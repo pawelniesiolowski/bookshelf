@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AuthorRepository")
  */
-class Author
+class Author implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -44,16 +44,31 @@ class Author
         }
     }
 
-    public function getBooks(): array
-    {
-        $books = $this->books->toArray();
-        usort($books, 'strnatcasecmp');
-        return $books;
-    }
-
     public function __toString(): string
     {
         return $this->surname . ' ' . $this->name;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->surname . ' ' . $this->name,
+            'books' => $this->getJsonSimplifiedSortedBooks(),
+        ];
+    }
+    
+    private function getJsonSimplifiedSortedBooks(): array
+    {
+        $books = $this->books->toArray();
+
+        usort($books, 'strnatcasecmp');
+
+        $books = array_map(function($book) {
+            return $book->jsonSimplify();
+        }, $books);
+
+        return $books;
     }
 }
 

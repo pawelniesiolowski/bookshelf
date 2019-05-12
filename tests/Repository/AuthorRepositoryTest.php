@@ -2,12 +2,12 @@
 
 namespace App\Tests\Repository;
 
-use App\Tests\DatabaseTestCase;
+use App\Tests\FunctionalTestCase;
 use App\Entity\Author;
 use App\Entity\Book;
 use App\Repository\AuthorRepository;
 
-class AuthorRepositoryTest extends DatabaseTestCase
+class AuthorRepositoryTest extends FunctionalTestCase
 {
     private $authorRepository;
 

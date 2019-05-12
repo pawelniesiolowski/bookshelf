@@ -63,5 +63,14 @@ class Book
     {
         return $this->title;
     }
+    
+    public function jsonSimplify(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'copies' => $this->copies,
+        ];
+    }
 }
 
