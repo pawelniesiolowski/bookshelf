@@ -13,13 +13,11 @@ class BookshelfControllerTest extends FunctionalTestCase
         $dostojewski = new Author('Fiodor', 'Dostojewski');
         $crime = new Book(
             'Zbrodnia i kara',
-            2,
             '1234567890',
             29.99
         );
         $idiot = new Book(
             'Idiota',
-            1,
             '0987654321',
             19.99
         );
@@ -28,7 +26,6 @@ class BookshelfControllerTest extends FunctionalTestCase
         $lem = new Author('Stanisław', 'Lem');
         $robots = new Book(
             'Bajki robotów',
-            4,
             '0123456789',
             59.00
         );
@@ -52,12 +49,12 @@ class BookshelfControllerTest extends FunctionalTestCase
                         [
                             'id' => 2,
                             'title' => 'Idiota',
-                            'copies' => 1,
+                            'copies' => 0,
                         ],
                         [
                             'id' => 1,
                             'title' => 'Zbrodnia i kara',
-                            'copies' => 2,
+                            'copies' => 0,
                         ],
                     ],
                 ],
@@ -68,13 +65,22 @@ class BookshelfControllerTest extends FunctionalTestCase
                         [
                             'id' => 3,
                             'title' => 'Bajki robotów',
-                            'copies' => 4,
+                            'copies' => 0,
                         ],
                     ],
                 ]
             ],
         ];
         $this->assertSame($expectedData, json_decode($content, true));
+    }
+
+    public function testNew()
+    {
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/books');
+        $response = $client->getResponse();
+
+        $this->assertSame(201, $response->getStatusCode());
     }
 }
 

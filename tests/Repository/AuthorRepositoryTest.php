@@ -22,7 +22,6 @@ class AuthorRepositoryTest extends FunctionalTestCase
         $author = new Author('Fiodor', 'Dostojewski');
         $book = new Book(
             'Bracia Karamazow',
-            2,
             '0123456789',
             29.99
         );
@@ -38,19 +37,16 @@ class AuthorRepositoryTest extends FunctionalTestCase
         $lem = new Author('Stanisław', 'Lem');
         $pirx = new Book(
             'Opowieści o pilocie Pirxie',
-            3,
             '0123456789',
             19.99
         );
         $solaris = new Book(
             'Solaris',
-            1,
             '1234567890',
             39.99
         );
         $voice = new Book(
             'Głos Pana',
-            10,
             '9876543210',
             50.00
         );

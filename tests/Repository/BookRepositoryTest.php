@@ -21,7 +21,6 @@ class BookRepositoryTest extends FunctionalTestCase
     {
         $book = new Book(
             'BraciaKaramazow',
-            2,
             '0123456789',
             29.99
         );
@@ -37,14 +36,12 @@ class BookRepositoryTest extends FunctionalTestCase
     {
         $book1 = new Book(
             'BraciaKaramazow',
-            2,
             '0123456789',
             29.99
         );
         $book1->addAuthor(new Author('Fiodor', 'Dostojewski'));
         $book2 = new Book(
             'Idiota',
-            1,
             '9876543210',
             39.99
         );

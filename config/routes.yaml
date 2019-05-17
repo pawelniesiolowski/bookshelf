@@ -2,3 +2,7 @@ index:
     path: /
     controller: App\Controller\BookshelfController::index
     methods: [GET]
+book_new:
+    path: /books
+    controller: App\Controller\BookController::new
+    methods: [POST]

@@ -44,28 +44,28 @@ class Author implements \JsonSerializable
         }
     }
 
-    public function __toString(): string
-    {
-        return $this->surname . ' ' . $this->name;
-    }
-
     public function jsonSerialize()
     {
         return [
             'id' => $this->id,
             'name' => $this->surname . ' ' . $this->name,
-            'books' => $this->getJsonSimplifiedSortedBooks(),
+            'books' => $this->getJsonSerializedBasicSortedBooks(),
         ];
     }
+
+    public function __toString(): string
+    {
+        return $this->surname . ' ' . $this->name;
+    }
     
-    private function getJsonSimplifiedSortedBooks(): array
+    private function getJsonSerializedBasicSortedBooks(): array
     {
         $books = $this->books->toArray();
 
         usort($books, 'strnatcasecmp');
 
         $books = array_map(function($book) {
-            return $book->jsonSimplify();
+            return $book->jsonSerializeBasic();
         }, $books);
 
         return $books;
