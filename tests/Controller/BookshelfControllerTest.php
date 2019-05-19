@@ -35,7 +35,7 @@ class BookshelfControllerTest extends FunctionalTestCase
         $this->entityManager->flush();
 
         $client = static::createClient();
-        $client->xmlHttpRequest('GET', '/');
+        $client->xmlHttpRequest('GET', '/authors');
         $response = $client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -72,15 +72,6 @@ class BookshelfControllerTest extends FunctionalTestCase
             ],
         ];
         $this->assertSame($expectedData, json_decode($content, true));
-    }
-
-    public function testNew()
-    {
-        $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/books');
-        $response = $client->getResponse();
-
-        $this->assertSame(201, $response->getStatusCode());
     }
 }
 

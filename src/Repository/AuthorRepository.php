@@ -17,5 +17,19 @@ class AuthorRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['surname' => 'ASC']);
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByNameAndSurname(string $name, string $surname): ?Author
+    {
+        return $this->createQueryBuilder('author')
+            ->andWhere('author.name = :name')
+            ->andWhere('author.surname = :surname')
+            ->setParameter('name', $name)
+            ->setParameter('surname', $surname)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
 

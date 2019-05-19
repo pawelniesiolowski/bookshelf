@@ -3,6 +3,7 @@
 namespace App\Provider;
 
 use App\Repository\AuthorRepository;
+use App\Entity\Author;
 
 class AuthorProvider
 {
@@ -13,9 +14,14 @@ class AuthorProvider
         $this->authorRepository = $authorRepository;
     }
 
-    public function all()
+    public function all(): array
     {
         return $this->authorRepository->getAllOrderBySurname();
+    }
+
+    public function findOneByNameAndSurname(string $name, string $surname): ?Author
+    {
+        return $this->authorRepository->findOneByNameAndSurname($name, $surname);
     }
 }
 

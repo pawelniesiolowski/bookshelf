@@ -53,7 +53,7 @@ class BookChangeEvent
     private $book;
     /**
      * @ORM\ManyToOne(targetEntity="Receiver", inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $receiver;
 

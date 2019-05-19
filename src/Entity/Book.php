@@ -42,7 +42,7 @@ class Book implements \JsonSerializable
     private $authors;
 
     /**
-     * @ORM\OneToMany(targetEntity="BookChangeEvent", mappedBy="book", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="BookChangeEvent", mappedBy="book", orphanRemoval=true, cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $events;

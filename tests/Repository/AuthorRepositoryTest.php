@@ -6,6 +6,7 @@ use App\Tests\FunctionalTestCase;
 use App\Entity\Author;
 use App\Entity\Book;
 use App\Repository\AuthorRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 class AuthorRepositoryTest extends FunctionalTestCase
 {
@@ -66,6 +67,36 @@ class AuthorRepositoryTest extends FunctionalTestCase
         $this->assertSame('Dostojewski Fiodor', $authorsFromRepository[0]->__toString());
         $this->assertSame('Lem Stanisław', $authorsFromRepository[1]->__toString());
         $this->assertSame('Miłosz Czesław', $authorsFromRepository[2]->__toString());
+    }
+
+    public function testItShouldGetOneAuthorByNameAndEmail()
+    {
+        $author = new Author('Fiodor', 'Dostojewski');
+        $this->entityManager->persist($author);
+        $this->entityManager->flush();
+        $this->assertInstanceOf(
+            Author::class, 
+            $this->authorRepository->findOneByNameAndSurname('Fiodor', 'Dostojewski')
+        );
+    }
+
+    public function testItShouldReturnNullWhenThereIsNoAuthorByNameAndEmail()
+    {
+        $this->assertSame(
+            null,
+            $this->authorRepository->findOneByNameAndSurname('Fiodor', 'Dostojewski')
+        );
+    }
+
+    public function testItShouldThrowExceptionWhenThereAreTwoAuthorsByNameAndEmail()
+    {
+        $firstAuthor = new Author('Fiodor', 'Dostojewski');
+        $secAuthor = new Author('Fiodor', 'Dostojewski');
+        $this->entityManager->persist($firstAuthor);
+        $this->entityManager->persist($secAuthor);
+        $this->entityManager->flush();
+        $this->expectException(NonUniqueResultException::class);
+        $this->authorRepository->findOneByNameAndSurname('Fiodor', 'Dostojewski');
     }
 }
 

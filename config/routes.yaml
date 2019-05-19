@@ -1,5 +1,9 @@
-index:
+website_index:
     path: /
+    controller: App\Controller\WebsiteController::index
+    methods: [GET]
+author_index:
+    path: /authors
     controller: App\Controller\BookshelfController::index
     methods: [GET]
 book_new:
