@@ -59,5 +59,14 @@ class AuthorTest extends TestCase
         $author = new Author('Stanisław', 'Lem');
         $this->assertSame('Lem Stanisław', $author->__toString());
     }
+
+    public function testAuthorWithInvalidDataShouldReturnProperErrors()
+    {
+        $author = new Author('', '');
+        $this->assertSame(false, $author->validate());
+        $errors = $author->getErrors();
+        $this->assertSame($errors['name'], 'Podaj imię autora');
+        $this->assertSame($errors['surname'], 'Podaj nazwisko autora');
+    }
 }
 

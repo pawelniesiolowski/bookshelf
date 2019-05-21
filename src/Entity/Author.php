@@ -29,6 +29,8 @@ class Author implements \JsonSerializable
      */
     private $books;
 
+    private $errors = [];
+
     public function __construct(string $name, string $surname)
     {
         $this->name = $name;
@@ -53,6 +55,18 @@ class Author implements \JsonSerializable
         ];
     }
 
+    public function validate(): bool
+    {
+        $this->validateName();
+        $this->validateSurname();
+        return count($this->errors) === 0;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     public function __toString(): string
     {
         return $this->surname . ' ' . $this->name;
@@ -69,6 +83,27 @@ class Author implements \JsonSerializable
         }, $books);
 
         return $books;
+    }
+
+    private function validateName(): void
+    {
+        if ($this->name === '') {
+            $this->addError('name', 'Podaj imię autora');
+        }
+    }
+
+    private function validateSurname(): void
+    {
+        if ($this->surname === '') {
+            $this->addError('surname', 'Podaj nazwisko autora');
+        }
+    }
+
+    private function addError(string $key, string $desc): void
+    {
+        if (!array_key_exists($key, $this->errors)) {
+            $this->errors[$key] = $desc;
+        }
     }
 }
 

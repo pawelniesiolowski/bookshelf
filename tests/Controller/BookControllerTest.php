@@ -38,5 +38,34 @@ class BookControllerTest extends FunctionalTestCase
         $events = $bookChangeEventRepository->findAll();
         $this->assertContains('przyjęto', $events[0]->__toString());
     }
+
+    public function testNewWithInvalidDataShouldCauseResponseWithProperErrors()
+    {
+        $content = [
+            'title' => '',
+            'ISBN' => 'invalid',
+            'price' => 0.9999,
+            'copies' => -1,
+            'authors' => [
+                [
+                    'name' => '',
+                    'surname' => '',
+                ],
+            ],
+        ];
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/books', [], [], [], json_encode($content));
+        $response = $client->getResponse();
+
+        $this->assertSame(422, $response->getStatusCode());
+        $errors = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('errors', $errors);
+
+        $errors = $errors['errors'];
+        $this->assertSame('Podaj tytuł', $errors['title']);
+        $this->assertSame('ISBN musi się składać z samych cyfr', $errors['ISBN']);
+        $this->assertSame('Podaj imię i nazwisko autora', $errors['authors']);
+    }
 }
 

@@ -46,5 +46,17 @@ class BookFactoryTest extends TestCase
         $this->assertArraySubset($bookData, $jsonSerializedBook);
         $this->assertContains('przyjęto', $jsonSerializedBook['events'][0]);
     }
+
+    public function testItCreatesBookFromEmptyData()
+    {
+        $authorProvider = $this->createMock(AuthorProvider::class);
+        $authorProvider->method('findOneByNameAndSurname')
+            ->will($this->returnValue(null));
+        
+        $bookFactory = new BookFactory($authorProvider);
+
+        $book = $bookFactory->fromJson('');
+        $this->assertInstanceOf(Book::class, $book);
+    }
 }
 

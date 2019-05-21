@@ -47,14 +47,18 @@ class Book implements \JsonSerializable
      */
     private $events;
 
+    private $errors = [];
+
     public function __construct(
         string $title,
-        string $ISBN,
-        float $price
+        ?string $ISBN,
+        ?float $price
     ) {
         $this->title = $title;
         $this->ISBN = $ISBN;
-        $this->price = $price;
+        if ($price !== null) {
+            $this->price = round(floatval($price), 2);
+        }
         $this->authors = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
@@ -69,6 +73,10 @@ class Book implements \JsonSerializable
 
     public function receive(int $num): void
     {
+        if ($num < 0) {
+            throw new BookException('There can not be less copies then zero');
+        }
+
         $this->copies += $num;
         $event = new BookChangeEvent(
             BookChangeEvent::RECEIVE,
@@ -126,6 +134,19 @@ class Book implements \JsonSerializable
         ];
     }
 
+    public function validate(): bool
+    {
+        $this->validateTitle();
+        $this->validateISBN();
+        $this->validateAuthors();
+        return count($this->errors) === 0;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     public function __toString()
     {
         $authors = array_map(function($author) {
@@ -167,6 +188,36 @@ class Book implements \JsonSerializable
     {
         if (!$this->events->contains($bookChangeEvent)) {
             $this->events[] = $bookChangeEvent;
+        }
+    }
+
+    private function validateTitle(): void
+    {
+        if ($this->title === '') {
+            $this->addError('title', 'Podaj tytuł');
+        }
+    }
+
+    private function validateISBN(): void
+    {
+        if ($this->ISBN !== null && !is_numeric($this->ISBN)) {
+            $this->addError('ISBN', 'ISBN musi się składać z samych cyfr');
+        }
+    }
+
+    private function validateAuthors(): void
+    {
+        foreach ($this->authors as $author) {
+            if (!$author->validate()) {
+                $this->addError('authors', 'Podaj imię i nazwisko autora');
+            }
+        }
+    }
+
+    private function addError(string $key, string $desc): void
+    {
+        if (!array_key_exists($key, $this->errors)) {
+            $this->errors[$key] = $desc;
         }
     }
 }

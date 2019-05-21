@@ -23,6 +23,11 @@ class BookController extends AbstractController
     public function new(Request $request)
     {
         $book = $this->bookFactory->fromJson($request->getContent());
+
+        if (!$book->validate()) {
+            return $this->json(['errors' => $book->getErrors()], 422);
+        }
+
         $this->entityManager->persist($book);
         $this->entityManager->flush();
         
