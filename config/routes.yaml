@@ -10,3 +10,8 @@ book_new:
     path: /books
     controller: App\Controller\BookController::new
     methods: [POST]
+book_edit:
+    path: /books/{id}
+    controller: App\Controller\BookController:edit
+    methods: [PUT]
+

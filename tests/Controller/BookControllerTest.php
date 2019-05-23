@@ -61,11 +61,34 @@ class BookControllerTest extends FunctionalTestCase
         $this->assertSame(422, $response->getStatusCode());
         $errors = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('errors', $errors);
+    }
 
-        $errors = $errors['errors'];
-        $this->assertSame('Podaj tytuł', $errors['title']);
-        $this->assertSame('ISBN musi się składać z samych cyfr', $errors['ISBN']);
-        $this->assertSame('Podaj imię i nazwisko autora', $errors['authors']);
+    public function testItShouldEditBook()
+    {
+        $book = new Book('Zbrodnia i kara', '0123456789', 19.99);
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        $content = [
+            'title' => 'Zbrodnia i kara',
+            'ISBN' => '1234567890',
+            'price' => 39.99,
+            'authors' => [
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
+            ],
+        ];
+        $client = static::createClient();
+        $client->xmlHttpRequest('PUT', '/books/1', [], [], [], json_encode($content));
+        $response = $client->getResponse();
+
+        $this->assertSame(204, $response->getStatusCode());
+
+        $bookRepository = new BookRepository($this->registry);
+        $book = $bookRepository->find(1);
+        $this->assertSame('Dostojewski Fiodor "Zbrodnia i kara"', $book->__toString());
     }
 }
 

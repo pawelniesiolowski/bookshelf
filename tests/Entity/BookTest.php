@@ -120,10 +120,43 @@ class BookTest extends TestCase
         $book = new Book('', 'invalid', 0.9999);
         $book->addAuthor(new Author('', ''));
         $this->assertSame(false, $book->validate());
+        $errors = $book->getErrors();
 
         $this->assertSame('Podaj tytuł', $errors['title']);
         $this->assertSame('ISBN musi się składać z samych cyfr', $errors['ISBN']);
         $this->assertSame('Podaj imię i nazwisko autora', $errors['authors']);
+    }
+
+    public function testItShouldUpdateItselfFromJson()
+    {
+        $book = new Book('Fiodor Dostojewski', '0123456789', 19.99);
+        $book->addAuthor(new Author('Stanisław', 'Lem'));
+
+        $bookFromRequest = [
+            'title' => 'Zbrodnia i kara',
+            'ISBN' => '1234567890',
+            'price' => 39.99,
+            'authors' => [
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
+            ],
+        ];
+        $authors = [new Author('Fiodor', 'Dostojewski')];
+        $bookFromRequest = json_encode($bookFromRequest);
+        $book->updateFromJson($bookFromRequest, $authors);
+
+        $jsonSerializeData = [
+            'id' => null,
+            'title' => 'Zbrodnia i kara',
+            'ISBN' => '1234567890',
+            'price' => 39.99,
+            'copies' => 0,
+            'authors' => ['Dostojewski Fiodor'],
+            'events' => [],
+        ];
+        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 }
 

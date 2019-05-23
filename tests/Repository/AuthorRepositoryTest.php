@@ -69,7 +69,7 @@ class AuthorRepositoryTest extends FunctionalTestCase
         $this->assertSame('Miłosz Czesław', $authorsFromRepository[2]->__toString());
     }
 
-    public function testItShouldGetOneAuthorByNameAndEmail()
+    public function testItShouldGetOneAuthorByNameAndSurname()
     {
         $author = new Author('Fiodor', 'Dostojewski');
         $this->entityManager->persist($author);
@@ -80,7 +80,7 @@ class AuthorRepositoryTest extends FunctionalTestCase
         );
     }
 
-    public function testItShouldReturnNullWhenThereIsNoAuthorByNameAndEmail()
+    public function testItShouldReturnNullWhenThereIsNoAuthorByNameAndSurname()
     {
         $this->assertSame(
             null,
@@ -88,7 +88,7 @@ class AuthorRepositoryTest extends FunctionalTestCase
         );
     }
 
-    public function testItShouldThrowExceptionWhenThereAreTwoAuthorsByNameAndEmail()
+    public function testItShouldThrowExceptionWhenThereAreTwoAuthorsByNameAndSurname()
     {
         $firstAuthor = new Author('Fiodor', 'Dostojewski');
         $secAuthor = new Author('Fiodor', 'Dostojewski');

@@ -134,6 +134,18 @@ class Book implements \JsonSerializable
         ];
     }
 
+    public function updateFromJson(string $data, array $authors): void
+    {
+        $data = json_decode($data, true);
+        $this->title = $data['title'] ?? '';
+        $this->ISBN = $data['ISBN'] ?? null;
+        $this->price = $data['price'] ?? null;
+        $this->authors->clear();
+        foreach ($authors as $author) {
+            $this->addAuthor($author);
+        }
+    }
+
     public function validate(): bool
     {
         $this->validateTitle();
