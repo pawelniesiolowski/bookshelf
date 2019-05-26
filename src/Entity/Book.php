@@ -73,8 +73,8 @@ class Book implements \JsonSerializable
 
     public function receive(int $num): void
     {
-        if ($num < 0) {
-            throw new BookException('There can not be less copies then zero');
+        if ($num <= 0) {
+            throw new BookException('Nie można przyjąć mnie niż jedną książkę');
         }
 
         $this->copies += $num;
@@ -112,6 +112,18 @@ class Book implements \JsonSerializable
         $this->addEvent($event);
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'ISBN' => $this->ISBN,
+            'price' => (float)$this->price,
+            'copies' => $this->copies,
+            'author' => $this->createSingleJsonSerializableSortedAuthor(),
+        ];
+    }
+
     public function jsonSerializeBasic(): array
     {
         return [
@@ -121,13 +133,13 @@ class Book implements \JsonSerializable
         ];
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerializeExtended(): array
     {
         return [
             'id' => $this->id,
             'title' => $this->title,
             'ISBN' => $this->ISBN,
-            'price' => $this->price,
+            'price' => (float)$this->price,
             'copies' => $this->copies,
             'authors' => $this->createJsonSerializableSortedAuthors(),
             'events' => $this->createJsonSerializableEvents(),
@@ -161,10 +173,19 @@ class Book implements \JsonSerializable
 
     public function __toString()
     {
-        $authors = array_map(function($author) {
-            return $author->__toString();
-        }, $this->authors->toArray());
-        return implode(', ', $authors) . ' "' . $this->title . '"';
+        $text = '';
+        $authors = $this->authors->toArray();
+        if (count($authors) > 0) {
+            $text .= $authors[0]->__toString() . ' ';
+        }
+        $text .= '"' . $this->title . '"';
+        return $text;
+    }
+
+    private function createSingleJsonSerializableSortedAuthor(): string
+    {
+        $authors = $this->authors->toArray();
+        return $authors[0]->__toString();
     }
 
     private function createJsonSerializableSortedAuthors(): array
@@ -191,7 +212,7 @@ class Book implements \JsonSerializable
     private function substractCopies(int $num): void
     {
         if ($this->copies - $num < 0) {
-            throw new BookException('There can not be less copies then zero');
+            throw new BookException('Książka nie może mieć mniej niż zero egzemplarzy');
         }
         $this->copies -= $num;
     }

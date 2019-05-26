@@ -12,5 +12,10 @@ class BookRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Book::class);
     }
+
+    public function findAllOrderedByTitle(): array
+    {
+        return $this->findBy([], ['title' => 'ASC']);
+    }
 }
 

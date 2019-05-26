@@ -18,12 +18,31 @@ class BookProviderTest extends TestCase
 
     public function testItShouldFindOneBook()
     {
-        $book = new Book('Zbrodnia i kara', '1234567890', 29.00);
+        $book = $this->createMock(Book::class);
         $this->bookRepository->method('find')
-            ->with( $this->equalTo(1))
+            ->with($this->equalTo(1))
             ->will($this->returnValue($book));
-        $authorProvider = new BookProvider($this->bookRepository);
-        $this->assertSame($book, $authorProvider->findOne(1));
+        $bookProvider = new BookProvider($this->bookRepository);
+        $this->assertSame($book, $bookProvider->findOne(1));
+    }
+
+    public function testItCansGetAllOrderedByAuthorAndTitle()
+    {
+        $firstBook = $this->createMock(Book::class);
+        $firstBook->method('__toString')
+            ->will($this->returnValue('C'));
+        $secondBook = $this->createMock(Book::class);
+        $secondBook->method('__toString')
+            ->will($this->returnValue('A'));
+        $thirdBook = $this->createMock(Book::class);
+        $thirdBook->method('__toString')
+            ->will($this->returnValue('B'));
+        $booksOrderedByTitle = [$firstBook, $secondBook, $thirdBook];
+        $this->bookRepository->method('findAllOrderedByTitle')
+            ->will($this->returnValue($booksOrderedByTitle));
+        $bookProvider = new BookProvider($this->bookRepository);
+        $booksOrderedByAuthor = [$secondBook, $thirdBook, $firstBook];
+        $this->assertSame($booksOrderedByAuthor, $bookProvider->getAllOrderedByAuthorAndTitle());
     }
 }
 

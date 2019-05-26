@@ -31,6 +31,28 @@ class BookTest extends TestCase
     {
         $book = new Book('Bracia Karamazow', '0123456789', 29.99);
         $book->addAuthor($this->author);
+
+        $secondAuthor = $this->createMock(Author::class);
+        $secondAuthor->method('validate')
+            ->will($this->returnValue(true));
+        $book->addAuthor($secondAuthor);
+
+        $jsonSerializeData = [
+            'id' => null,
+            'title' => 'Bracia Karamazow',
+            'ISBN' => '0123456789',
+            'price' => 29.99,
+            'copies' => 0,
+            'author' => 'Dostojewski Fiodor',
+        ];
+        $this->assertSame(true, $book->validate());
+        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
+    }
+
+    public function testItShouldCreateJsonSerializedExtendedData()
+    {
+        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book->addAuthor($this->author);
         $jsonSerializeData = [
             'id' => null,
             'title' => 'Bracia Karamazow',
@@ -41,7 +63,7 @@ class BookTest extends TestCase
             'events' => [],
         ];
         $this->assertSame(true, $book->validate());
-        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
+        $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());
     }
 
     public function testItCreatesJsonSerializedBasicData()
@@ -70,7 +92,7 @@ class BookTest extends TestCase
         $book = new Book('Bracia Karamazow', '0123456789', 29.99);
         $book->receive(1);
         $this->assertSame(true, $book->validate());
-        $jsonSerializedBook = $book->jsonSerialize();
+        $jsonSerializedBook = $book->jsonSerializeExtended();
         $this->assertSame(1, $jsonSerializedBook['copies']);
         $this->assertContains('przyjęto', $jsonSerializedBook['events'][0]); 
     }
@@ -80,7 +102,7 @@ class BookTest extends TestCase
         $book = new Book('Bracia Karamazow', '0123456789', 29.99);
         $book->receive(5);
         $book->release(3, $this->receiver);
-        $jsonSerializedBook = $book->jsonSerialize();
+        $jsonSerializedBook = $book->jsonSerializeExtended();
         $this->assertSame(true, $book->validate());
         $this->assertSame(2, $jsonSerializedBook['copies']);
         $this->assertSame(2, count($jsonSerializedBook['events']));
@@ -94,7 +116,7 @@ class BookTest extends TestCase
         $book->receive(5);
         $event = $book->sell(2);
         $this->assertSame(true, $book->validate());
-        $jsonSerializedBook = $book->jsonSerialize();
+        $jsonSerializedBook = $book->jsonSerializeExtended();
         $this->assertSame(3, $jsonSerializedBook['copies']);
         $this->assertSame(2, count($jsonSerializedBook['events']));
         $this->assertContains('sprzedano', $jsonSerializedBook['events'][1]); 
@@ -156,7 +178,7 @@ class BookTest extends TestCase
             'authors' => ['Dostojewski Fiodor'],
             'events' => [],
         ];
-        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
+        $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());
     }
 }
 

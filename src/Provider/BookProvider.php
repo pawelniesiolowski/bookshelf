@@ -18,5 +18,12 @@ class BookProvider
     {
         return $this->bookRepository->find($id);
     }
+
+    public function getAllOrderedByAuthorAndTitle(): array
+    {
+        $books = $this->bookRepository->findAllOrderedByTitle();
+        usort($books, 'strnatcasecmp');
+        return $books;
+    }
 }
 

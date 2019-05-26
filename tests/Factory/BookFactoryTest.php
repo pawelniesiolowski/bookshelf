@@ -42,7 +42,7 @@ class BookFactoryTest extends TestCase
                 'Dostojewski Fiodor',
             ],
         ];
-        $jsonSerializedBook = $book->jsonSerialize();
+        $jsonSerializedBook = $book->jsonSerializeExtended();
         $this->assertArraySubset($bookData, $jsonSerializedBook);
         $this->assertContains('przyjęto', $jsonSerializedBook['events'][0]);
     }

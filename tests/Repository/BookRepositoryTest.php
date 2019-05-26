@@ -56,5 +56,22 @@ class BookRepositoryTest extends FunctionalTestCase
 
         $this->assertSame($books, $this->bookRepository->findAll());
     }
+
+    public function testItShouldFindAllBooksOrderedByTitle()
+    {
+        $firstBook = new Book('Solaris', '0987654321', 10.00);
+        $secondBook = new Book('Biblia', '0123456789', 50.00);
+        $thirdBook = new Book('Bracia Karamazow', '1234567890', 19.99);
+
+        $this->entityManager->persist($firstBook);
+        $this->entityManager->persist($secondBook);
+        $this->entityManager->persist($thirdBook);
+        $this->entityManager->flush();
+
+        $books = $this->bookRepository->findAllOrderedByTitle();
+        $this->assertSame('"Biblia"', $books[0]->__toString());
+        $this->assertSame('"Bracia Karamazow"', $books[1]->__toString());
+        $this->assertSame('"Solaris"', $books[2]->__toString());
+    }
 }
 
