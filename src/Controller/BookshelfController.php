@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Exception\BookException;
 use App\Provider\BookProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Provider\ReceiverProvider;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\NonUniqueResultException;
 
 class BookshelfController extends AbstractController
 {
@@ -35,9 +38,33 @@ class BookshelfController extends AbstractController
         try {
             $book->receive($data['copies']);
         } catch (BookException $e) {
-            return $this->json(['errors' => ['copies' => 'Egzemplarzy musi być więcej niż 0']], 422);
+            return $this->json(['errors' => ['copies' => $e->getMessage()]], 422);
         }
 
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        return $this->json([], 204);
+    }
+
+    public function release(int $id, Request $request, ReceiverProvider $receiverProvider)
+    {
+        $book = $this->bookProvider->findOne($id);
+        $data = json_decode($request->getContent(), true);
+        $errors = [];
+        try {
+            $receiver = $receiverProvider->findOneById($data['receiver_id']);
+            $book->receive($data['copies'], $receiver);
+        } catch (NonUniqueResultException | NoResultException $e) {
+            $errors['receiver_id'] = 'Wybierz osobę, która jest uprawniona do pobrania książek';
+        } catch (BookException $e) {
+            $errors['copies'] = $e->getMessage();
+        }
+
+        if (count($errors) > 0) {
+            return $this->json(['errors' => $errors], 422);
+        }
+        
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 

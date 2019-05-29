@@ -12,5 +12,18 @@ class ReceiverRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Receiver::class);
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\NoResultException
+     */
+    public function findOneById(int $id): Receiver
+    {
+        return $this->createQueryBuilder('receiver')
+            ->andWhere('receiver.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult();
+    }
 }
 

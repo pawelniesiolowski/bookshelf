@@ -74,7 +74,7 @@ class Book implements \JsonSerializable
     public function receive(int $num): void
     {
         if ($num <= 0) {
-            throw new BookException('Nie można przyjąć mnie niż jedną książkę');
+            throw new BookException('Nie można przyjąć mniej niż jedną książkę');
         }
 
         $this->copies += $num;

@@ -10,6 +10,10 @@ bookshelf_receive:
     path: /receive/{id}
     controller: App\Controller\BookshelfController::receive
     methods: [POST]
+bookshelf_release:
+    path: /release/{id}
+    controller: App\Controller\BookshelfController::release
+    methods: [POST]
 book_new:
     path: /books
     controller: App\Controller\BookController::new

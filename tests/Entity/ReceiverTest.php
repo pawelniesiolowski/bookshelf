@@ -36,5 +36,14 @@ class ReceiverTest extends TestCase
         ];
         $this->assertSame($jsonSerializedReceiver, $receiver->jsonSerialize());
     }
+
+    public function testItShouldReturnErrorsWhenGetsInvalidData()
+    {
+        $receiver = new Receiver('', '');
+        $this->assertSame(false, $receiver->validate());
+        $errors = $receiver->getErrors();
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayHasKey('surname', $errors);
+    }
 }
 

@@ -5,6 +5,7 @@ namespace App\Tests\Controller;
 use App\Tests\FunctionalTestCase;
 use App\Entity\Author;
 use App\Entity\Book;
+use App\Entity\Receiver;
 
 class BookshelfControllerTest extends FunctionalTestCase
 {
@@ -84,6 +85,78 @@ class BookshelfControllerTest extends FunctionalTestCase
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
+    }
+    
+    public function testItShouldReleaseBook()
+    {
+        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book->receive(5);
+        $this->entityManager->persist($book);
+
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $data = [
+            'copies' => 4,
+            'receiver_id' => 1,
+        ];
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+
+        $this->assertSame(204, $response->getStatusCode());
+    }
+
+    public function testItShouldReturnProperErrorsWhenReceiverIdIsInvalid()
+    {
+        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        $data = [
+            'copies' => 4,
+            'receiver_id' => 1,
+        ];
+
+        $client = static::createClient();
+
+        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+        $content = json_decode($response->getContent(), true);
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertArrayHasKey('errors', $content);
+        $this->assertArrayHasKey('receiver_id', $content['errors']);
+    }
+    
+    public function testItShouldReturnProperErrorsWhenThereIsLessCopiesThenZero()
+    {
+        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $data = [
+            'copies' => -4,
+            'receiver_id' => 1,
+        ];
+
+        $client = static::createClient();
+
+        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+        $content = json_decode($response->getContent(), true);
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertArrayHasKey('errors', $content);
+        $this->assertArrayHasKey('copies', $content['errors']);
     }
 }
 

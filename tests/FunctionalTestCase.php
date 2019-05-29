@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Entity\Author;
 use App\Entity\Book;
+use App\Entity\Receiver;
+use App\Entity\BookChangeEvent;
 
 class FunctionalTestCase extends WebTestCase
 {
@@ -23,6 +25,8 @@ class FunctionalTestCase extends WebTestCase
             [
                 Author::class,
                 Book::class,
+                Receiver::class,
+                BookChangeEvent::class,
             ],
             [
                 'books_authors',

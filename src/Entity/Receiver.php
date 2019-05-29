@@ -30,6 +30,8 @@ class Receiver implements \JsonSerializable
      */
     private $events;
 
+    private $errors = [];
+
     public function __construct(string $name, string $surname)
     {
         $this->name = $name;
@@ -44,6 +46,18 @@ class Receiver implements \JsonSerializable
         }
     }
 
+    public function validate(): bool
+    {
+        $this->validateName();
+        $this->validateSurname();
+        return count($this->errors) === 0;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -55,6 +69,27 @@ class Receiver implements \JsonSerializable
     public function __toString(): string
     {
         return $this->surname . ' ' . $this->name;
+    }
+
+    private function validateName(): void
+    {
+        if ($this->name === '') {
+            $this->addError('name', 'Imię osoby, która może pobrać książki jest wymagane');
+        }
+    }
+
+    private function validateSurname(): void
+    {
+        if ($this->surname === '') {
+            $this->addError('surname', 'Nazwisko osoby, która może pobrać książki jest wymagane');
+        }
+    }
+
+    private function addError(string $key, string $desc): void
+    {
+        if (!array_key_exists($key, $this->errors)) {
+            $this->errors[$key] = $desc;
+        }
     }
 
     private function createJsonSerializableEvents(): array
