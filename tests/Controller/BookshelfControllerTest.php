@@ -6,9 +6,18 @@ use App\Tests\FunctionalTestCase;
 use App\Entity\Author;
 use App\Entity\Book;
 use App\Entity\Receiver;
+use App\Repository\BookRepository;
 
 class BookshelfControllerTest extends FunctionalTestCase
 {
+    private $bookRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->bookRepository = new BookRepository($this->registry);
+    }
+
     public function testIndex()
     {
         $dostojewski = new Author('Fiodor', 'Dostojewski');
@@ -85,6 +94,9 @@ class BookshelfControllerTest extends FunctionalTestCase
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
+
+        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $this->assertSame(4, $serializedBook['copies']);
     }
     
     public function testItShouldReleaseBook()
@@ -107,6 +119,9 @@ class BookshelfControllerTest extends FunctionalTestCase
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
+
+        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $this->assertSame(1, $serializedBook['copies']);
     }
 
     public function testItShouldReturnProperErrorsWhenReceiverIdIsInvalid()
@@ -157,6 +172,27 @@ class BookshelfControllerTest extends FunctionalTestCase
         $this->assertSame(422, $response->getStatusCode());
         $this->assertArrayHasKey('errors', $content);
         $this->assertArrayHasKey('copies', $content['errors']);
+    }
+
+    public function testItShouldSellBook()
+    {
+        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        $data = [
+            'copies' => 2,
+        ];
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/sell/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+
+        $this->assertSame(204, $response->getStatusCode());
+
+        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $this->assertSame(3, $serializedBook['copies']);
     }
 }
 

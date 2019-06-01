@@ -211,7 +211,10 @@ class Book implements \JsonSerializable
 
     private function substractCopies(int $num): void
     {
-        if ($this->copies - $num < 0) {
+        if ($num <= 0) {
+            throw new BookException('Nie można wydać ani sprzedać ujemnej liczby egzemplarzy książki');
+        }
+        if (($this->copies - $num) < 0) {
             throw new BookException('Książka nie może mieć mniej niż zero egzemplarzy');
         }
         $this->copies -= $num;

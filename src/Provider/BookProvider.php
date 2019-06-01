@@ -4,6 +4,7 @@ namespace App\Provider;
 
 use App\Entity\Book;
 use App\Repository\BookRepository;
+use App\Exception\BookException;
 
 class BookProvider
 {
@@ -16,7 +17,11 @@ class BookProvider
 
     public function findOne(int $id): Book
     {
-        return $this->bookRepository->find($id);
+        $book = $this->bookRepository->find($id);
+        if ($book === null) {
+            throw new BookException('There is no book with id ' . $id . ' in database');
+        }
+        return $book;
     }
 
     public function getAllOrderedByAuthorAndTitle(): array

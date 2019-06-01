@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use App\Provider\BookProvider;
 use App\Repository\BookRepository;
 use App\Entity\Book;
+use App\Exception\BookException;
 
 class BookProviderTest extends TestCase
 {
@@ -24,6 +25,17 @@ class BookProviderTest extends TestCase
             ->will($this->returnValue($book));
         $bookProvider = new BookProvider($this->bookRepository);
         $this->assertSame($book, $bookProvider->findOne(1));
+    }
+
+    public function testFindOneShuldReturnBookExceptionWhenBookDoesNotExist()
+    {
+        $book = $this->createMock(Book::class);
+        $this->bookRepository->method('find')
+            ->with($this->equalTo(1))
+            ->will($this->returnValue(null));
+        $bookProvider = new BookProvider($this->bookRepository);
+        $this->expectException(BookException::class);
+        $bookProvider->findOne(1);
     }
 
     public function testItCansGetAllOrderedByAuthorAndTitle()

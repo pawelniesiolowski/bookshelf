@@ -14,6 +14,10 @@ bookshelf_release:
     path: /release/{id}
     controller: App\Controller\BookshelfController::release
     methods: [POST]
+bookshelf_sell:
+    path: /sell/{id}
+    controller: App\Controller\BookshelfController::sell
+    methods: [POST]
 book_new:
     path: /books
     controller: App\Controller\BookController::new
@@ -22,4 +26,8 @@ book_edit:
     path: /books/{id}
     controller: App\Controller\BookController:edit
     methods: [PUT]
+receiver_new:
+    path: /receiver
+    controller: App\Controller\ReceiverController:new
+    methods: [POST]
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Exception\BookException;
+use App\Exception\BookChangeEventException;
 use App\Provider\BookProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Provider\ReceiverProvider;
@@ -54,7 +55,7 @@ class BookshelfController extends AbstractController
         $errors = [];
         try {
             $receiver = $receiverProvider->findOneById($data['receiver_id']);
-            $book->receive($data['copies'], $receiver);
+            $book->release($data['copies'], $receiver);
         } catch (NonUniqueResultException | NoResultException $e) {
             $errors['receiver_id'] = 'Wybierz osobę, która jest uprawniona do pobrania książek';
         } catch (BookException $e) {
@@ -65,6 +66,27 @@ class BookshelfController extends AbstractController
             return $this->json(['errors' => $errors], 422);
         }
         
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        return $this->json([], 204);
+    }
+
+    public function sell(int $id, Request $request)
+    {
+        $book = $this->bookProvider->findOne($id);
+        $data = json_decode($request->getContent(), true);
+        $errors = [];
+        try {
+            $book->sell($data['copies']);
+        } catch (BookException $e) {
+            $errors['copies'] = $e->getMessage();
+        }
+
+        if (count($errors) > 0) {
+            return $this->json(['errors' => $errors], 422);
+        }
+
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 
