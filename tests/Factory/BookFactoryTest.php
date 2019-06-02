@@ -58,5 +58,9 @@ class BookFactoryTest extends TestCase
         $book = $bookFactory->fromJson('');
         $this->assertInstanceOf(Book::class, $book);
     }
+
+    public function testItCreatesBookWhenPriceIsEmptyString()
+    {
+    }
 }
 

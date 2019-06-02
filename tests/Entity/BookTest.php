@@ -49,6 +49,13 @@ class BookTest extends TestCase
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 
+    public function testItShouldBeJsonSerializedWithoutAuthor()
+    {
+        $book = new Book('Bracia Karamazow', '1234567890', 19.00);
+        $jsonSerializedBook = $book->jsonSerialize();
+        $this->assertSame('', $jsonSerializedBook['author']);
+    }
+
     public function testItShouldCreateJsonSerializedExtendedData()
     {
         $book = new Book('Bracia Karamazow', '0123456789', 29.99);

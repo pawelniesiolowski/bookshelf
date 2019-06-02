@@ -1,6 +1,72 @@
 {% extends 'base.html.twig' %}
-{% block body %}
+{% block main %}
 <header>
     <h1>Regał z książkami</h1>
 </header>
+<section>
+    <form id="bookshelf-new-book" action="{{ path('book_new') }}">
+        <legend>Dodaj książkę</legend>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-2">
+                    <input type="text" name="authorSurname" class="form-control" placeholder="Nazwisko autora">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="authorName" class="form-control" placeholder="Imię autora">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="title" class="form-control" placeholder="Tytuł">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="copies" class="form-control" placeholder="Egzemplarze">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="isbn" class="form-control" placeholder="ISBN">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="price" min="1" step="any" class="form-control" placeholder="Cena">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn">Zapisz</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<section>
+    <header>
+        <h3>Książki</h3>
+    </header>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Autor</th>
+                    <th>Tytuł</th>
+                    <th>Egzemplarze</th>
+                    <th>ISBN</th>
+                    <th>Cena</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody 
+                id="bookshelf-table-body" 
+                data-index="{{ path('bookshelf_index') }}" 
+                data-receive-path="{{ path('bookshelf_receive', { 'id': 0 }) }}"
+                data-release-path="{{ path('bookshelf_release', { 'id': 0 }) }}"
+                data-sell-path="{{ path('bookshelf_sell', { 'id': 0 }) }}"
+            >
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/modal.js') }}"></script>
+    <script src="{{ asset('js/bookshelf.js') }}"></script>
 {% endblock %}

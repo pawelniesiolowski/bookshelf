@@ -10,7 +10,7 @@ use App\Repository\BookChangeEventRepository;
 
 class BookControllerTest extends FunctionalTestCase
 {
-    public function testNew()
+    public function testNewShouldCreateNewBookAndMaybeBookChangeEvent()
     {
         $content = [
             'title' => 'Zbrodnia i kara',

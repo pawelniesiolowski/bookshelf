@@ -1,0 +1,14 @@
+.action-button {
+    margin: 0 5px 0 5px;
+}
+
+.modal-window {
+    height: auto;
+    width: auto;
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    opacity: 1;
+    font-size: 1.5rem;
+    padding: 1rem;
+}

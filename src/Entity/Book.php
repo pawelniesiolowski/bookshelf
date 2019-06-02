@@ -185,7 +185,8 @@ class Book implements \JsonSerializable
     private function createSingleJsonSerializableSortedAuthor(): string
     {
         $authors = $this->authors->toArray();
-        return $authors[0]->__toString();
+        $author = array_shift($authors);
+        return $author ? $author->__toString() : '';
     }
 
     private function createJsonSerializableSortedAuthors(): array
