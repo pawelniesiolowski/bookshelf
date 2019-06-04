@@ -9,6 +9,16 @@ use App\Provider\AuthorProvider;
 
 class BookFactoryTest extends TestCase
 {
+    private $bookFactory;
+
+    public function setUp()
+    {
+        $authorProvider = $this->createMock(AuthorProvider::class);
+        $authorProvider->method('findOneByNameAndSurname')
+            ->will($this->returnValue(null));
+        $this->bookFactory = new BookFactory($authorProvider);
+    }
+
     public function testItCreatesBookFromJson()
     {
         $requestContent = [
@@ -25,13 +35,7 @@ class BookFactoryTest extends TestCase
         ];
         $requestContent = json_encode($requestContent);
 
-        $authorProvider = $this->createMock(AuthorProvider::class);
-        $authorProvider->method('findOneByNameAndSurname')
-            ->will($this->returnValue(null));
-
-        $bookFactory = new BookFactory($authorProvider);
-
-        $book = $bookFactory->fromJson($requestContent);
+        $book = $this->bookFactory->fromJson($requestContent);
         $this->assertInstanceOf(Book::class, $book);
 
         $bookData = [
@@ -49,18 +53,21 @@ class BookFactoryTest extends TestCase
 
     public function testItCreatesBookFromEmptyData()
     {
-        $authorProvider = $this->createMock(AuthorProvider::class);
-        $authorProvider->method('findOneByNameAndSurname')
-            ->will($this->returnValue(null));
-        
-        $bookFactory = new BookFactory($authorProvider);
-
-        $book = $bookFactory->fromJson('');
+        $book = $this->bookFactory->fromJson('');
         $this->assertInstanceOf(Book::class, $book);
     }
 
     public function testItCreatesBookWhenPriceIsEmptyString()
     {
+        $requestContent = [
+            'title' => 'Zbrodnia i kara',
+            'ISBN' => '1234567890',
+            'price' => '',
+            'copies' => 0,
+        ];
+        $data = json_encode($requestContent);
+        $book = $this->bookFactory->fromJson($data);
+        $this->assertInstanceOf(Book::class, $book);
     }
 }
 

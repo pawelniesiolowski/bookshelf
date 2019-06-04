@@ -87,7 +87,7 @@ class Book implements \JsonSerializable
         $this->addEvent($event);
     }
     
-    public function release(int $num, Receiver $receiver): void
+    public function release(int $num, Receiver $receiver, string $comment = ''): void
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
@@ -97,6 +97,7 @@ class Book implements \JsonSerializable
             $this,
             $receiver
         );
+        $event->setComment($comment);
         $this->addEvent($event);
     }
 

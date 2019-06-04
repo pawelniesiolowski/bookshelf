@@ -43,6 +43,10 @@ class BookChangeEvent
      */
     private $num;
     /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $comment;
+    /**
      * @ORM\Column(type="datetime")
      */
     private $date;
@@ -74,6 +78,18 @@ class BookChangeEvent
         if ($this->receiver !== null) {
             $this->receiver->addEvent($this);
         }
+    }
+
+    public function setComment(string $comment): void
+    {
+        if ($comment !== '') {
+            $this->comment = $comment;
+        }
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment ?? '';
     }
 
     public function textFromReceiverPerspective(): string

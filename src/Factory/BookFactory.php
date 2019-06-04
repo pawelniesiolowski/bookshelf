@@ -21,7 +21,7 @@ class BookFactory
         $book = new Book(
             $data['title'] ?? '',
             $data['ISBN'] ?? null,
-            $data['price'] ?? null
+            $this->createPrice($data['price'] ?? null)
         );
         foreach(($data['authors'] ?? []) as $author) {
             $book->addAuthor($this->getAuthor($author));
@@ -30,6 +30,12 @@ class BookFactory
             $book->receive($data['copies']);
         }
         return $book;
+    }
+
+    private function createPrice($price): float
+    {
+        $price = is_numeric($price) ? $price : 0;
+        return (float)$price;
     }
 
     private function getAuthor(array $data): Author
