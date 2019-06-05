@@ -4,7 +4,7 @@ const Bookshelf = function () {
     const init = function () {
         bookshelfTableBody.addEventListener('click', function (e) { checkEvent(e); });
         const newBook = document.getElementById('bookshelf-new-book');
-        newBook.addEventListener('submit', function (e) { addBook(e); });
+        newBook.addEventListener('submit', function (e) { Book.create(e, loadBooks); });
         loadBooks();
     };
 
@@ -36,6 +36,8 @@ const Bookshelf = function () {
         } else if (e.target.classList.contains('sell-button')) {
             const sellDiv = createSellDiv(e.target.getAttribute('data-path'));
             // ModalWindow.init(sellDiv);
+        } else if (e.target.classList.contains('edit-book-button')) {
+            Book.edit(e, loadBooks);
         }
     }
 
@@ -70,6 +72,13 @@ const Bookshelf = function () {
         return div;
     }
 
+
+    const doCreateEditBookDiv = function (book, path) {
+        console.log(book);
+        /*
+        */
+    }
+
     const createReleaseDiv = function (path) {}
 
     const createSellDiv = function (path) {}
@@ -98,6 +107,8 @@ const Bookshelf = function () {
         const receiveBooksPath = tableBody.getAttribute('data-receive-path');
         const releaseBookPath = tableBody.getAttribute('data-release-path');
         const sellBookPath = tableBody.getAttribute('data-sell-path');
+        const editBookPath = tableBody.getAttribute('data-edit-book-path');
+        const getBookPath = tableBody.getAttribute('data-get-book-path');
 
         while (tableBody.firstChild) {
             tableBody.removeChild(tableBody.firstChild);
@@ -137,55 +148,23 @@ const Bookshelf = function () {
             sellButton.setAttribute('class', 'sell-button action-button btn btn-info');
             sellButton.setAttribute('data-path', sellBookPath.replace('0', book.id));
             sellButton.textContent = 'Sprzedaj';
+
+            const editBookButton = document.createElement('button');
+            editBookButton.setAttribute('class', 'edit-book-button action-button btn btn-secondary');
+            editBookButton.setAttribute('data-edit-book-path', editBookPath.replace('0', book.id));
+            editBookButton.setAttribute('data-get-book-path', getBookPath.replace('0', book.id));
+            editBookButton.textContent = 'Edytuj';
             
             td6.appendChild(receiveButton);
             td6.appendChild(releaseButton);
             td6.appendChild(sellButton);
+            td6.appendChild(editBookButton);
             tr.appendChild(td6);
             
             tableBody.appendChild(tr);
         }
 
         return tableBody;
-    };
-
-    const addBook = function (e) {
-        e.preventDefault();
-        const newBookForm = e.target;
-        const book = {
-            authors: [],
-            title: newBookForm.elements.namedItem('title').value,
-            copies: newBookForm.elements.namedItem('copies').value,
-            ISBN: newBookForm.elements.namedItem('isbn').value,
-            price: newBookForm.elements.namedItem('price').value,
-        };
-
-        const author = {
-            name: newBookForm.elements.namedItem('authorName').value,
-            surname: newBookForm.elements.namedItem('authorSurname').value,
-        };
-        
-        if (author.name !== '' || author.surname !== '') {
-            book.authors.push(author);
-        }
-        
-        const request = new XMLHttpRequest();
-        request.open('POST', newBookForm.getAttribute('action'), true);
-        request.onload = function () {
-            let response = {};
-            if (request.status === 201) {
-                loadBooks();
-            } else {
-                response = JSON.parse(this.response);
-                if (response.hasOwnProperty('errors')) {
-                    console.log(response.errors);
-                }
-            }
-        };
-        request.onerror = function () {
-            console.log('Błąd! Nie udało się dodać książki');
-        };
-        request.send(JSON.stringify(book));
     };
 
     return {

@@ -22,6 +22,10 @@ book_new:
     path: /books
     controller: App\Controller\BookController::new
     methods: [POST]
+book_one:
+    path: /books/{id}
+    controller: App\Controller\BookController:one
+    methods: [GET]
 book_edit:
     path: /books/{id}
     controller: App\Controller\BookController:edit

@@ -43,6 +43,11 @@ class BookController extends AbstractController
         return $this->json([], 201);
     }
 
+    public function one(int $id)
+    {
+        return $this->json(['book' => $this->bookProvider->findOne($id)]);
+    }
+
     public function edit(int $id, Request $request)
     {
         $book = $this->bookProvider->findOne($id);
