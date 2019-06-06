@@ -47,6 +47,11 @@ class Book implements \JsonSerializable
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
     private $errors = [];
 
     public function __construct(
@@ -111,6 +116,11 @@ class Book implements \JsonSerializable
             $this
         );
         $this->addEvent($event);
+    }
+
+    public function delete(): void
+    {
+        $this->deletedAt = new \DateTime();
     }
 
     public function jsonSerialize(): array

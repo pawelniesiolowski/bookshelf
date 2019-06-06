@@ -30,6 +30,10 @@ book_edit:
     path: /books/{id}
     controller: App\Controller\BookController:edit
     methods: [PUT]
+book_delete:
+    path: /books/{id}
+    controller: App\Controller\BookController:delete
+    methods: [DELETE]
 receiver_new:
     path: /receiver
     controller: App\Controller\ReceiverController:new

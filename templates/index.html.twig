@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="bookshelf-new-book-isbn">ISBN</label>
-                    <input type="text" name="isbn" id="bookshelf-new-book-isbn" class="form-control" placeholder="ISBN">
+                    <input type="text" name="ISBN" id="bookshelf-new-book-isbn" class="form-control" placeholder="ISBN">
                 </div>
                 <div class="col-md-2">
                     <label for="bookshelf-new-book-price">Cena</label>
@@ -67,6 +67,7 @@
                 data-sell-path="{{ path('bookshelf_sell', { 'id': 0 }) }}"
                 data-edit-book-path="{{ path('book_edit', { 'id': 0 }) }}"
                 data-get-book-path="{{ path('book_one', { 'id': 0 }) }}"
+                data-delete-book-path="{{ path('book_delete', { 'id': 0 }) }}"
             >
             </tbody>
         </table>

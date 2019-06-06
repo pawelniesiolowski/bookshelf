@@ -48,6 +48,15 @@ class BookController extends AbstractController
         return $this->json(['book' => $this->bookProvider->findOne($id)]);
     }
 
+    public function delete(int $id)
+    {
+        $book = $this->bookProvider->findOne($id);
+        $book->delete();
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        return $this->json([], 200);
+    }
+
     public function edit(int $id, Request $request)
     {
         $book = $this->bookProvider->findOne($id);

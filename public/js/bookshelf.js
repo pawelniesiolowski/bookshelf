@@ -38,6 +38,8 @@ const Bookshelf = function () {
             // ModalWindow.init(sellDiv);
         } else if (e.target.classList.contains('edit-book-button')) {
             Book.edit(e, loadBooks);
+        } else if (e.target.classList.contains('delete-book-button')) {
+            Book.deleteBook(e, loadBooks);
         }
     }
 
@@ -109,6 +111,7 @@ const Bookshelf = function () {
         const sellBookPath = tableBody.getAttribute('data-sell-path');
         const editBookPath = tableBody.getAttribute('data-edit-book-path');
         const getBookPath = tableBody.getAttribute('data-get-book-path');
+        const deleteBookPath = tableBody.getAttribute('data-delete-book-path');
 
         while (tableBody.firstChild) {
             tableBody.removeChild(tableBody.firstChild);
@@ -155,10 +158,17 @@ const Bookshelf = function () {
             editBookButton.setAttribute('data-get-book-path', getBookPath.replace('0', book.id));
             editBookButton.textContent = 'Edytuj';
             
+            const deleteBookButton = document.createElement('button');
+            deleteBookButton.setAttribute('class', 'delete-book-button action-button btn btn-danger');
+            deleteBookButton.setAttribute('data-delete-book-path', deleteBookPath.replace('0', book.id));
+            deleteBookButton.setAttribute('data-get-book-path', getBookPath.replace('0', book.id));
+            deleteBookButton.textContent = 'Usuń';
+
             td6.appendChild(receiveButton);
             td6.appendChild(releaseButton);
             td6.appendChild(sellButton);
             td6.appendChild(editBookButton);
+            td6.appendChild(deleteBookButton);
             tr.appendChild(td6);
             
             tableBody.appendChild(tr);

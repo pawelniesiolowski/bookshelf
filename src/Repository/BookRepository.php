@@ -15,7 +15,7 @@ class BookRepository extends ServiceEntityRepository
 
     public function findAllOrderedByTitle(): array
     {
-        return $this->findBy([], ['title' => 'ASC']);
+        return $this->findBy(['deletedAt' => null], ['title' => 'ASC']);
     }
 }
 

@@ -2,26 +2,8 @@ const Book = function () {
 
     const create = function (e, onSuccessCallback) {
         e.preventDefault();
-        const newBookForm = e.target;
-        const book = {
-            authors: [],
-            title: newBookForm.elements.namedItem('title').value,
-            copies: newBookForm.elements.namedItem('copies').value,
-            ISBN: newBookForm.elements.namedItem('isbn').value,
-            price: newBookForm.elements.namedItem('price').value,
-        };
-
-        const author = {
-            name: newBookForm.elements.namedItem('authorName').value,
-            surname: newBookForm.elements.namedItem('authorSurname').value,
-        };
-        
-        if (author.name !== '' || author.surname !== '') {
-            book.authors.push(author);
-        }
-
-        const path = newBookForm.getAttribute('action') ;
-
+        const book = createBookData(e.target.elements);
+        const path = e.target.getAttribute('action') ;
         makePostRequest(book, path, onSuccessCallback);
     };
 
@@ -29,7 +11,14 @@ const Book = function () {
         const getBookPath = e.target.getAttribute('data-get-book-path');
         const editBookPath = e.target.getAttribute('data-edit-book-path');
 
-        makeGetRequest(getBookPath, function (book) { createEditDiv(book, editBookPath, onSuccessCallback) })
+        makeGetRequest(getBookPath, function (book) { createEditDiv(book, editBookPath, onSuccessCallback); })
+    };
+
+    const deleteBook = function(e, onSuccessCallback) {
+        const deleteBookPath = e.target.getAttribute('data-delete-book-path');
+        const getBookPath = e.target.getAttribute('data-get-book-path');
+
+        makeGetRequest(getBookPath, function (book) { createDeleteDiv(book, deleteBookPath, onSuccessCallback); });
     };
 
     const makeGetRequest = function (path, onSuccessCallback) {
@@ -42,7 +31,7 @@ const Book = function () {
                 if (response.hasOwnProperty('book')) {
                     onSuccessCallback(response.book);
                 }
-            }       
+            }
         };
         request.onerror = function () {
             console.log('Błąd! Nie udało się wykonać akcji');
@@ -53,6 +42,7 @@ const Book = function () {
     const createEditDiv = function (book, path, onSuccessCallback) {
         const div = document.createElement('div');
         const text = document.createElement('h2');
+        text.setAttribute('class', 'text-center');
         text.textContent = 'Edycja książki';
         div.appendChild(text);
 
@@ -130,16 +120,20 @@ const Book = function () {
         bookGroup.appendChild(priceInput);
         form.appendChild(bookGroup);
 
+
+        const buttonsGroup = document.createElement('div');
+        buttonsGroup.setAttribute('class', 'form-group text-center');
         const saveButton = document.createElement('button');
         saveButton.setAttribute('class', 'btn btn-success action-button');
         saveButton.setAttribute('type', 'submit');
         saveButton.textContent = 'Zapisz';
-        form.appendChild(saveButton);
+        buttonsGroup.appendChild(saveButton);
         const cancelButton = document.createElement('button');
         cancelButton.setAttribute('class', 'btn btn-default action-button');
         cancelButton.textContent = 'Anuluj';
         cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
-        form.appendChild(cancelButton);
+        buttonsGroup.appendChild(cancelButton);
+        form.appendChild(buttonsGroup);
         form.addEventListener('submit', function (e) { 
             ModalWindow.closeModal(); 
             const data = createBookData(e.target.elements)
@@ -149,6 +143,43 @@ const Book = function () {
         ModalWindow.init(div);
     };
 
+    const createDeleteDiv = function(book, deleteBookPath, onSuccessCallback) {
+        const container = document.createElement('div');
+        container.setAttribute('class', 'container');
+
+        const rowDiv1 = document.createElement('div');
+        rowDiv1.setAttribute('class', 'row');
+        const colDiv1 = document.createElement('div');
+        colDiv1.setAttribute('class', 'col text-center');
+        const text = document.createElement('p');
+        text.textContent = 'Czy na pewno chcesz usunąć książkę: ';
+        colDiv1.appendChild(text);
+        const bookText = document.createElement('h2');
+        bookText.textContent = book.author + ' "' + book.title + '"?';
+        colDiv1.appendChild(bookText);
+        rowDiv1.appendChild(colDiv1);
+        container.appendChild(rowDiv1);
+
+        const rowDiv2 = document.createElement('div');
+        rowDiv2.setAttribute('class', 'row mt-3');
+        const colDiv2 = document.createElement('div');
+        colDiv2.setAttribute('class', 'col text-center');
+        const deleteButton = document.createElement('button');
+        deleteButton.setAttribute('class', 'btn btn-danger action-button');
+        deleteButton.textContent = 'Usuń';
+        deleteButton.addEventListener('click', function (e) { makeDeleteRequest(deleteBookPath, onSuccessCallback); ModalWindow.closeModal(); });
+        colDiv2.appendChild(deleteButton);
+        const cancelButton = document.createElement('button');
+        cancelButton.setAttribute('class', 'btn btn-default action-button');
+        cancelButton.textContent = 'Anuluj';
+        cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
+        colDiv2.appendChild(cancelButton);
+        rowDiv2.appendChild(colDiv2);
+        container.appendChild(rowDiv2);
+
+        ModalWindow.init(container);
+    };
+
     const createBookData = function(form) {
         const book = {
             authors: [],
@@ -156,6 +187,10 @@ const Book = function () {
             ISBN: form.namedItem('ISBN').value,
             price: form.namedItem('price').value,
         };
+
+        if (copies = form.namedItem('copies')) {
+            book.copies = copies.value;
+        }
 
         const author = {
             name: form.namedItem('authorName').value,
@@ -209,8 +244,24 @@ const Book = function () {
         request.send(JSON.stringify(book));
     };
 
+    const makeDeleteRequest = function (path, onSuccessCallback) {
+        const request = new XMLHttpRequest();
+        request.open('DELETE', path, true);
+        request.onload = function () {
+            let response = {};
+            if (request.status === 200) {
+                onSuccessCallback();
+            }
+        };
+        request.onerror = function () {
+            console.log('Błąd! Nie udało się usunąć książki');
+        };
+        request.send();
+    };
+
     return {
         create: create,
-        edit: edit
+        edit: edit,
+        deleteBook: deleteBook
     };
 }();
