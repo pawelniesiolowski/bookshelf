@@ -61,6 +61,7 @@ class Receiver implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->__toString(),
             'events' => $this->createJsonSerializableEvents(),
         ];

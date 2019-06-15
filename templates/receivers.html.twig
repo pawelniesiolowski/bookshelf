@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+<header>
+    <h1>Regał z książkami</h1>
+</header>
+<section>
+    <form id="bookshelf-new-receiver" action="{{ path('receiver_new') }}">
+        <legend>Dodaj osobę pobierającą książki</legend>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-2">
+                    <label for="bookshelf-new-receiver-surname">Nazwisko</label>
+                    <input type="text" name="surname" id="bookshelf-new-receiver-surname" class="form-control" placeholder="Nazwisko">
+                </div>
+                <div class="col-md-2">
+                    <label for="bookshelf-new-receiver-name">Imię</label>
+                    <input type="text" name="name" id="bookshelf-new-receiver-name" class="form-control" placeholder="Imię">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn">Zapisz</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<section>
+    <header>
+        <h3>Pobierający książki</h3>
+    </header>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Imię</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody id="bookshelf-receivers-table-body" data-path="{{ path('receiver_index') }}">
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/modal.js') }}"></script>
+    <script src="{{ asset('js/receivers.js') }}"></script>
+{% endblock %}

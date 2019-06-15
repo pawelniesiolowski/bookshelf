@@ -68,6 +68,7 @@
                 data-edit-book-path="{{ path('book_edit', { 'id': 0 }) }}"
                 data-get-book-path="{{ path('book_one', { 'id': 0 }) }}"
                 data-delete-book-path="{{ path('book_delete', { 'id': 0 }) }}"
+                data-get-receivers-path="{{ path('receiver_index') }}"
             >
             </tbody>
         </table>
@@ -77,6 +78,9 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/modal.js') }}"></script>
+    <script src="{{ asset('js/bookshelf_data.js') }}"></script>
+    <script src="{{ asset('js/bookshelf_elements.js') }}"></script>
     <script src="{{ asset('js/book.js') }}"></script>
+    <script src="{{ asset('js/bookshelf_actions.js') }}"></script>
     <script src="{{ asset('js/bookshelf.js') }}"></script>
 {% endblock %}

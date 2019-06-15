@@ -25,5 +25,24 @@ class ReceiverRepositoryTest extends FunctionalTestCase
         $this->entityManager->flush();
         $this->assertSame($receiver, $this->receiverRepository->findOneById(1));
     }
+
+    public function testItShouldFindAllOrderAlfabethically()
+    {
+        $firstReceiver = new Receiver('Paweł', 'Niesiołowski');
+        $secondReceiver = new Receiver('Justyna', 'Mazur');
+        $thirdReceiver = new Receiver('Alojzy', 'Niesiołowski');
+        $this->entityManager->persist($firstReceiver);
+        $this->entityManager->persist($secondReceiver);
+        $this->entityManager->persist($thirdReceiver);
+        $this->entityManager->flush();
+
+        $expectedData = [
+            $secondReceiver,
+            $thirdReceiver,
+            $firstReceiver,
+        ];
+
+        $this->assertSame($expectedData, $this->receiverRepository->findAllOrderAlfabethically());
+    }
 }
 

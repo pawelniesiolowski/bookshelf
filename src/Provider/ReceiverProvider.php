@@ -18,5 +18,10 @@ class ReceiverProvider
     {
         return $this->receiverRepository->findOneById($id);
     }
+
+    public function findAll(): array
+    {
+        return $this->receiverRepository->findAllOrderAlfabethically();
+    }
 }
 

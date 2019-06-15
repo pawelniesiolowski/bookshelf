@@ -55,7 +55,7 @@ class BookshelfController extends AbstractController
         $errors = [];
         try {
             $receiver = $receiverProvider->findOneById($data['receiver_id']);
-            $book->release($data['copies'], $receiver);
+            $book->release($data['copies'], $receiver, $data['comment']);
         } catch (NonUniqueResultException | NoResultException $e) {
             $errors['receiver_id'] = 'Wybierz osobę, która jest uprawniona do pobrania książek';
         } catch (BookException $e) {

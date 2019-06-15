@@ -2,6 +2,10 @@ website_index:
     path: /
     controller: App\Controller\WebsiteController::index
     methods: [GET]
+website_receivers:
+    path: /receivers
+    controller: App\Controller\WebsiteController::receivers
+    methods: [GET]
 bookshelf_index:
     path: /books
     controller: App\Controller\BookshelfController::index
@@ -38,4 +42,7 @@ receiver_new:
     path: /receiver
     controller: App\Controller\ReceiverController:new
     methods: [POST]
-
+receiver_index:
+    path: /receiver
+    controller: App\Controller\ReceiverController:index
+    methods: [GET]

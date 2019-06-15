@@ -25,5 +25,10 @@ class ReceiverRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleResult();
     }
+
+    public function findAllOrderAlfabethically(): array
+    {
+        return $this->findBy([], ['surname' => 'ASC', 'name' => 'ASC']);
+    }
 }
 

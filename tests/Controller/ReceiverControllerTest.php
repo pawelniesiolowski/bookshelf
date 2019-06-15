@@ -24,5 +24,37 @@ class ReceiverControllerTest extends FunctionalTestCase
         $receiver = $receiverRepository->find(1);
         $this->assertSame('Mazur Justyna', $receiver->__toString());
     }
+
+    public function testItShouldIndexReceiversInAlfabethicalOrder()
+    {
+        $firstReceiver = new Receiver('Paweł', 'Niesiołowski');
+        $secondReceiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($firstReceiver);
+        $this->entityManager->persist($secondReceiver);
+        $this->entityManager->flush();
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('GET', '/receiver');
+        $response = $client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        
+        $expectedData = [
+            'receivers' => [
+                [
+                    'id' => 2,
+                    'name' => 'Mazur Justyna',
+                    'events' => [],
+                ],
+                [
+                    'id' => 1,
+                    'name' => 'Niesiołowski Paweł',
+                    'events' => [],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expectedData, json_decode($response->getContent(), true));
+    }
 }
 
