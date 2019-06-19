@@ -46,3 +46,7 @@ receiver_index:
     path: /receiver
     controller: App\Controller\ReceiverController:index
     methods: [GET]
+receiver_delete:
+    path: /receiver/{id}
+    controller: App\Controller\ReceiverController:delete
+    methods: [DELETE]

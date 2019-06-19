@@ -30,6 +30,11 @@ class Receiver implements \JsonSerializable
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
     private $errors = [];
 
     public function __construct(string $name, string $surname)
@@ -44,6 +49,11 @@ class Receiver implements \JsonSerializable
         if (!$this->events->contains($bookChangeEvent)) {
             $this->events[] = $bookChangeEvent;
         }
+    }
+
+    public function delete(): void
+    {
+        $this->deletedAt = new \DateTime();
     }
 
     public function validate(): bool

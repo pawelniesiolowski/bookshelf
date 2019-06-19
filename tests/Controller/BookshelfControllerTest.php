@@ -112,6 +112,7 @@ class BookshelfControllerTest extends FunctionalTestCase
         $data = [
             'copies' => 4,
             'receiver_id' => 1,
+            'comment' => 'Test',
         ];
 
         $client = static::createClient();
@@ -161,6 +162,7 @@ class BookshelfControllerTest extends FunctionalTestCase
         $data = [
             'copies' => -4,
             'receiver_id' => 1,
+            'comment' => 'Test',
         ];
 
         $client = static::createClient();

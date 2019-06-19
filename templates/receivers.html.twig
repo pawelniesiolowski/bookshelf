@@ -39,7 +39,11 @@
                     <th>Akcje</th>
                 </tr>
             </thead>
-            <tbody id="bookshelf-receivers-table-body" data-path="{{ path('receiver_index') }}">
+            <tbody 
+                id="bookshelf-receivers-table-body" 
+                data-path="{{ path('receiver_index') }}"
+                data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
+            >
             </tbody>
         </table>
     </div>

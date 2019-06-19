@@ -28,7 +28,7 @@ class ReceiverRepository extends ServiceEntityRepository
 
     public function findAllOrderAlfabethically(): array
     {
-        return $this->findBy([], ['surname' => 'ASC', 'name' => 'ASC']);
+        return $this->findBy(['deletedAt' => null], ['surname' => 'ASC', 'name' => 'ASC']);
     }
 }
 

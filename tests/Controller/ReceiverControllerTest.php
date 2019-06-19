@@ -56,5 +56,17 @@ class ReceiverControllerTest extends FunctionalTestCase
 
         $this->assertSame($expectedData, json_decode($response->getContent(), true));
     }
+
+    public function testItShouldDeleteReceiver()
+    {
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('DELETE', '/receiver/1');
+        $response = $client->getResponse();
+        $this->assertSame(200, $response->getStatusCode());
+    }
 }
 

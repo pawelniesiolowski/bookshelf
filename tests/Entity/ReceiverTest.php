@@ -28,6 +28,7 @@ class ReceiverTest extends TestCase
         $receiver->addEvent($firstBookChangeEvent);
         $receiver->addEvent($secBookChangeEvent);
         $jsonSerializedReceiver = [
+            'id' => null,
             'name' => 'Mazur Justyna',
             'events' => [
                 'first text from receiver perspective',

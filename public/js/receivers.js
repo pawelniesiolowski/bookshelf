@@ -7,12 +7,15 @@ const Receivers = function () {
             const path = e.target.getAttribute('action');
             makePostRequest(receiver, path);
         });
+        table.addEventListener('click', function (e) { e.preventDefault(); checkEvent(e); });
         loadReceivers();
     };
 
     const table = document.getElementById('bookshelf-receivers-table-body');
 
-    receivers = table.getAttribute('data-path');
+    const receiversPath = table.getAttribute('data-path');
+
+    const deleteReceiverPath = table.getAttribute('data-delete-receiver-path');
 
     const create = function (form) {
         const receiver = {
@@ -44,7 +47,7 @@ const Receivers = function () {
 
     const loadReceivers = function () {
         const request = new XMLHttpRequest();
-        request.open('GET', receivers, true);
+        request.open('GET', receiversPath, true);
         request.onload = function () {
             let response = {};
             if (request.status === 200) {
@@ -66,6 +69,7 @@ const Receivers = function () {
         }
         for (let receiver of receivers) {
             const tr = document.createElement('tr');
+            tr.setAttribute('data-id', receiver.id);
             const td1 = document.createElement('td');
             td1.textContent = receiver.name;
             tr.appendChild(td1);
@@ -78,8 +82,44 @@ const Receivers = function () {
                 eventTr.appendChild(eventTd);
                 td2.appendChild(eventTr);
             }
+            tr.appendChild(td2);
+
+            const td3 = document.createElement('td');
+            const editReceiverButton = document.createElement('button');
+            editReceiverButton.setAttribute('class', 'edit-receiver-button action-button btn btn-secondary');
+            editReceiverButton.textContent = 'Edytuj';
+            const deleteReceiverButton = document.createElement('button');
+            deleteReceiverButton.setAttribute('class', 'delete-receiver-button action-button btn btn-danger');
+            deleteReceiverButton.textContent = 'Usuń';
+            td3.appendChild(editReceiverButton);
+            td3.appendChild(deleteReceiverButton);
+            tr.appendChild(td3);
+            
             table.appendChild(tr);
         }
+    };
+
+    const checkEvent = function (e) {
+        const receiverId = e.target.parentElement.getAttribute('data-id');
+        if (e.target.classList.contains('delete-receiver-button')) {
+            console.log('Tak jest');
+            deleteReceiver(deleteReceiverPath.replace('0', receiverId));
+        }
+    };
+
+    const deleteReceiver = function (path) {
+        const request = new XMLHttpRequest();
+        request.open('DELETE', path, true);
+        request.onload = function () {
+            let response = {};
+            if (request.status === 200) {
+                loadReceivers();
+            }
+        };
+        request.onerror = function () {
+            console.log('Błąd! Nie udało się usunąć książki');
+        };
+        request.send();
     };
 
     return {

@@ -39,5 +39,14 @@ class ReceiverController extends AbstractController
     {
         return $this->json(['receivers' => $this->receiverProvider->findAll()]);
     }
+
+    public function delete(int $id)
+    {
+        $receiver = $this->receiverProvider->findOneById($id);
+        $receiver->delete();
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+        return $this->json([], 200);
+    }
 }
 
