@@ -26,14 +26,17 @@ class ReceiverRepositoryTest extends FunctionalTestCase
         $this->assertSame($receiver, $this->receiverRepository->findOneById(1));
     }
 
-    public function testItShouldFindAllOrderAlfabethically()
+    public function testItShouldFindAllNonDeletedOrderAlfabethically()
     {
         $firstReceiver = new Receiver('Paweł', 'Niesiołowski');
         $secondReceiver = new Receiver('Justyna', 'Mazur');
         $thirdReceiver = new Receiver('Alojzy', 'Niesiołowski');
+        $fourthReceiver = new Receiver('Gal', 'Anonim');
+        $fourthReceiver->delete();
         $this->entityManager->persist($firstReceiver);
         $this->entityManager->persist($secondReceiver);
         $this->entityManager->persist($thirdReceiver);
+        $this->entityManager->persist($fourthReceiver);
         $this->entityManager->flush();
 
         $expectedData = [
@@ -42,7 +45,7 @@ class ReceiverRepositoryTest extends FunctionalTestCase
             $firstReceiver,
         ];
 
-        $this->assertSame($expectedData, $this->receiverRepository->findAllOrderAlfabethically());
+        $this->assertSame($expectedData, $this->receiverRepository->findAllNonDeletedOrderAlfabethically());
     }
 }
 

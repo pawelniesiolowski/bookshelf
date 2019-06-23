@@ -1,125 +1,112 @@
 const Receivers = function () {
+    const table = document.getElementById('bookshelf-receivers-table-body');
+    const paths = {
+        index: table.getAttribute('data-path'),
+        deleteReceiver: table.getAttribute('data-delete-receiver-path'),
+        get: table.getAttribute('data-get-receiver-path')
+    };
+
     const init = function () {
         const newReceiver = document.getElementById('bookshelf-new-receiver');
         newReceiver.addEventListener('submit', function (e) {
             e.preventDefault();
-            const receiver = create(e.target.elements);
+            const receiver = Receiver.create(e.target.elements);
             const path = e.target.getAttribute('action');
-            makePostRequest(receiver, path);
+            post(receiver, path)
+                .then(function () {
+                    loadReceivers(paths.index);
+                })
+                .catch(function (errors) {
+                    console.log(errors);
+                });
         });
         table.addEventListener('click', function (e) { e.preventDefault(); checkEvent(e); });
         loadReceivers();
     };
 
-    const table = document.getElementById('bookshelf-receivers-table-body');
-
-    const receiversPath = table.getAttribute('data-path');
-
-    const deleteReceiverPath = table.getAttribute('data-delete-receiver-path');
-
-    const create = function (form) {
-        const receiver = {
-            name: form.namedItem('name').value,
-            surname: form.namedItem('surname').value,
-        };
-        return receiver;
-    };
-
-    const makePostRequest = function (receiver, path) {
-        const request = new XMLHttpRequest();
-        request.open('POST', path, true);
-        request.onload = function () {
-            let response = {};
-            if (request.status === 201) {
-                loadReceivers();
-            } else {
-                response = JSON.parse(this.response);
-                if (response.hasOwnProperty('errors')) {
-                    console.log(response.errors);
+    const post = function (receiver, path) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.open('POST', path, true);
+            request.onload = function () {
+                let response = {};
+                if (request.status === 201) {
+                    resolve();
+                } else {
+                    reject(this.response);
                 }
-            }
-        };
-        request.onerror = function () {
-            console.log('Błąd! Nie udało się dodać książki');
-        };
-        request.send(JSON.stringify(receiver));
+            };
+            request.onerror = function () {
+                reject(Error('Błąd! Nie udało się dodać książki'));
+            };
+            request.send(JSON.stringify(receiver));
+        });
     };
 
     const loadReceivers = function () {
-        const request = new XMLHttpRequest();
-        request.open('GET', receiversPath, true);
-        request.onload = function () {
-            let response = {};
-            if (request.status === 200) {
-                response = JSON.parse(this.response);
-                if (response.hasOwnProperty('receivers')) {
-                    showReceivers(response.receivers);
-                }
-            }
-        };
-        request.onerror = function () {
-            console.log('Błąd! Nie udało się pobrać danych');
-        };
-        request.send();
+        fetchReceivers(paths.index)
+            .then(decode)
+            .then(function (data) {
+                const content = ReceiversElements.tableBodyContent(data.receivers);
+                showReceivers(content);
+            });
     };
 
-    const showReceivers = function (receivers) {
+    const fetchReceivers = function (path) {
+        return fetch(path);
+    };
+
+    const decode = function (response) {
+        return response.json();
+    };
+
+    const showReceivers = function (content) {
         while (table.firstChild) {
             table.removeChild(table.firstChild);
         }
-        for (let receiver of receivers) {
-            const tr = document.createElement('tr');
-            tr.setAttribute('data-id', receiver.id);
-            const td1 = document.createElement('td');
-            td1.textContent = receiver.name;
-            tr.appendChild(td1);
-            const td2 = document.createElement('td');
-            
-            for (let receiverEvent of receiver.events) {
-                const eventTr = document.createElement('tr');
-                const eventTd = document.createElement('td');
-                eventTd.textContent = receiverEvent;
-                eventTr.appendChild(eventTd);
-                td2.appendChild(eventTr);
-            }
-            tr.appendChild(td2);
-
-            const td3 = document.createElement('td');
-            const editReceiverButton = document.createElement('button');
-            editReceiverButton.setAttribute('class', 'edit-receiver-button action-button btn btn-secondary');
-            editReceiverButton.textContent = 'Edytuj';
-            const deleteReceiverButton = document.createElement('button');
-            deleteReceiverButton.setAttribute('class', 'delete-receiver-button action-button btn btn-danger');
-            deleteReceiverButton.textContent = 'Usuń';
-            td3.appendChild(editReceiverButton);
-            td3.appendChild(deleteReceiverButton);
-            tr.appendChild(td3);
-            
-            table.appendChild(tr);
-        }
+        table.appendChild(content);
     };
 
     const checkEvent = function (e) {
         const receiverId = e.target.parentElement.getAttribute('data-id');
         if (e.target.classList.contains('delete-receiver-button')) {
-            console.log('Tak jest');
-            deleteReceiver(deleteReceiverPath.replace('0', receiverId));
+            deleteReceiver(receiverId)
+                .then(loadReceivers)
+                .catch(function(errors) {
+                    console.log(errors);
+                });
         }
     };
 
-    const deleteReceiver = function (path) {
-        const request = new XMLHttpRequest();
-        request.open('DELETE', path, true);
-        request.onload = function () {
-            let response = {};
-            if (request.status === 200) {
-                loadReceivers();
-            }
-        };
-        request.onerror = function () {
-            console.log('Błąd! Nie udało się usunąć książki');
-        };
-        request.send();
+    const deleteReceiver = function (id) {
+        const getPath = createPath(paths.get, id);
+        const deletePath = createPath(paths.deleteReceiver, id);
+
+        return fetchReceivers(getPath)
+            .then(decode)
+            .then(function (data) {
+                const text = 'Czy na pewno chcesz usunąć użytkownika: ' + data.receiver.name + '?';
+                const approvalDiv = BookshelfElements.deleteDiv(text, function () {
+                    ModalWindow.closeModal(); 
+                    doDeleteReceiver(deletePath)
+                        .then(loadReceivers)
+                        .catch(function (errors) {
+                            console.log(errors);
+                        });
+                    
+                });
+                ModalWindow.init(approvalDiv);
+            });
+    };
+
+    const doDeleteReceiver = function (path) {
+        return fetch(path, {
+            method: 'DELETE'
+        });
+    };
+
+    const createPath = function (path, id) {
+        return path.replace('0', id);
     };
 
     return {

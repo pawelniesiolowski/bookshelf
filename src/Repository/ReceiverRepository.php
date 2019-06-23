@@ -26,7 +26,7 @@ class ReceiverRepository extends ServiceEntityRepository
             ->getSingleResult();
     }
 
-    public function findAllOrderAlfabethically(): array
+    public function findAllNonDeletedOrderAlfabethically(): array
     {
         return $this->findBy(['deletedAt' => null], ['surname' => 'ASC', 'name' => 'ASC']);
     }

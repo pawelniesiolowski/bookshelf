@@ -25,12 +25,15 @@ class ReceiverControllerTest extends FunctionalTestCase
         $this->assertSame('Mazur Justyna', $receiver->__toString());
     }
 
-    public function testItShouldIndexReceiversInAlfabethicalOrder()
+    public function testItShouldIndexNonDeletedReceiversInAlfabethicalOrder()
     {
         $firstReceiver = new Receiver('Paweł', 'Niesiołowski');
         $secondReceiver = new Receiver('Justyna', 'Mazur');
+        $thirdReceiver = new Receiver('Gal', 'Anonim');
+        $thirdReceiver->delete();
         $this->entityManager->persist($firstReceiver);
         $this->entityManager->persist($secondReceiver);
+        $this->entityManager->persist($thirdReceiver);
         $this->entityManager->flush();
 
         $client = static::createClient();
@@ -51,6 +54,29 @@ class ReceiverControllerTest extends FunctionalTestCase
                     'name' => 'Niesiołowski Paweł',
                     'events' => [],
                 ],
+            ],
+        ];
+
+        $this->assertSame($expectedData, json_decode($response->getContent(), true));
+    }
+
+    public function testItShuldGetReceiverById()
+    {
+        $receiver = new Receiver('Paweł', 'Niesiołowski');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('GET', '/receiver/1');
+        $response = $client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        
+        $expectedData = [
+            'receiver' => [
+                'id' => 1,
+                'name' => 'Niesiołowski Paweł',
+                'events' => [],
             ],
         ];
 

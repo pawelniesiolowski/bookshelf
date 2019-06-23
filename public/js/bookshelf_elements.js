@@ -1,9 +1,6 @@
 const BookshelfElements = function () {
-    const tableBodyContent = function (books, tableBody) {
-        while (tableBody.firstChild) {
-            tableBody.removeChild(tableBody.firstChild);
-        }
-
+    const tableBodyContent = function (books) {
+        const content = document.createDocumentFragment();
         for (let book of books) {
             const tr = document.createElement('tr');
             const td1 = document.createElement('td');
@@ -52,17 +49,21 @@ const BookshelfElements = function () {
             td6.appendChild(deleteBookButton);
             tr.appendChild(td6);
             
-            tableBody.appendChild(tr);
+            content.appendChild(tr);
         }
 
-        return tableBody;
+        return content;
     };
 
-    const receiveDiv = function (book, path, bookChangeEvent) {
+    const receiveDiv = function (book) {
         const div = document.createElement('div');
         const text = document.createElement('p');
         text.textContent = 'Ile egzemplarzy książki ' + book.title + ' chcesz dodać?';
         div.appendChild(text);
+        return div;
+    };
+
+    const receiveForm = function (book) {
         const form = document.createElement('form');
         const input = document.createElement('input');
         input.setAttribute('type', 'number');
@@ -78,18 +79,10 @@ const BookshelfElements = function () {
         cancelButton.textContent = 'Anuluj';
         cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
         form.appendChild(cancelButton);
-        form.addEventListener('submit', function (e) { 
-            ModalWindow.closeModal(); 
-            const data = {
-                copies: e.target.elements.namedItem('copies').value,
-            };
-            bookChangeEvent(data, path); 
-        });
-        div.appendChild(form);
-        ModalWindow.init(div);
+        return form;
     };
 
-    const deleteDiv = function (book, deleteBookPath, deleteRequest) {
+    const deleteDiv = function (textContent, deleteFunction) {
         const container = document.createElement('div');
         container.setAttribute('class', 'container');
 
@@ -98,11 +91,8 @@ const BookshelfElements = function () {
         const colDiv1 = document.createElement('div');
         colDiv1.setAttribute('class', 'col text-center');
         const text = document.createElement('p');
-        text.textContent = 'Czy na pewno chcesz usunąć książkę: ';
+        text.textContent = textContent;
         colDiv1.appendChild(text);
-        const bookText = document.createElement('h2');
-        bookText.textContent = book.author + ' "' + book.title + '"?';
-        colDiv1.appendChild(bookText);
         rowDiv1.appendChild(colDiv1);
         container.appendChild(rowDiv1);
 
@@ -113,7 +103,7 @@ const BookshelfElements = function () {
         const deleteButton = document.createElement('button');
         deleteButton.setAttribute('class', 'btn btn-danger action-button');
         deleteButton.textContent = 'Usuń';
-        deleteButton.addEventListener('click', function (e) { deleteRequest(deleteBookPath); ModalWindow.closeModal(); });
+        deleteButton.addEventListener('click', function (e) { deleteFunction(); });
         colDiv2.appendChild(deleteButton);
         const cancelButton = document.createElement('button');
         cancelButton.setAttribute('class', 'btn btn-default action-button');
@@ -122,15 +112,10 @@ const BookshelfElements = function () {
         colDiv2.appendChild(cancelButton);
         rowDiv2.appendChild(colDiv2);
         container.appendChild(rowDiv2);
-        ModalWindow.init(container);
+        return container;
     };
 
-    const editDiv = function (book, path, createBookData, putRequest) {
-        const div = document.createElement('div');
-        const text = document.createElement('h2');
-        text.setAttribute('class', 'text-center');
-        text.textContent = 'Edycja książki';
-        div.appendChild(text);
+    const editForm = function (book) {
 
         const form = document.createElement('form');
 
@@ -220,13 +205,7 @@ const BookshelfElements = function () {
         cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
         buttonsGroup.appendChild(cancelButton);
         form.appendChild(buttonsGroup);
-        form.addEventListener('submit', function (e) { 
-            ModalWindow.closeModal(); 
-            const data = createBookData(e.target.elements)
-            putRequest(data, path);
-        });
-        div.appendChild(form);
-        ModalWindow.init(div);
+        return form;
     };
 
     const releaseDiv = function (book, receivers, releaseBookPath, bookChangeEvent) {
@@ -329,8 +308,9 @@ const BookshelfElements = function () {
     return {
         tableBodyContent: tableBodyContent,
         receiveDiv: receiveDiv,
+        receiveForm: receiveForm,
         deleteDiv: deleteDiv,
-        editDiv: editDiv,
+        editForm: editForm,
         releaseDiv: releaseDiv
     };
 }();

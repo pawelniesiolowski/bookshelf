@@ -21,7 +21,7 @@ class ReceiverProvider
 
     public function findAll(): array
     {
-        return $this->receiverRepository->findAllOrderAlfabethically();
+        return $this->receiverRepository->findAllNonDeletedOrderAlfabethically();
     }
 }
 

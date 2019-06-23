@@ -1,18 +1,29 @@
 const Bookshelf = function () {
+
+    const bookshelfTable = document.getElementById('bookshelf-table-body');
+    const newBook = document.getElementById('bookshelf-new-book');
+    const paths = {
+        index: bookshelfTable.getAttribute('data-index'),
+        receive: bookshelfTable.getAttribute('data-receive-path'),
+        release: bookshelfTable.getAttribute('data-release-path'),
+        sell: bookshelfTable.getAttribute('data-sell-path'),
+        edit: bookshelfTable.getAttribute('data-edit-book-path'),
+        get: bookshelfTable.getAttribute('data-get-book-path'),
+        deleteBook: bookshelfTable.getAttribute('data-delete-book-path'),
+        getReceivers: bookshelfTable.getAttribute('data-get-receivers-path')
+    }
     
     const init = function () {
-        BookshelfData.table.addEventListener('click', function (e) { checkEvent(e); });
-        const newBook = document.getElementById('bookshelf-new-book');
-        newBook.addEventListener('submit', function (e) { Book.create(e, BookshelfActions.loadBooks); });
-        BookshelfActions.loadBooks();
+        bookshelfTable.addEventListener('click', function (e) { checkEvent(e); });
+        newBook.addEventListener('submit', function (e) { createBook(e); });
+        loadBooks();
     };
 
     const checkEvent = function (e) {
         const bookId = e.target.parentElement.getAttribute('bookId');
-        const getBookPath = BookshelfData.createPath(BookshelfData.paths.getBooks, bookId);
+
         if (e.target.classList.contains('receive-button')) {
-            const receiveBookPath = BookshelfData.createPath(BookshelfData.paths.receiveBooks, bookId);
-            Book.receive(receiveBookPath, getBookPath);
+            receiveBook(bookId);
         } else if (e.target.classList.contains('release-button')) {
             const releaseBooksPath = BookshelfData.createPath(BookshelfData.paths.releaseBooks, bookId);
             const getReceiversPath = BookshelfData.paths.getReceivers;
@@ -22,12 +33,199 @@ const Bookshelf = function () {
             const sellDiv = createSellDiv(path);
             // ModalWindow.init(sellDiv);
         } else if (e.target.classList.contains('edit-book-button')) {
-            const editBooksPath = BookshelfData.createPath(BookshelfData.paths.editBooks, bookId);
-            Book.edit(editBooksPath, getBookPath);
+            editBook(bookId);
         } else if (e.target.classList.contains('delete-book-button')) {
-            const deleteBooksPath = BookshelfData.createPath(BookshelfData.paths.deleteBooks, bookId);
-            Book.deleteBook(deleteBooksPath, getBookPath);
+            deleteBook(bookId);
         }
+    };
+
+    const createPath = function (path, id) {
+        return path.replace('0', id);
+    };
+
+    const loadBooks = function () {
+        fetchBooks(paths.index)
+            .then(decode)
+            .then(function(data) {
+                const content = BookshelfElements.tableBodyContent(data.books);
+                reloadBookshelfTable(content);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    };
+
+
+    const reloadBookshelfTable = function (newContent) {
+        while (bookshelfTable.firstChild) {
+            bookshelfTable.removeChild(bookshelfTable.firstChild);
+        }
+        bookshelfTable.appendChild(newContent);
+    };
+
+    const createBook = function (e) {
+        e.preventDefault();
+        const path = e.target.getAttribute('action');
+        const book = Book.create(e.target.elements);
+        doCreateBook(book, path)
+            .then(function () {
+                loadBooks();
+            })
+            .catch(function (errors) {
+                console.log(errors);
+            });
+    };
+
+    const doCreateBook = function (book, path) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.open('POST', path, true);
+            request.onload = function () {
+                let response = {};
+                if (request.status === 201) {
+                    resolve();
+                } else {
+                    reject(response);
+                }
+            };
+            request.onerror = function () {
+                reject(Error('Błąd! Nie udało się dodać książki'));
+            };
+            request.send(JSON.stringify(book));
+        });
+    };
+
+    const receiveBook = function (id) {
+        const getPath = createPath(paths.get, id);
+        const receivePath = createPath(paths.receive, id);
+
+        fetchBooks(getPath)
+            .then(decode)
+            .then(function (data) {
+                const form = BookshelfElements.receiveForm(data.book);
+                form.addEventListener('submit', function (e) { 
+                    ModalWindow.closeModal(); 
+                    const data = {
+                        copies: e.target.elements.namedItem('copies').value,
+                    };
+                    emitBookChangeEvent(data, receivePath);
+                });
+                const div = BookshelfElements.receiveDiv(data.book);
+                div.appendChild(form);
+                ModalWindow.init(div);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const deleteBook = function (id) {
+        const getPath = createPath(paths.get, id);
+        const deletePath = createPath(paths.deleteBook, id);
+
+        fetchBooks(getPath)
+            .then(decode)
+            .then(function (data) {
+                const text = 'Czy na pewno chcesz usunąć książkę: ' + data.book.author + ' "' + data.book.title + '"?';
+                const approvalDiv = BookshelfElements.deleteDiv(text, function () {
+                    ModalWindow.closeModal(); 
+                    doDeleteBook(deletePath)
+                        .then(loadBooks)
+                        .catch(function (errors) {
+                            console.log(errors);
+                        });
+                    
+                });
+                ModalWindow.init(approvalDiv);
+            });
+    };
+
+    const doDeleteBook = function (path) {
+        return fetch(path, {
+            method: 'DELETE'
+        });
+    };
+
+    const editBook = function (id) {
+        const getPath = createPath(paths.get, id);
+        const editPath = createPath(paths.edit, id);
+
+        fetchBooks(getPath)
+            .then(decode)
+            .then(function (data) {
+                const div = document.createElement('div');
+                const text = document.createElement('h2');
+                text.setAttribute('class', 'text-center');
+                text.textContent = 'Edycja książki';
+                div.appendChild(text);
+                const form = BookshelfElements.editForm(data.book);
+                form.addEventListener('submit', function (e) { 
+                    ModalWindow.closeModal(); 
+                    const data = Book.create(e.target.elements)
+                    doEditBook(data, editPath)
+                        .then(loadBooks)
+                        .catch(function (errors) {
+                            console.log(errors);
+                        });
+                });
+                div.appendChild(form);
+                ModalWindow.init(div);
+            });
+
+    };
+
+    const doEditBook = function (data, path) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.open('PUT', path, true);
+            request.onload = function () {
+                let response = {};
+                if (request.status === 204) {
+                    resolve();
+                } else {
+                    reject(this.response);
+                }
+            };
+            request.onerror = function () {
+                reject(Error('Błąd! Nie udało się wykonać akcji'));
+            };
+            request.send(JSON.stringify(data));
+        });
+    };
+
+    const emitBookChangeEvent = function (data, path) {
+        doEmitBookChangeEvent(data, path)
+            .then(loadBooks)
+            .catch(function (errors) {
+                console.log(errors);
+            });
+    };
+
+    const doEmitBookChangeEvent = function (data, path) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.open('POST', path, true);
+            request.onload = function () {
+                let response = {};
+                if (request.status === 204) {
+                    resolve();
+                } else {
+                    reject(this.response);
+                }
+            };
+            request.onerror = function () {
+                reject(Error('Błąd! Nie udało się wykonać akcji'));
+            };
+            request.send(JSON.stringify(data));
+        });
+    };
+
+    const decode = function (response) {
+        return response.json();
+    };
+
+    const fetchBooks = function (path) {
+        return fetch(path);
     };
 
     return {

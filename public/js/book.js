@@ -1,10 +1,27 @@
 const Book = function () {
 
-    const create = function (e, onSuccessCallback) {
-        e.preventDefault();
-        const book = createBookData(e.target.elements);
-        const path = e.target.getAttribute('action') ;
-        makePostRequest(book, path, onSuccessCallback);
+    const create = function (form) {
+        const book = {
+            authors: [],
+            title: form.namedItem('title').value,
+            ISBN: form.namedItem('ISBN').value,
+            price: form.namedItem('price').value,
+        };
+
+        if (copies = form.namedItem('copies')) {
+            book.copies = copies.value;
+        }
+
+        const author = {
+            name: form.namedItem('authorName').value,
+            surname: form.namedItem('authorSurname').value,
+        };
+        
+        if (author.name !== '' || author.surname !== '') {
+            book.authors.push(author);
+        }
+
+        return book;
     };
 
     const edit = function(editBooksPath, getBookPath) {
@@ -102,49 +119,6 @@ const Book = function () {
         request.send();
     };
 
-    const createBookData = function(form) {
-        const book = {
-            authors: [],
-            title: form.namedItem('title').value,
-            ISBN: form.namedItem('ISBN').value,
-            price: form.namedItem('price').value,
-        };
-
-        if (copies = form.namedItem('copies')) {
-            book.copies = copies.value;
-        }
-
-        const author = {
-            name: form.namedItem('authorName').value,
-            surname: form.namedItem('authorSurname').value,
-        };
-        
-        if (author.name !== '' || author.surname !== '') {
-            book.authors.push(author);
-        }
-
-        return book;
-    };
-
-    const emitBookChangeEvent = function (data, path) {
-        const request = new XMLHttpRequest();
-        request.open('POST', path, true);
-        request.onload = function () {
-            let response = {};
-            if (request.status === 204) {
-                BookshelfActions.loadBooks();
-            } else {
-                response = JSON.parse(this.response);
-                if (response.hasOwnProperty('errors')) {
-                    console.log(response.errors);
-                }
-            }
-        };
-        request.onerror = function () {
-            console.log('Błąd! Nie udało się wykonać akcji');
-        };
-        request.send(JSON.stringify(data));
-    };
 
     return {
         create: create,

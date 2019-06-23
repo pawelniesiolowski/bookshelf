@@ -36,6 +36,7 @@
             <thead>
                 <tr>
                     <th>Imię</th>
+                    <th>Wydarzenia</th>
                     <th>Akcje</th>
                 </tr>
             </thead>
@@ -43,6 +44,7 @@
                 id="bookshelf-receivers-table-body" 
                 data-path="{{ path('receiver_index') }}"
                 data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
+                data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
             >
             </tbody>
         </table>
@@ -52,5 +54,8 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/modal.js') }}"></script>
+    <script src="{{ asset('js/receiver.js') }}"></script>
+    <script src="{{ asset('js/bookshelf_elements.js') }}"></script>
+    <script src="{{ asset('js/receivers_elements.js') }}"></script>
     <script src="{{ asset('js/receivers.js') }}"></script>
 {% endblock %}

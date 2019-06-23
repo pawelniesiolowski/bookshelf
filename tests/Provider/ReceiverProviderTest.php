@@ -30,7 +30,7 @@ class ReceiverProviderTest extends TestCase
     public function testItShouldFindAllReceivers()
     {
         $receiver = $this->createMock(Receiver::class);
-        $this->receiverRepository->method('findAllOrderAlfabethically')
+        $this->receiverRepository->method('findAllNonDeletedOrderAlfabethically')
             ->will($this->returnValue([$receiver]));
         $this->assertSame([$receiver], $this->receiverProvider->findAll());
     }
