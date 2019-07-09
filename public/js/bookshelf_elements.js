@@ -208,12 +208,16 @@ const BookshelfElements = function () {
         return form;
     };
 
-    const releaseDiv = function (book, receivers, releaseBookPath, bookChangeEvent) {
+    const releaseDiv = function (book) {
         const div = document.createElement('div');
         const text = document.createElement('h2');
         text.setAttribute('class', 'text-center');
         text.textContent = 'Wydajesz książkę: ' + book.author + ' "' + book.title + '"';
         div.appendChild(text);
+        return div;
+    };
+
+    const releaseForm = function (receivers) {
         const form = document.createElement('form');
 
         const copiesGroup = document.createElement('div');
@@ -229,59 +233,35 @@ const BookshelfElements = function () {
         copiesGroup.appendChild(copiesLabel);
         copiesGroup.appendChild(copiesInput);
 
+        const receiversGroup = document.createElement('div');
+        receiversGroup.setAttribute('class', 'form-group');
         const receiverLabel = document.createElement('label');
         receiverLabel.setAttribute('for', 'book-release-form-receiver');
-        receiverLabel.textContent = 'Imię autora';
-        const nameInput = document.createElement('input');
-        nameInput.setAttribute('type', 'text');
-        nameInput.setAttribute('name', 'authorName');
-        nameInput.setAttribute('id', 'book-edit-form-author-name');
-        nameInput.setAttribute('class', 'form-control');
-        nameInput.setAttribute('value', author[1]);
-        authorGroup.appendChild(nameLabel);
-        authorGroup.appendChild(nameInput);
-        form.appendChild(authorGroup);
+        receiverLabel.textContent = 'Pobierający książki';
+        const receiverSelect = document.createElement('select');
+        receiverSelect.setAttribute('name', 'receivers');
+        receiverSelect.setAttribute('id', 'book-release-form-receiver');
+        receiverSelect.setAttribute('class', 'form-control');
+        for (const receiver of receivers) {
+            const receiverOption = document.createElement('option');
+            receiverOption.setAttribute('value', receiver.id);
+            receiverOption.textContent = receiver.name;
+            receiverSelect.appendChild(receiverOption);
+        }
+        receiversGroup.appendChild(receiverLabel);
+        receiversGroup.appendChild(receiverSelect);
         
-        const bookGroup = document.createElement('div');
-        bookGroup.setAttribute('class', 'form-group');
-
-        const titleLabel = document.createElement('label');
-        titleLabel.setAttribute('for', 'book-edit-form-title');
-        titleLabel.textContent = 'Tytuł';
-        const title = document.createElement('input');
-        title.setAttribute('type', 'text');
-        title.setAttribute('name', 'title');
-        title.setAttribute('id', 'book-edit-form-title');
-        title.setAttribute('class', 'form-control');
-        title.setAttribute('value', book.title);
-        bookGroup.appendChild(titleLabel);
-        bookGroup.appendChild(title);
-
-        const isbnLabel = document.createElement('label');
-        isbnLabel.setAttribute('for', 'book-edit-form-isbn');
-        isbnLabel.textContent = 'ISBN';
-        const isbnInput = document.createElement('input');
-        isbnInput.setAttribute('type', 'text');
-        isbnInput.setAttribute('name', 'ISBN');
-        isbnInput.setAttribute('id', 'book-edit-form-isbn');
-        isbnInput.setAttribute('class', 'form-control');
-        isbnInput.setAttribute('value', book.ISBN);
-        bookGroup.appendChild(isbnLabel);
-        bookGroup.appendChild(isbnInput);
-
-        const priceLabel = document.createElement('label');
-        priceLabel.setAttribute('for', 'book-edit-form-price');
-        priceLabel.textContent = 'Cena';
-        const priceInput = document.createElement('input');
-        priceInput.setAttribute('type', 'number');
-        priceInput.setAttribute('name', 'price');
-        priceInput.setAttribute('id', 'book-edit-form-price');
-        priceInput.setAttribute('class', 'form-control');
-        priceInput.setAttribute('value', book.price);
-        bookGroup.appendChild(priceLabel);
-        bookGroup.appendChild(priceInput);
-        form.appendChild(bookGroup);
-
+        const commentGroup = document.createElement('div');
+        commentGroup.setAttribute('class', 'form-group');
+        const commentLabel = document.createElement('label');
+        commentLabel.setAttribute('for', 'book-release-form-comment');
+        commentLabel.textContent = 'Komentarz';
+        const text = document.createElement('textarea');
+        text.setAttribute('name', 'comment');
+        text.setAttribute('id', 'book-release-form-comment');
+        text.setAttribute('class', 'form-control');
+        commentGroup.appendChild(commentLabel);
+        commentGroup.appendChild(text);
 
         const buttonsGroup = document.createElement('div');
         buttonsGroup.setAttribute('class', 'form-group text-center');
@@ -295,14 +275,13 @@ const BookshelfElements = function () {
         cancelButton.textContent = 'Anuluj';
         cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
         buttonsGroup.appendChild(cancelButton);
+
+        form.appendChild(copiesGroup);
+        form.appendChild(receiversGroup);
+        form.appendChild(commentGroup);
         form.appendChild(buttonsGroup);
-        form.addEventListener('submit', function (e) { 
-            ModalWindow.closeModal(); 
-            const data = createBookData(e.target.elements)
-            putRequest(data, path);
-        });
-        div.appendChild(form);
-        ModalWindow.init(div);
+
+        return form;
     };
 
     return {
@@ -311,6 +290,7 @@ const BookshelfElements = function () {
         receiveForm: receiveForm,
         deleteDiv: deleteDiv,
         editForm: editForm,
-        releaseDiv: releaseDiv
+        releaseDiv: releaseDiv,
+        releaseForm: releaseForm
     };
 }();

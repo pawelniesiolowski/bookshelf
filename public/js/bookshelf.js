@@ -25,9 +25,7 @@ const Bookshelf = function () {
         if (e.target.classList.contains('receive-button')) {
             receiveBook(bookId);
         } else if (e.target.classList.contains('release-button')) {
-            const releaseBooksPath = BookshelfData.createPath(BookshelfData.paths.releaseBooks, bookId);
-            const getReceiversPath = BookshelfData.paths.getReceivers;
-            Book.release(releaseBooksPath, getBookPath, getReceiversPath);
+            releaseBook(bookId);
         } else if (e.target.classList.contains('sell-button')) {
             const path = BookshelfData.createPath(BookshelfData.paths.sellBooks, bookId);
             const sellDiv = createSellDiv(path);
@@ -117,6 +115,49 @@ const Bookshelf = function () {
             .catch(function (error) {
                 console.log(error);
             });
+    };
+
+    const releaseBook = function (id) {
+        const getPath = createPath(paths.get, id);
+        const getReceiversPath = createPath(paths.getReceivers, id);
+        const releasePath = createPath(paths.release, id);
+
+        fetchBooks(getPath)
+            .then(decode)
+            .then(function (booksData) {
+                return fetchReceivers(getReceiversPath)
+                    .then(decode)
+                    .then(function (receiversData) {
+                        return {
+                            book: booksData.book,
+                            receivers: receiversData.receivers
+                        }
+                    });
+            })
+            .then(function (allData) {
+                doReleaseBook(allData, releasePath);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const doReleaseBook = function (data, path) {
+        const div = document.createElement('div');
+        const info = BookshelfElements.releaseDiv(data.book);
+        div.appendChild(info);
+        const form = BookshelfElements.releaseForm(data.receivers);
+        form.addEventListener('submit', function (e) {
+            ModalWindow.closeModal();
+            const data = {
+                copies: e.target.elements.namedItem('copies').value,
+                receiverId: e.target.elements.namedItem('receivers').value,
+                comment: e.target.elements.namedItem('comment').value,
+            };
+            emitBookChangeEvent(data, path);
+        });
+        div.appendChild(form);
+        ModalWindow.init(div);
     };
 
     const deleteBook = function (id) {
@@ -225,6 +266,10 @@ const Bookshelf = function () {
     };
 
     const fetchBooks = function (path) {
+        return fetch(path);
+    };
+
+    const fetchReceivers = function (path) {
         return fetch(path);
     };
 
