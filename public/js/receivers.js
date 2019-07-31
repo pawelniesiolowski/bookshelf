@@ -3,7 +3,8 @@ const Receivers = function () {
     const paths = {
         index: table.getAttribute('data-path'),
         deleteReceiver: table.getAttribute('data-delete-receiver-path'),
-        get: table.getAttribute('data-get-receiver-path')
+        get: table.getAttribute('data-get-receiver-path'),
+        edit: table.getAttribute('data-edit-receiver-path')
     };
 
     const init = function () {
@@ -75,6 +76,12 @@ const Receivers = function () {
                 .catch(function(errors) {
                     console.log(errors);
                 });
+        } else if (e.target.classList.contains('edit-receiver-button')) {
+            editReceiver(receiverId)
+                .then(loadReceivers)
+                .catch(function(errors) {
+                    console.log(errors);
+                });
         }
     };
 
@@ -102,6 +109,52 @@ const Receivers = function () {
     const doDeleteReceiver = function (path) {
         return fetch(path, {
             method: 'DELETE'
+        });
+    };
+
+    const editReceiver = function (id) {
+        const getPath = createPath(paths.get, id);
+        const editPath = createPath(paths.edit, id);
+
+        return fetchReceivers(getPath)
+            .then(decode)
+            .then(function (data) {
+                const div = document.createElement('div');
+                const text = document.createElement('h2');
+                text.setAttribute('class', 'text-center');
+                text.textContent = 'Edycja danych osoby odbierającej książki';
+                div.appendChild(text);
+                const form = ReceiversElements.editForm(data.receiver);
+                form.addEventListener('submit', function (e) {
+                    ModalWindow.closeModal();
+                    const data = Receiver.create(e.target.elements)
+                    doEditReceiver(data, editPath)
+                        .then(loadReceivers)
+                        .catch(function (errors) {
+                            console.log(errors);
+                        });
+                });
+                div.appendChild(form);
+                ModalWindow.init(div);
+            });
+    };
+
+    const doEditReceiver = function (data, path) {
+        return new Promise(function (resolve, reject) {
+            const request = new XMLHttpRequest();
+            request.open('PUT', path, true);
+            request.onload = function () {
+                let response = {};
+                if (request.status === 204) {
+                    resolve();
+                } else {
+                    reject(this.response);
+                }
+            };
+            request.onerror = function () {
+                reject(Error('Błąd! Nie udało się wykonać akcji'));
+            };
+            request.send(JSON.stringify(data));
         });
     };
 

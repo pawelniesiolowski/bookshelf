@@ -3,6 +3,9 @@
 <header>
     <h1>Regał z książkami</h1>
 </header>
+<nav>
+    <a href="{{ path('website_index') }}">Książki</a>
+</nav>
 <section>
     <form id="bookshelf-new-receiver" action="{{ path('receiver_new') }}">
         <legend>Dodaj osobę pobierającą książki</legend>
@@ -45,6 +48,7 @@
                 data-path="{{ path('receiver_index') }}"
                 data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
                 data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
+                data-edit-receiver-path="{{ path('receiver_edit', { 'id': 0 }) }}"
             >
             </tbody>
         </table>
