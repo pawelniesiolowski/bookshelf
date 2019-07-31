@@ -27,9 +27,7 @@ const Bookshelf = function () {
         } else if (e.target.classList.contains('release-button')) {
             releaseBook(bookId);
         } else if (e.target.classList.contains('sell-button')) {
-            const path = BookshelfData.createPath(BookshelfData.paths.sellBooks, bookId);
-            const sellDiv = createSellDiv(path);
-            // ModalWindow.init(sellDiv);
+            sellBook(bookId);
         } else if (e.target.classList.contains('edit-book-button')) {
             editBook(bookId);
         } else if (e.target.classList.contains('delete-book-button')) {
@@ -100,7 +98,7 @@ const Bookshelf = function () {
         fetchBooks(getPath)
             .then(decode)
             .then(function (data) {
-                const form = BookshelfElements.receiveForm(data.book);
+                const form = BookshelfElements.simpleBookActionForm(data.book);
                 form.addEventListener('submit', function (e) { 
                     ModalWindow.closeModal(); 
                     const data = {
@@ -108,7 +106,7 @@ const Bookshelf = function () {
                     };
                     emitBookChangeEvent(data, receivePath);
                 });
-                const div = BookshelfElements.receiveDiv(data.book);
+                const div = BookshelfElements.simpleBookActionDiv(data.book, 'dodać');
                 div.appendChild(form);
                 ModalWindow.init(div);
             })
@@ -156,6 +154,34 @@ const Bookshelf = function () {
             };
             emitBookChangeEvent(data, path);
         });
+        div.appendChild(form);
+        ModalWindow.init(div);
+    };
+
+    const sellBook = function (id) {
+        const getPath = createPath(paths.get, id);
+        const sellPath = createPath(paths.sell, id);
+
+        fetchBooks(getPath)
+            .then(decode)
+            .then(function (booksData) {
+                doSellBook(booksData, sellPath);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const doSellBook = function (data, sellPath) {
+        const form = BookshelfElements.simpleBookActionForm(data.book);
+        form.addEventListener('submit', function (e) {
+            ModalWindow.closeModal();
+            const data = {
+                copies: e.target.elements.namedItem('copies').value,
+            };
+            emitBookChangeEvent(data, sellPath);
+        });
+        const div = BookshelfElements.simpleBookActionDiv(data.book, 'sprzedać');
         div.appendChild(form);
         ModalWindow.init(div);
     };

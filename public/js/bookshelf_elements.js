@@ -55,15 +55,15 @@ const BookshelfElements = function () {
         return content;
     };
 
-    const receiveDiv = function (book) {
+    const simpleBookActionDiv = function (book, verb) {
         const div = document.createElement('div');
         const text = document.createElement('p');
-        text.textContent = 'Ile egzemplarzy książki ' + book.title + ' chcesz dodać?';
+        text.textContent = 'Ile egzemplarzy książki ' + book.title + ' chcesz ' + verb + '?';
         div.appendChild(text);
         return div;
     };
 
-    const receiveForm = function (book) {
+    const simpleBookActionForm = function (book) {
         const form = document.createElement('form');
         const input = document.createElement('input');
         input.setAttribute('type', 'number');
@@ -286,8 +286,8 @@ const BookshelfElements = function () {
 
     return {
         tableBodyContent: tableBodyContent,
-        receiveDiv: receiveDiv,
-        receiveForm: receiveForm,
+        simpleBookActionDiv: simpleBookActionDiv,
+        simpleBookActionForm: simpleBookActionForm,
         deleteDiv: deleteDiv,
         editForm: editForm,
         releaseDiv: releaseDiv,
