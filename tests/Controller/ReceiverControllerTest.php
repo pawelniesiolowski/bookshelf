@@ -94,5 +94,26 @@ class ReceiverControllerTest extends FunctionalTestCase
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
     }
+
+    public function testItShouldEditReceiver()
+    {
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $data = [
+            'name' => 'Justynka',
+            'surname' => 'Mazur',
+        ];
+        $client = static::createClient();
+        $client->xmlHttpRequest('PUT', '/receiver/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+
+        $this->assertSame(204, $response->getStatusCode());
+
+        $receiverRepository = new ReceiverRepository($this->registry);
+        $receiver = $receiverRepository->find(1);
+        $this->assertSame('Mazur Justynka', $receiver->__toString());
+    }
 }
 

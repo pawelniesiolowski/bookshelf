@@ -44,6 +44,13 @@ class Receiver implements \JsonSerializable
         $this->events = new ArrayCollection();
     }
 
+    public function editFromJsonData(string $data): void
+    {
+        $data = json_decode($data, true);
+        $this->name = $data['name'] ?? '';
+        $this->surname = $data['surname'] ?? '';
+    }
+
     public function addEvent(BookChangeEvent $bookChangeEvent): void
     {
         if (!$this->events->contains($bookChangeEvent)) {
@@ -84,14 +91,14 @@ class Receiver implements \JsonSerializable
 
     private function validateName(): void
     {
-        if ($this->name === '') {
+        if (!is_string($this->name) || $this->name === '') {
             $this->addError('name', 'Imię osoby, która może pobrać książki jest wymagane');
         }
     }
 
     private function validateSurname(): void
     {
-        if ($this->surname === '') {
+        if (!is_string($this->name) || $this->surname === '') {
             $this->addError('surname', 'Nazwisko osoby, która może pobrać książki jest wymagane');
         }
     }

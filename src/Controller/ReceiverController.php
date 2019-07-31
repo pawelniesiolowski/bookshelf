@@ -53,5 +53,17 @@ class ReceiverController extends AbstractController
         $this->entityManager->flush();
         return $this->json([], 200);
     }
+
+    public function edit(int $id, Request $request)
+    {
+        $receiver = $this->receiverProvider->findOneById($id);
+        $receiver->editFromJsonData($request->getContent());
+        if (!$receiver->validate()) {
+            return $this->json(['errors' => $receiver->getErrors()], 422);
+        }
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+        return $this->json([], 204);
+    }
 }
 

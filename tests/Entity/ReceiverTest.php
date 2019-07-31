@@ -46,5 +46,17 @@ class ReceiverTest extends TestCase
         $this->assertArrayHasKey('name', $errors);
         $this->assertArrayHasKey('surname', $errors);
     }
+
+    public function testItShouldBeEditedFromJsonData()
+    {
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $data = [
+            'name' => 'Justynka',
+            'surname' => 'Mazur',
+        ];
+        $jsonData = json_encode($data);
+        $receiver->editFromJsonData($jsonData);
+        $this->assertSame('Mazur Justynka', $receiver->__toString());
+    }
 }
 

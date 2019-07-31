@@ -54,3 +54,7 @@ receiver_delete:
     path: /receiver/{id}
     controller: App\Controller\ReceiverController:delete
     methods: [DELETE]
+receiver_edit:
+    path: /receiver/{id}
+    controller: App\Controller\ReceiverController:edit
+    methods: [PUT]
