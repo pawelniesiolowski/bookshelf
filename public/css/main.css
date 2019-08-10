@@ -1,3 +1,20 @@
+body {
+    /* From Subtle Patterns (https://www.toptal.com/designers/subtlepatterns/). Made by Craig Schwartz. */
+    background-image: url("../img/round.png");
+    font-family: 'Montserrat', sans-serif;
+}
+
+.bookshelf-title-container {
+    font-family: 'Playfair Display', serif;
+    padding: 2rem 0 2rem 0;
+    background-color: ghostwhite;
+    letter-spacing: 0.5rem;
+}
+
+.bookshelf-title {
+    text-align: center;
+}
+
 .action-button {
     margin: 0 5px 0 5px;
 }
