@@ -58,3 +58,11 @@ receiver_edit:
     path: /receiver/{id}
     controller: App\Controller\ReceiverController:edit
     methods: [PUT]
+app_login:
+    path: /login
+    controller: App\Controller\SecurityController:login
+    methods: [GET, POST]
+app_logout:
+    path: /logout
+    controller: App\Controller\SecurityController:logout
+    methods: [GET]

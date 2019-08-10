@@ -15,6 +15,14 @@ body {
     text-align: center;
 }
 
+.bookshelf-subtitle {
+    text-align: center;
+}
+
+.bookshelf-form-container {
+    padding: 8rem 0 8rem 0;
+}
+
 .action-button {
     margin: 0 5px 0 5px;
 }
