@@ -1,54 +1,57 @@
 {% extends 'base.html.twig' %}
 {% block main %}
-<nav>
-    <a href="{{ path('website_index') }}">Książki</a>
-</nav>
 <section>
-    <form id="bookshelf-new-receiver" action="{{ path('receiver_new') }}">
-        <legend>Dodaj osobę pobierającą książki</legend>
-        <div class="form-group">
-            <div class="form-row">
-                <div class="col-md-2">
-                    <label for="bookshelf-new-receiver-surname">Nazwisko</label>
-                    <input type="text" name="surname" id="bookshelf-new-receiver-surname" class="form-control" placeholder="Nazwisko">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-receiver-name">Imię</label>
-                    <input type="text" name="name" id="bookshelf-new-receiver-name" class="form-control" placeholder="Imię">
-                </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="bookshelf-form-container">
+                <form id="bookshelf-new-receiver" action="{{ path('receiver_new') }}">
+                    <legend>Dodaj użytkownika</legend>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="bookshelf-new-receiver-surname">Nazwisko</label>
+                                <input type="text" name="surname" id="bookshelf-new-receiver-surname" class="form-control" placeholder="Nazwisko">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bookshelf-new-receiver-name">Imię</label>
+                                <input type="text" name="name" id="bookshelf-new-receiver-name" class="form-control" placeholder="Imię">
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn">Zapisz</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="form-group">
-            <div class="form-row">
-                <div class="col-md-12">
-                    <button type="submit" class="btn">Zapisz</button>
-                </div>
-            </div>
-        </div>
-    </form>
+    </div>
 </section>
 <section>
-    <header>
-        <h3>Pobierający książki</h3>
-    </header>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Imię</th>
-                    <th>Wydarzenia</th>
-                    <th>Akcje</th>
-                </tr>
-            </thead>
-            <tbody 
-                id="bookshelf-receivers-table-body" 
-                data-path="{{ path('receiver_index') }}"
-                data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
-                data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
-                data-edit-receiver-path="{{ path('receiver_edit', { 'id': 0 }) }}"
-            >
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Imię</th>
+                            <th>Wydarzenia</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        id="bookshelf-receivers-table-body" 
+                        data-path="{{ path('receiver_index') }}"
+                        data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
+                        data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
+                        data-edit-receiver-path="{{ path('receiver_edit', { 'id': 0 }) }}"
+                    >
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

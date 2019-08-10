@@ -58,27 +58,34 @@ const BookshelfElements = function () {
     const simpleBookActionDiv = function (book, verb) {
         const div = document.createElement('div');
         const text = document.createElement('p');
-        text.textContent = 'Ile egzemplarzy książki ' + book.title + ' chcesz ' + verb + '?';
+        text.textContent = 'Ile egzemplarzy książki "' + book.title + '" chcesz ' + verb + '?';
         div.appendChild(text);
         return div;
     };
 
     const simpleBookActionForm = function (book) {
         const form = document.createElement('form');
+        const group = document.createElement('div');
+        group.setAttribute('class', 'form-group');
+        form.appendChild(group);
         const input = document.createElement('input');
         input.setAttribute('type', 'number');
         input.setAttribute('name', 'copies');
-        form.appendChild(input);
+        input.setAttribute('class', 'form-control');
+        group.appendChild(input);
+        const div = document.createElement('div');
+        div.setAttribute('class', 'text-center');
+        form.appendChild(div);
         const saveButton = document.createElement('button');
         saveButton.setAttribute('class', 'btn btn-success action-button');
         saveButton.setAttribute('type', 'submit');
         saveButton.textContent = 'Zapisz';
-        form.appendChild(saveButton);
+        div.appendChild(saveButton);
         const cancelButton = document.createElement('button');
         cancelButton.setAttribute('class', 'btn btn-default action-button');
         cancelButton.textContent = 'Anuluj';
         cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
-        form.appendChild(cancelButton);
+        div.appendChild(cancelButton);
         return form;
     };
 

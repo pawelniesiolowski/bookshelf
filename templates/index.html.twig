@@ -1,77 +1,83 @@
 {% extends 'base.html.twig' %}
 {% block main %}
-<nav>
-    <a href="{{ path('website_receivers') }}">Osoby pobierające książki</a>
-</nav>
 <section>
-    <form id="bookshelf-new-book" action="{{ path('book_new') }}">
-        <legend>Dodaj książkę</legend>
-        <div class="form-group">
-            <div class="form-row">
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-author-surname">Nazwisko autora</label>
-                    <input type="text" name="authorSurname" id="bookshelf-new-book-author-surname" class="form-control" placeholder="Nazwisko autora">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-authorName">Imię autora</label>
-                    <input type="text" name="authorName" id="bookshelf-new-book-authorName" class="form-control" placeholder="Imię autora">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-title">Tytuł</label>
-                    <input type="text" name="title" id="bookshelf-new-book-title" class="form-control" placeholder="Tytuł">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-copies">Egzemplarze</label>
-                    <input type="number" name="copies" id="bookshelf-new-book-copies" class="form-control" placeholder="Egzemplarze">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-isbn">ISBN</label>
-                    <input type="text" name="ISBN" id="bookshelf-new-book-isbn" class="form-control" placeholder="ISBN">
-                </div>
-                <div class="col-md-2">
-                    <label for="bookshelf-new-book-price">Cena</label>
-                    <input type="number" name="price" id="bookshelf-new-book-price" min="1" step="any" class="form-control" placeholder="Cena">
-                </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="bookshelf-form-container">
+                <form id="bookshelf-new-book" action="{{ path('book_new') }}">
+                    <legend>Dodaj książkę</legend>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-author-surname">Nazwisko autora</label>
+                                <input type="text" name="authorSurname" id="bookshelf-new-book-author-surname" class="form-control" placeholder="Nazwisko autora">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-authorName">Imię autora</label>
+                                <input type="text" name="authorName" id="bookshelf-new-book-authorName" class="form-control" placeholder="Imię autora">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-title">Tytuł</label>
+                                <input type="text" name="title" id="bookshelf-new-book-title" class="form-control" placeholder="Tytuł">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-copies">Egzemplarze</label>
+                                <input type="number" name="copies" id="bookshelf-new-book-copies" class="form-control" placeholder="Egzemplarze">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-isbn">ISBN</label>
+                                <input type="text" name="ISBN" id="bookshelf-new-book-isbn" class="form-control" placeholder="ISBN">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bookshelf-new-book-price">Cena</label>
+                                <input type="number" name="price" id="bookshelf-new-book-price" min="1" step="any" class="form-control" placeholder="Cena">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn">Zapisz</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="form-group">
-            <div class="form-row">
-                <div class="col-md-12">
-                    <button type="submit" class="btn">Zapisz</button>
-                </div>
-            </div>
-        </div>
-    </form>
+    </div>
 </section>
 <section>
-    <header>
-        <h3>Książki</h3>
-    </header>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Autor</th>
-                    <th>Tytuł</th>
-                    <th>Egzemplarze</th>
-                    <th>ISBN</th>
-                    <th>Cena</th>
-                    <th>Akcja</th>
-                </tr>
-            </thead>
-            <tbody 
-                id="bookshelf-table-body" 
-                data-index="{{ path('bookshelf_index') }}" 
-                data-receive-path="{{ path('bookshelf_receive', { 'id': 0 }) }}"
-                data-release-path="{{ path('bookshelf_release', { 'id': 0 }) }}"
-                data-sell-path="{{ path('bookshelf_sell', { 'id': 0 }) }}"
-                data-edit-book-path="{{ path('book_edit', { 'id': 0 }) }}"
-                data-get-book-path="{{ path('book_one', { 'id': 0 }) }}"
-                data-delete-book-path="{{ path('book_delete', { 'id': 0 }) }}"
-                data-get-receivers-path="{{ path('receiver_index') }}"
-            >
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Autor</th>
+                            <th>Tytuł</th>
+                            <th>Egz.</th>
+                            <th>ISBN</th>
+                            <th>Cena</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        id="bookshelf-table-body" 
+                        data-index="{{ path('bookshelf_index') }}" 
+                        data-receive-path="{{ path('bookshelf_receive', { 'id': 0 }) }}"
+                        data-release-path="{{ path('bookshelf_release', { 'id': 0 }) }}"
+                        data-sell-path="{{ path('bookshelf_sell', { 'id': 0 }) }}"
+                        data-edit-book-path="{{ path('book_edit', { 'id': 0 }) }}"
+                        data-get-book-path="{{ path('book_one', { 'id': 0 }) }}"
+                        data-delete-book-path="{{ path('book_delete', { 'id': 0 }) }}"
+                        data-get-receivers-path="{{ path('receiver_index') }}"
+                    >
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}
