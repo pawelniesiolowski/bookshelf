@@ -32,7 +32,7 @@ class Book implements \JsonSerializable
      */
     private $price;
     /**
-     * @ORM\Column(type="string", length=13)
+     * @ORM\Column(type="string", length=13, nullable=true)
      */
     private $ISBN;
     /**
