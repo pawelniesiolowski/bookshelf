@@ -30,7 +30,6 @@ const Receivers = function () {
             const request = new XMLHttpRequest();
             request.open('POST', path, true);
             request.onload = function () {
-                let response = {};
                 if (request.status === 201) {
                     resolve();
                 } else {
@@ -126,6 +125,7 @@ const Receivers = function () {
                 div.appendChild(text);
                 const form = ReceiversElements.editForm(data.receiver);
                 form.addEventListener('submit', function (e) {
+                    e.preventDefault();
                     ModalWindow.closeModal();
                     const data = Receiver.create(e.target.elements)
                     doEditReceiver(data, editPath)
@@ -144,7 +144,6 @@ const Receivers = function () {
             const request = new XMLHttpRequest();
             request.open('PUT', path, true);
             request.onload = function () {
-                let response = {};
                 if (request.status === 204) {
                     resolve();
                 } else {

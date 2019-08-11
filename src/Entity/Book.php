@@ -30,7 +30,7 @@ class Book implements \JsonSerializable
     /**
      * @ORM\Column(type="decimal", precision=7, scale=2)
      */
-    private $price;
+    private $price = 0.0;
     /**
      * @ORM\Column(type="string", length=13, nullable=true)
      */
@@ -55,17 +55,21 @@ class Book implements \JsonSerializable
     private $errors = [];
 
     public function __construct(
-        string $title,
-        ?string $ISBN,
-        ?float $price
+        string $title
     ) {
         $this->title = $title;
-        $this->ISBN = $ISBN;
-        if ($price !== null) {
-            $this->price = round(floatval($price), 2);
-        }
         $this->authors = new ArrayCollection();
         $this->events = new ArrayCollection();
+    }
+
+    public function setPrice(float $price): void
+    {
+        $this->price = round(floatval($price), 2);
+    }
+
+    public function setISBN(?string $ISBN): void
+    {
+        $this->ISBN = $ISBN;
     }
 
     public function addAuthor(Author $author)
@@ -128,8 +132,8 @@ class Book implements \JsonSerializable
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'ISBN' => $this->ISBN,
-            'price' => (float)$this->price,
+            'ISBN' => $this->ISBN ?? '',
+            'price' => $this->price,
             'copies' => $this->copies,
             'author' => $this->createSingleJsonSerializableSortedAuthor(),
         ];
@@ -149,8 +153,8 @@ class Book implements \JsonSerializable
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'ISBN' => $this->ISBN,
-            'price' => (float)$this->price,
+            'ISBN' => $this->ISBN ?? '',
+            'price' => $this->price,
             'copies' => $this->copies,
             'authors' => $this->createJsonSerializableSortedAuthors(),
             'events' => $this->createJsonSerializableEvents(),
@@ -161,8 +165,16 @@ class Book implements \JsonSerializable
     {
         $data = json_decode($data, true);
         $this->title = $data['title'] ?? '';
-        $this->ISBN = $data['ISBN'] ?? null;
-        $this->price = $data['price'] ?? null;
+        if (empty($data['ISBN'])) {
+            $this->setISBN(null);
+        } else {
+            $this->setISBN($data['ISBN']);
+        }
+        if (empty($data['price'])) {
+            $this->price = 0.0;
+        } else {
+            $this->price = is_numeric($data['price']) ? (float)$data['price'] : 0.0;
+        }
         $this->authors->clear();
         foreach ($authors as $author) {
             $this->addAuthor($author);

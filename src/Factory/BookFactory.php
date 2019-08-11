@@ -20,9 +20,13 @@ class BookFactory
         $data = json_decode($json, true);
         $book = new Book(
             $data['title'] ?? '',
-            $data['ISBN'] ?? null,
-            $this->createPrice($data['price'] ?? null)
         );
+        if (!empty($data['price'])) {
+            $book->setPrice($this->createPrice($data['price']));
+        }
+        if (!empty($data['ISBN'])) {
+            $book->setISBN($data['ISBN']);
+        }
         foreach(($data['authors'] ?? []) as $author) {
             $book->addAuthor($this->getAuthor($author));
         }

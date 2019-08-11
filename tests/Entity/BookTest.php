@@ -29,7 +29,9 @@ class BookTest extends TestCase
 
     public function testItCanBeJsonSerialized()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
+        $book->setISBN('0123456789');
+        $book->setPrice(29.99);
         $book->addAuthor($this->author);
 
         $secondAuthor = $this->createMock(Author::class);
@@ -49,16 +51,26 @@ class BookTest extends TestCase
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 
-    public function testItShouldBeJsonSerializedWithoutAuthor()
+    public function testDefaultValues()
     {
-        $book = new Book('Bracia Karamazow', '1234567890', 19.00);
-        $jsonSerializedBook = $book->jsonSerialize();
-        $this->assertSame('', $jsonSerializedBook['author']);
+        $book = new Book('Bracia Karamazow');
+        $jsonSerializeData = [
+            'id' => null,
+            'title' => 'Bracia Karamazow',
+            'ISBN' => '',
+            'price' => 0.0,
+            'copies' => 0,
+            'author' => '',
+        ];
+        $this->assertSame(true, $book->validate());
+        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 
     public function testItShouldCreateJsonSerializedExtendedData()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
+        $book->setISBN('0123456789');
+        $book->setPrice(29.99);
         $book->addAuthor($this->author);
         $jsonSerializeData = [
             'id' => null,
@@ -75,8 +87,7 @@ class BookTest extends TestCase
 
     public function testItCreatesJsonSerializedBasicData()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
-        $book->addAuthor($this->author);
+        $book = new Book('Bracia Karamazow');
         $jsonSerializedBasicData = [
             'id' => null,
             'title' => 'Bracia Karamazow',
@@ -88,7 +99,7 @@ class BookTest extends TestCase
 
     public function testItCanBeUsedAsString()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->addAuthor($this->author);
         $this->assertSame(true, $book->validate());
         $this->assertSame('Dostojewski Fiodor "Bracia Karamazow"', $book->__toString());
@@ -96,7 +107,7 @@ class BookTest extends TestCase
 
     public function testReceiveBook()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(1);
         $this->assertSame(true, $book->validate());
         $jsonSerializedBook = $book->jsonSerializeExtended();
@@ -106,7 +117,7 @@ class BookTest extends TestCase
 
     public function testReleaseBooks()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $book->release(3, $this->receiver);
         $jsonSerializedBook = $book->jsonSerializeExtended();
@@ -119,7 +130,7 @@ class BookTest extends TestCase
     
     public function testSellBooks()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $event = $book->sell(2);
         $this->assertSame(true, $book->validate());
@@ -131,7 +142,7 @@ class BookTest extends TestCase
 
     public function testItShouldThrowExceptionWhenThereAreLessThenZeroBooks()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $this->expectException(BookException::class);
         $event = $book->release(6, $this->receiver);
@@ -139,14 +150,15 @@ class BookTest extends TestCase
 
     public function testItShouldThrowExceptionWhenReceiveMethodGetsLessThenZero()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $this->expectException(BookException::class);
         $book->receive(-5);
     }
 
     public function testItShouldValidateItselfAndReturnProperErrors()
     {
-        $book = new Book('', 'invalid', 0.9999);
+        $book = new Book('');
+        $book->setISBN('invalid');
         $book->addAuthor(new Author('', ''));
         $this->assertSame(false, $book->validate());
         $errors = $book->getErrors();

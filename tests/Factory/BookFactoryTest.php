@@ -57,11 +57,11 @@ class BookFactoryTest extends TestCase
         $this->assertInstanceOf(Book::class, $book);
     }
 
-    public function testItCreatesBookWhenPriceIsEmptyString()
+    public function testItCreatesBookWhenPriceAndISBNAreEmptyStrings()
     {
         $requestContent = [
             'title' => 'Zbrodnia i kara',
-            'ISBN' => '1234567890',
+            'ISBN' => '',
             'price' => '',
             'copies' => 0,
         ];

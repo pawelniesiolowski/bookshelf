@@ -77,11 +77,10 @@ const Bookshelf = function () {
             const request = new XMLHttpRequest();
             request.open('POST', path, true);
             request.onload = function () {
-                let response = {};
                 if (request.status === 201) {
                     resolve();
                 } else {
-                    reject(response);
+                    reject(this.response);
                 }
             };
             request.onerror = function () {
@@ -100,6 +99,7 @@ const Bookshelf = function () {
             .then(function (data) {
                 const form = BookshelfElements.simpleBookActionForm(data.book);
                 form.addEventListener('submit', function (e) { 
+                    e.preventDefault();
                     ModalWindow.closeModal(); 
                     const data = {
                         copies: e.target.elements.namedItem('copies').value,
@@ -146,6 +146,7 @@ const Bookshelf = function () {
         div.appendChild(info);
         const form = BookshelfElements.releaseForm(data.receivers);
         form.addEventListener('submit', function (e) {
+            e.preventDefault();
             ModalWindow.closeModal();
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
@@ -175,6 +176,7 @@ const Bookshelf = function () {
     const doSellBook = function (data, sellPath) {
         const form = BookshelfElements.simpleBookActionForm(data.book);
         form.addEventListener('submit', function (e) {
+            e.preventDefault();
             ModalWindow.closeModal();
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
@@ -227,6 +229,7 @@ const Bookshelf = function () {
                 div.appendChild(text);
                 const form = BookshelfElements.editForm(data.book);
                 form.addEventListener('submit', function (e) { 
+                    e.preventDefault();
                     ModalWindow.closeModal(); 
                     const data = Book.create(e.target.elements)
                     doEditBook(data, editPath)
@@ -246,7 +249,6 @@ const Bookshelf = function () {
             const request = new XMLHttpRequest();
             request.open('PUT', path, true);
             request.onload = function () {
-                let response = {};
                 if (request.status === 204) {
                     resolve();
                 } else {
@@ -273,7 +275,6 @@ const Bookshelf = function () {
             const request = new XMLHttpRequest();
             request.open('POST', path, true);
             request.onload = function () {
-                let response = {};
                 if (request.status === 204) {
                     resolve();
                 } else {
