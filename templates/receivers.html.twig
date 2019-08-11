@@ -30,26 +30,28 @@
     </div>
 </section>
 <section>
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Imię</th>
-                            <th>Wydarzenia</th>
-                            <th>Akcje</th>
-                        </tr>
-                    </thead>
-                    <tbody
-                        id="bookshelf-receivers-table-body" 
-                        data-path="{{ path('receiver_index') }}"
-                        data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
-                        data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
-                        data-edit-receiver-path="{{ path('receiver_edit', { 'id': 0 }) }}"
-                    >
-                    </tbody>
-                </table>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <div class="table-responsive-sm">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Imię</th>
+                                <th>Wydarzenia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            id="bookshelf-receivers-table-body"
+                            data-path="{{ path('receiver_index') }}"
+                            data-delete-receiver-path="{{ path('receiver_delete', { 'id': 0 }) }}"
+                            data-get-receiver-path="{{ path('receiver_one', { 'id': 0 }) }}"
+                            data-edit-receiver-path="{{ path('receiver_edit', { 'id': 0 }) }}"
+                        >
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
