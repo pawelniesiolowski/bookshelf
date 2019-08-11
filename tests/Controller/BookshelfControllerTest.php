@@ -21,24 +21,18 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testIndex()
     {
         $dostojewski = new Author('Fiodor', 'Dostojewski');
-        $crime = new Book(
-            'Zbrodnia i kara',
-            '1234567890',
-            29.99
-        );
-        $idiot = new Book(
-            'Idiota',
-            '0987654321',
-            19.99
-        );
+        $crime = new Book('Zbrodnia i kara');
+        $crime->setISBN('1234567890');
+        $crime->setPrice(29.99);
+        $idiot = new Book('Idiota');
+        $idiot->setISBN('0987654321');
+        $idiot->setPrice(19.99);
         $crime->addAuthor($dostojewski);
         $idiot->addAuthor($dostojewski);
         $lem = new Author('Stanisław', 'Lem');
-        $robots = new Book(
-            'Bajki robotów',
-            '0123456789',
-            59.00
-        );
+        $robots = new Book('Bajki robotów');
+        $robots->setISBN('0123456789');
+        $robots->setPrice(59.00);
         $robots->addAuthor($lem);
         $this->entityManager->persist($crime);
         $this->entityManager->persist($robots);
@@ -57,7 +51,7 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'id' => 2,
                     'title' => 'Idiota',
                     'ISBN' => '0987654321',
-                    'price' => 19.99,
+                    'price' => '19.99',
                     'copies' => 0,
                     'author' => 'Dostojewski Fiodor',
                 ],
@@ -65,7 +59,7 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'id' => 1,
                     'title' => 'Zbrodnia i kara',
                     'ISBN' => '1234567890',
-                    'price' => 29.99,
+                    'price' => '29.99',
                     'copies' => 0,
                     'author' => 'Dostojewski Fiodor',
                 ],
@@ -73,7 +67,7 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'id' => 3,
                     'title' => 'Bajki robotów',
                     'ISBN' => '0123456789',
-                    'price' => 59,
+                    'price' => '59.00',
                     'copies' => 0,
                     'author' => 'Lem Stanisław',
                 ],
@@ -84,7 +78,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
     public function testItShouldReceiveBook()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $this->entityManager->persist($book);
         $this->entityManager->flush();
         $data = ['copies' => 4];
@@ -101,7 +95,7 @@ class BookshelfControllerTest extends FunctionalTestCase
     
     public function testItShouldReleaseBook()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $this->entityManager->persist($book);
 
@@ -111,7 +105,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiver_id' => 1,
+            'receiverId' => 1,
             'comment' => 'Test',
         ];
 
@@ -134,7 +128,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiver_id' => 1,
+            'receiverId' => 1,
         ];
 
         $client = static::createClient();
@@ -145,7 +139,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $this->assertSame(422, $response->getStatusCode());
         $this->assertArrayHasKey('errors', $content);
-        $this->assertArrayHasKey('receiver_id', $content['errors']);
+        $this->assertArrayHasKey('receiverId', $content['errors']);
     }
     
     public function testItShouldReturnProperErrorsWhenThereIsLessCopiesThenZero()
@@ -161,7 +155,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => -4,
-            'receiver_id' => 1,
+            'receiverId' => 1,
             'comment' => 'Test',
         ];
 

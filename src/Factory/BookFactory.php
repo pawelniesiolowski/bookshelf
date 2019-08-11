@@ -19,7 +19,7 @@ class BookFactory
     {
         $data = json_decode($json, true);
         $book = new Book(
-            $data['title'] ?? '',
+            $data['title'] ?? ''
         );
         if (!empty($data['price'])) {
             $book->setPrice($this->createPrice($data['price']));
