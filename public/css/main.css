@@ -30,7 +30,7 @@ body {
 .modal-window {
     height: auto;
     width: auto;
-    position: absolute;
+    position: fixed;
     background-color: white;
     border: 1px solid black;
     opacity: 1;
