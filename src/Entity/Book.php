@@ -135,7 +135,7 @@ class Book implements \JsonSerializable
             'ISBN' => $this->ISBN ?? '',
             'price' => $this->price,
             'copies' => $this->copies,
-            'author' => $this->createSingleJsonSerializableSortedAuthor(),
+            'author' => $this->createSingleJsonSerializableAuthor(),
         ];
     }
 
@@ -205,11 +205,11 @@ class Book implements \JsonSerializable
         return $text;
     }
 
-    private function createSingleJsonSerializableSortedAuthor(): string
+    private function createSingleJsonSerializableAuthor(): array
     {
         $authors = $this->authors->toArray();
         $author = array_shift($authors);
-        return $author ? $author->__toString() : '';
+        return $author ? $author->toArray() : [];
     }
 
     private function createJsonSerializableSortedAuthors(): array

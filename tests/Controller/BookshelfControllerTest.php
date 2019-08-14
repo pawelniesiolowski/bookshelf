@@ -53,7 +53,10 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'ISBN' => '0987654321',
                     'price' => '19.99',
                     'copies' => 0,
-                    'author' => 'Dostojewski Fiodor',
+                    'author' => [
+                        'name' => 'Fiodor',
+                        'surname' => 'Dostojewski',
+                    ],
                 ],
                 [
                     'id' => 1,
@@ -61,7 +64,10 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'ISBN' => '1234567890',
                     'price' => '29.99',
                     'copies' => 0,
-                    'author' => 'Dostojewski Fiodor',
+                    'author' => [
+                        'name' => 'Fiodor',
+                        'surname' => 'Dostojewski',
+                    ],
                 ],
                 [
                     'id' => 3,
@@ -69,7 +75,10 @@ class BookshelfControllerTest extends FunctionalTestCase
                     'ISBN' => '0123456789',
                     'price' => '59.00',
                     'copies' => 0,
-                    'author' => 'Lem Stanisław',
+                    'author' => [
+                        'name' => 'Stanisław',
+                        'surname' => 'Lem',
+                    ],
                 ],
             ],
         ];

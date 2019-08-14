@@ -195,7 +195,8 @@ const Bookshelf = function () {
         fetchBooks(getPath)
             .then(decode)
             .then(function (data) {
-                const text = 'Czy na pewno chcesz usunąć książkę: ' + data.book.author + ' "' + data.book.title + '"?';
+                const text = 'Czy na pewno chcesz usunąć książkę: ' + data.book.author.name + ' ' +
+                    data.book.author.surname + ' "' + data.book.title + '"?';
                 const approvalDiv = BookshelfElements.deleteDiv(text, function () {
                     ModalWindow.closeModal(); 
                     doDeleteBook(deletePath)

@@ -19,6 +19,11 @@ class BookTest extends TestCase
         $this->author = $this->createMock(Author::class);
         $this->author->method('validate')
             ->will($this->returnValue(true));
+        $this->author->method('toArray')
+            ->will($this->returnValue([
+                'name' => 'Fiodor',
+                'surname' => 'Dostojewski',
+            ]));
         $this->author->method('__toString')
             ->will($this->returnValue('Dostojewski Fiodor'));
 
@@ -45,7 +50,10 @@ class BookTest extends TestCase
             'ISBN' => '0123456789',
             'price' => 29.99,
             'copies' => 0,
-            'author' => 'Dostojewski Fiodor',
+            'author' => [
+                'name' => 'Fiodor',
+                'surname' => 'Dostojewski',
+            ],
         ];
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
@@ -60,7 +68,7 @@ class BookTest extends TestCase
             'ISBN' => '',
             'price' => 0.0,
             'copies' => 0,
-            'author' => '',
+            'author' => [],
         ];
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());

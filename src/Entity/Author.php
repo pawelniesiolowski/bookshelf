@@ -71,6 +71,14 @@ class Author implements \JsonSerializable
     {
         return $this->surname . ' ' . $this->name;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'surname' => $this->surname,
+        ];
+    }
     
     private function getJsonSerializedBasicSortedBooks(): array
     {

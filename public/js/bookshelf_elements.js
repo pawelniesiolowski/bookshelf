@@ -4,7 +4,7 @@ const BookshelfElements = function () {
         for (let book of books) {
             const tr = document.createElement('tr');
             const td1 = document.createElement('td');
-            td1.textContent = book.author;
+            td1.textContent = book.author.surname + ' ' + book.author.name;
             tr.appendChild(td1);
             const td2 = document.createElement('td');
             td2.textContent = book.title;
@@ -126,11 +126,6 @@ const BookshelfElements = function () {
 
         const form = document.createElement('form');
 
-        let author = ['', ''];
-        if (book.author !== '') {
-            author = book.author.split(' ');
-        }
-
         const authorGroup = document.createElement('div');
         authorGroup.setAttribute('class', 'form-group');
         const surnameLabel = document.createElement('label');
@@ -141,7 +136,7 @@ const BookshelfElements = function () {
         surnameInput.setAttribute('name', 'authorSurname');
         surnameInput.setAttribute('id', 'book-edit-form-author-surname');
         surnameInput.setAttribute('class', 'form-control');
-        surnameInput.setAttribute('value', author[0]);
+        surnameInput.setAttribute('value', book.author.surname);
         authorGroup.appendChild(surnameLabel);
         authorGroup.appendChild(surnameInput);
 
@@ -153,7 +148,7 @@ const BookshelfElements = function () {
         nameInput.setAttribute('name', 'authorName');
         nameInput.setAttribute('id', 'book-edit-form-author-name');
         nameInput.setAttribute('class', 'form-control');
-        nameInput.setAttribute('value', author[1]);
+        nameInput.setAttribute('value', book.author.name);
         authorGroup.appendChild(nameLabel);
         authorGroup.appendChild(nameInput);
         form.appendChild(authorGroup);
@@ -219,7 +214,8 @@ const BookshelfElements = function () {
         const div = document.createElement('div');
         const text = document.createElement('h2');
         text.setAttribute('class', 'text-center');
-        text.textContent = 'Wydajesz książkę: ' + book.author + ' "' + book.title + '"';
+        text.textContent = 'Wydajesz książkę: ' + book.author.name + ' ' + book.author.surname
+            + ' "' + book.title + '"';
         div.appendChild(text);
         return div;
     };
