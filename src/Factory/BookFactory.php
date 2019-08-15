@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Entity\Book;
 use App\Provider\AuthorProvider;
 use App\Entity\Author;
+use App\Tool\TextProcessor;
 
 class BookFactory
 {
@@ -18,6 +19,9 @@ class BookFactory
     public function fromJson(string $json): Book
     {
         $data = json_decode($json, true);
+        if (is_array($data)) {
+            $data = TextProcessor::trimData($data);
+        }
         $book = new Book(
             $data['title'] ?? ''
         );
