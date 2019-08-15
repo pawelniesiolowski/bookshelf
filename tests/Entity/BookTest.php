@@ -168,13 +168,16 @@ class BookTest extends TestCase
     {
         $book = new Book('');
         $book->setISBN('invalid');
+        $book->setPrice(100000);
         $book->addAuthor(new Author('', ''));
         $this->assertSame(false, $book->validate());
         $errors = $book->getErrors();
 
         $this->assertSame('Podaj tytuł', $errors['title']);
         $this->assertSame('ISBN musi się składać tylko z cyfr, myślników i znaków "X"!', $errors['ISBN']);
-        $this->assertSame('Podaj imię i nazwisko autora', $errors['authors']);
+        $this->assertSame('Podaj imię autora', $errors['authorName']);
+        $this->assertSame('Podaj nazwisko autora', $errors['authorSurname']);
+        $this->assertSame('Cena książki nie może być wyższa niż 99999.00 zł', $errors['price']);
     }
 
     public function testItShouldUpdateItselfFromJson()

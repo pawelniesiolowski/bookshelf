@@ -189,6 +189,7 @@ class Book implements \JsonSerializable
             $this->validateISBN();
         }
         $this->validateAuthors();
+        $this->validatePrice();
         return count($this->errors) === 0;
     }
 
@@ -258,6 +259,8 @@ class Book implements \JsonSerializable
     {
         if ($this->title === '') {
             $this->addError('title', 'Podaj tytuł');
+        } else if (mb_strlen($this->title, 'utf8') > 100) {
+            $this->addError('title', 'Tytuł nie może być dłuższy niż 100 znaków!');
         }
     }
 
@@ -287,8 +290,15 @@ class Book implements \JsonSerializable
     {
         foreach ($this->authors as $author) {
             if (!$author->validate()) {
-                $this->addError('authors', 'Podaj imię i nazwisko autora');
+                $this->errors = array_merge($this->errors, $author->getErrors());
             }
+        }
+    }
+
+    private function validatePrice(): void
+    {
+        if ($this->price > 99999) {
+            $this->addError('price', 'Cena książki nie może być wyższa niż 99999.00 zł');
         }
     }
 

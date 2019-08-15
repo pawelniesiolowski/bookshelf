@@ -96,14 +96,14 @@ class Author implements \JsonSerializable
     private function validateName(): void
     {
         if ($this->name === '') {
-            $this->addError('name', 'Podaj imię autora');
+            $this->addError('authorName', 'Podaj imię autora');
         }
     }
 
     private function validateSurname(): void
     {
         if ($this->surname === '') {
-            $this->addError('surname', 'Podaj nazwisko autora');
+            $this->addError('authorSurname', 'Podaj nazwisko autora');
         }
     }
 
