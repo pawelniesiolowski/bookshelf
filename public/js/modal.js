@@ -1,11 +1,14 @@
 const ModalWindow = (function () {
 
     const init = function (content = '') {
-        let modalDiv = createModal();
-        appendContentToModal(modalDiv, content);
-        bindCenterModal(modalDiv);
-        showModal(modalDiv);
-        centerModal(modalDiv);
+        const previousModalDiv = document.querySelector('.modal-window');
+        if (previousModalDiv === null) {
+            let modalDiv = createModal();
+            appendContentToModal(modalDiv, content);
+            bindCenterModal(modalDiv);
+            showModal(modalDiv);
+            centerModal(modalDiv);
+        }
     };
 
     const createModal = function () {
