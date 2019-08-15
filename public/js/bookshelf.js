@@ -64,6 +64,7 @@ const Bookshelf = function () {
         const form = e.target;
         const path = form.getAttribute('action');
         const book = Book.create(e.target.elements);
+        ErrorsHandler.reset(form);
         doCreateBook(book, path)
             .then(function () {
                 loadBooks();

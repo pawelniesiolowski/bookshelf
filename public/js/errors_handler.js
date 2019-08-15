@@ -9,7 +9,15 @@ const ErrorsHandler = (function () {
         }
     };
 
+    const reset = function (form) {
+        const errors = form.getElementsByClassName('form-error');
+        for (let errorDiv of errors) {
+            errorDiv.textContent = '';
+        }
+    };
+
     return {
-        show
+        show,
+        reset
     };
 })();
