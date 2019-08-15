@@ -32,7 +32,7 @@ class Book implements \JsonSerializable
      */
     private $price = 0.0;
     /**
-     * @ORM\Column(type="string", length=13, nullable=true)
+     * @ORM\Column(type="string", length=17, nullable=true)
      */
     private $ISBN;
     /**
@@ -183,8 +183,11 @@ class Book implements \JsonSerializable
 
     public function validate(): bool
     {
+        $this->errors = [];
         $this->validateTitle();
-        $this->validateISBN();
+        if ($this->ISBN !== null) {
+            $this->validateISBN();
+        }
         $this->validateAuthors();
         return count($this->errors) === 0;
     }
@@ -260,8 +263,23 @@ class Book implements \JsonSerializable
 
     private function validateISBN(): void
     {
-        if ($this->ISBN !== null && !is_numeric($this->ISBN)) {
-            $this->addError('ISBN', 'ISBN musi się składać z samych cyfr');
+        $isbn = $this->ISBN;
+        $digits = str_ireplace(['-', 'X'], '', $isbn);
+        if (!is_numeric($digits)) {
+            $this->addError('ISBN', 'ISBN musi się składać tylko z cyfr, myślników i znaków "X"!');
+            return;
+        }
+
+        $digitsAndX = str_ireplace('-', '', $isbn);;
+        $length = strlen($digitsAndX);
+        if ($length !== 10 && $length !== 13) {
+            $this->addError('ISBN', 'ISBN powinien mieć 10 lub 13 cyfr (w tym znak X)!');
+            return;
+        }
+
+        if (strlen($isbn) > 17) {
+            $this->addError('ISBN', 'ISBN razem z myślnikami może mieć maksymalnie 17 znaków!');
+            return;
         }
     }
 

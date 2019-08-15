@@ -55,6 +55,7 @@ class BookTest extends TestCase
                 'surname' => 'Dostojewski',
             ],
         ];
+        $book->validate();
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
@@ -172,13 +173,15 @@ class BookTest extends TestCase
         $errors = $book->getErrors();
 
         $this->assertSame('Podaj tytuł', $errors['title']);
-        $this->assertSame('ISBN musi się składać z samych cyfr', $errors['ISBN']);
+        $this->assertSame('ISBN musi się składać tylko z cyfr, myślników i znaków "X"!', $errors['ISBN']);
         $this->assertSame('Podaj imię i nazwisko autora', $errors['authors']);
     }
 
     public function testItShouldUpdateItselfFromJson()
     {
-        $book = new Book('Fiodor Dostojewski', '0123456789', 19.99);
+        $book = new Book('Fiodor Dostojewski');
+        $book->setISBN('0123456789');
+        $book->setPrice(19.99);
         $book->addAuthor(new Author('Stanisław', 'Lem'));
 
         $bookFromRequest = [
@@ -206,6 +209,48 @@ class BookTest extends TestCase
             'events' => [],
         ];
         $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());
+    }
+
+    public function testISBNWithTenDigitsShouldBeValid()
+    {
+        $book = new Book('Testing ISBN');
+        $book->setISBN('1234567890');
+        $this->assertSame(true, $book->validate());
+    }
+
+    public function testISBNWithThirteenDigitsShouldBeValid()
+    {
+        $book = new Book('Testing ISBN');
+        $book->setISBN('1234567890123');
+        $this->assertSame(true, $book->validate());
+    }
+
+    public function testISBNWithTwelveDigitsAndXAndFourDashesShouldBeValid()
+    {
+        $book = new Book('Testing ISBN');
+        $book->setISBN('123-45-678901-2-X');
+        $book->validate();
+        $this->assertSame(true, $book->validate());
+    }
+
+    public function testItShouldEmitErrorWhenISBNHasInvalidNumberOfDigitsOrX()
+    {
+        $book = new Book('Testing ISBN');
+        $book->setISBN('123456789');
+        $this->assertSame(false, $book->validate());
+        $book->setISBN('12345678901');
+        $this->assertSame(false, $book->validate());
+        $book->setISBN('123456789X1234');
+        $this->assertSame(false, $book->validate());
+        $book->setISBN('123456789012345678');
+        $this->assertSame(false, $book->validate());
+    }
+
+    public function testISBNShouldHaveOnlyNumbersDashesAndX()
+    {
+        $book = new Book('Testing ISBN');
+        $book->setISBN('123456789012a');
+        $this->assertSame(false, $book->validate());
     }
 }
 
