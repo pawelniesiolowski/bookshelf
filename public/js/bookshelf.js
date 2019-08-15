@@ -196,8 +196,11 @@ const Bookshelf = function () {
         fetchBooks(getPath)
             .then(decode)
             .then(function (data) {
-                const text = 'Czy na pewno chcesz usunąć książkę: ' + data.book.author.name + ' ' +
-                    data.book.author.surname + ' "' + data.book.title + '"?';
+                let displayedAuthor = '';
+                if (Object.keys(data.book.author).length > 0) {
+                    displayedAuthor = data.book.author.name + ' ' + data.book.author.surname;
+                }
+                const text = 'Czy na pewno chcesz usunąć książkę: ' + displayedAuthor + ' "' + data.book.title + '"?';
                 const approvalDiv = BookshelfElements.deleteDiv(text, function () {
                     ModalWindow.closeModal(); 
                     doDeleteBook(deletePath)
