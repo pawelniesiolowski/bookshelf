@@ -61,14 +61,15 @@ const Bookshelf = function () {
 
     const createBook = function (e) {
         e.preventDefault();
-        const path = e.target.getAttribute('action');
+        const form = e.target;
+        const path = form.getAttribute('action');
         const book = Book.create(e.target.elements);
         doCreateBook(book, path)
             .then(function () {
                 loadBooks();
             })
             .catch(function (errors) {
-                console.log(errors);
+                ErrorsHandler.show(form, errors);
             });
     };
 
