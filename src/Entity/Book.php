@@ -135,7 +135,7 @@ class Book implements \JsonSerializable
             'ISBN' => $this->ISBN ?? '',
             'price' => $this->price,
             'copies' => $this->copies,
-            'author' => $this->createSingleJsonSerializableAuthor(),
+            'authors' => $this->createJsonSerializableSortedAuthors(),
         ];
     }
 
@@ -202,30 +202,21 @@ class Book implements \JsonSerializable
     {
         $text = '';
         $authors = $this->authors->toArray();
-        if (count($authors) > 0) {
-            $text .= $authors[0]->__toString() . ' ';
+        $numOfAuthors = count($authors);
+        for ($i = 0; $i < $numOfAuthors; $i++) {
+            $text .= $authors[$i]->__toString();
+            $text .= ($i < $numOfAuthors - 1 ? ', ' : ' ');
         }
         $text .= '"' . $this->title . '"';
         return $text;
     }
 
-    private function createSingleJsonSerializableAuthor(): array
-    {
-        $authors = $this->authors->toArray();
-        $author = array_shift($authors);
-        return $author ? $author->toArray() : [];
-    }
-
     private function createJsonSerializableSortedAuthors(): array
     {
         $authors = $this->authors->toArray();
-
-        usort($authors, 'strnatcasecmp');
-
         $authors = array_map(function($author) {
-            return $author->__toString();
+            return $author->toArray();
         }, $authors);
-
         return $authors;
     }
 
@@ -288,9 +279,9 @@ class Book implements \JsonSerializable
 
     private function validateAuthors(): void
     {
-        foreach ($this->authors as $author) {
-            if (!$author->validate()) {
-                $this->errors = array_merge($this->errors, $author->getErrors());
+        for ($i = 0; $i < count($this->authors); $i++) {
+            if (!$this->authors[$i]->validate()) {
+                $this->errors['authors'][$i] = $this->authors[$i]->getErrors();
             }
         }
     }

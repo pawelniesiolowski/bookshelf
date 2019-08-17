@@ -11,22 +11,10 @@ use App\Entity\Receiver;
 
 class BookTest extends TestCase
 {
-    private $author;
     private $receiver;
 
     public function setUp()
     {
-        $this->author = $this->createMock(Author::class);
-        $this->author->method('validate')
-            ->will($this->returnValue(true));
-        $this->author->method('toArray')
-            ->will($this->returnValue([
-                'name' => 'Fiodor',
-                'surname' => 'Dostojewski',
-            ]));
-        $this->author->method('__toString')
-            ->will($this->returnValue('Dostojewski Fiodor'));
-
         $this->receiver = $this->createMock(Receiver::class);
         $this->receiver->method('__toString')
             ->will($this->returnValue('Mazur Justyna'));
@@ -37,12 +25,8 @@ class BookTest extends TestCase
         $book = new Book('Bracia Karamazow');
         $book->setISBN('0123456789');
         $book->setPrice(29.99);
-        $book->addAuthor($this->author);
-
-        $secondAuthor = $this->createMock(Author::class);
-        $secondAuthor->method('validate')
-            ->will($this->returnValue(true));
-        $book->addAuthor($secondAuthor);
+        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
+        $book->addAuthor(new Author('Michaił', 'Bułhakow'));
 
         $jsonSerializeData = [
             'id' => null,
@@ -50,12 +34,17 @@ class BookTest extends TestCase
             'ISBN' => '0123456789',
             'price' => 29.99,
             'copies' => 0,
-            'author' => [
-                'name' => 'Fiodor',
-                'surname' => 'Dostojewski',
+            'authors' => [
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
+                [
+                    'name' => 'Michaił',
+                    'surname' => 'Bułhakow',
+                ],
             ],
         ];
-        $book->validate();
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
@@ -69,7 +58,7 @@ class BookTest extends TestCase
             'ISBN' => '',
             'price' => 0.0,
             'copies' => 0,
-            'author' => [],
+            'authors' => [],
         ];
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
@@ -80,14 +69,19 @@ class BookTest extends TestCase
         $book = new Book('Bracia Karamazow');
         $book->setISBN('0123456789');
         $book->setPrice(29.99);
-        $book->addAuthor($this->author);
+        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
         $jsonSerializeData = [
             'id' => null,
             'title' => 'Bracia Karamazow',
             'ISBN' => '0123456789',
             'price' => 29.99,
             'copies' => 0,
-            'authors' => ['Dostojewski Fiodor'],
+            'authors' => [
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
+            ],
             'events' => [],
         ];
         $this->assertSame(true, $book->validate());
@@ -109,7 +103,7 @@ class BookTest extends TestCase
     public function testItCanBeUsedAsString()
     {
         $book = new Book('Bracia Karamazow');
-        $book->addAuthor($this->author);
+        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
         $this->assertSame(true, $book->validate());
         $this->assertSame('Dostojewski Fiodor "Bracia Karamazow"', $book->__toString());
     }
@@ -175,8 +169,8 @@ class BookTest extends TestCase
 
         $this->assertSame('Podaj tytuł', $errors['title']);
         $this->assertSame('ISBN musi się składać tylko z cyfr, myślników i znaków "X"!', $errors['ISBN']);
-        $this->assertSame('Podaj imię autora', $errors['authorName']);
-        $this->assertSame('Podaj nazwisko autora', $errors['authorSurname']);
+        $this->assertSame('Podaj imię autora', $errors['authors'][0]['authorName']);
+        $this->assertSame('Podaj nazwisko autora', $errors['authors'][0]['authorSurname']);
         $this->assertSame('Cena książki nie może być wyższa niż 99999.00 zł', $errors['price']);
     }
 
@@ -208,7 +202,12 @@ class BookTest extends TestCase
             'ISBN' => '1234567890',
             'price' => 39.99,
             'copies' => 0,
-            'authors' => ['Dostojewski Fiodor'],
+            'authors' => [
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
+            ],
             'events' => [],
         ];
         $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());

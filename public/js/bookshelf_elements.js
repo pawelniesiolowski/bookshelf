@@ -4,9 +4,7 @@ const BookshelfElements = function () {
         for (let book of books) {
             const tr = document.createElement('tr');
             const td1 = document.createElement('td');
-            if (Object.keys(book.author).length > 0) {
-                td1.textContent = book.author.surname + ' ' + book.author.name;
-            }
+            td1.textContent = Authors.createDisplayedAuthors(book.authors);
             tr.appendChild(td1);
             const td2 = document.createElement('td');
             td2.textContent = book.title;
@@ -130,33 +128,15 @@ const BookshelfElements = function () {
 
         const authorGroup = document.createElement('div');
         authorGroup.setAttribute('class', 'form-group');
-        const surnameLabel = document.createElement('label');
-        surnameLabel.setAttribute('for', 'book-edit-form-author-surname');
-        surnameLabel.textContent = 'Nazwisko autora';
-        const surnameInput = document.createElement('input');
-        surnameInput.setAttribute('type', 'text');
-        surnameInput.setAttribute('name', 'authorSurname');
-        surnameInput.setAttribute('id', 'book-edit-form-author-surname');
-        surnameInput.setAttribute('class', 'form-control');
-        if (Object.keys(book.author).length > 0) {
-            surnameInput.setAttribute('value', book.author.surname);
-        }
-        authorGroup.appendChild(surnameLabel);
-        authorGroup.appendChild(surnameInput);
 
-        const nameLabel = document.createElement('label');
-        nameLabel.setAttribute('for', 'book-edit-form-author-name');
-        nameLabel.textContent = 'Imię autora';
-        const nameInput = document.createElement('input');
-        nameInput.setAttribute('type', 'text');
-        nameInput.setAttribute('name', 'authorName');
-        nameInput.setAttribute('id', 'book-edit-form-author-name');
-        nameInput.setAttribute('class', 'form-control');
-        if (Object.keys(book.author).length > 0) {
-            nameInput.setAttribute('value', book.author.name);
+        const authorsLength = Object.keys(book.authors).length;
+        if (authorsLength > 0) {
+            for (let i = 0; i < authorsLength; i++) {
+                createAuthorElements(book.authors[i].name, book.authors[i].surname, authorGroup, i);
+            }
+        } else {
+            createAuthorElements('', '', authorGroup, 0);
         }
-        authorGroup.appendChild(nameLabel);
-        authorGroup.appendChild(nameInput);
         form.appendChild(authorGroup);
         
         const bookGroup = document.createElement('div');
@@ -216,14 +196,37 @@ const BookshelfElements = function () {
         return form;
     };
 
+    const createAuthorElements = function (name, surname, div, i) {
+        const surnameLabel = document.createElement('label');
+        surnameLabel.setAttribute('for', 'book-edit-form-author-surname' + '[' +  i + ']');
+        surnameLabel.textContent = 'Nazwisko autora';
+        const surnameInput = document.createElement('input');
+        surnameInput.setAttribute('type', 'text');
+        surnameInput.setAttribute('name', 'authorSurname[' + i + ']');
+        surnameInput.setAttribute('id', 'book-edit-form-author-surname' + '[' + i + ']');
+        surnameInput.setAttribute('class', 'form-control');
+        surnameInput.setAttribute('value', surname);
+        div.appendChild(surnameLabel);
+        div.appendChild(surnameInput);
+
+        const nameLabel = document.createElement('label');
+        nameLabel.setAttribute('for', 'book-edit-form-author-name' + '[' + i + ']');
+        nameLabel.textContent = 'Imię autora';
+        const nameInput = document.createElement('input');
+        nameInput.setAttribute('type', 'text');
+        nameInput.setAttribute('name', 'authorName[' + i + ']');
+        nameInput.setAttribute('id', 'book-edit-form-author-name' + '[' + i + ']');
+        nameInput.setAttribute('class', 'form-control');
+        nameInput.setAttribute('value', name);
+        div.appendChild(nameLabel);
+        div.appendChild(nameInput);
+    };
+
     const releaseDiv = function (book) {
         const div = document.createElement('div');
         const text = document.createElement('h2');
         text.setAttribute('class', 'text-center');
-        let displayedAuthor = '';
-        if (Object.keys(book.author).length > 0) {
-            displayedAuthor = book.author.name + ' ' + book.author.surname;
-        }
+        const displayedAuthor = Authors.createDisplayedAuthors(book.authors);
         text.textContent = 'Wydajesz książkę: ' + displayedAuthor  + ' "' + book.title + '"';
         div.appendChild(text);
         return div;

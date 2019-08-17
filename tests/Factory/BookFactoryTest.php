@@ -43,7 +43,10 @@ class BookFactoryTest extends TestCase
             'ISBN' => '1234567890',
             'price' => 39.99,
             'authors' => [
-                'Dostojewski Fiodor',
+                [
+                    'name' => 'Fiodor',
+                    'surname' => 'Dostojewski',
+                ],
             ],
         ];
         $jsonSerializedBook = $book->jsonSerializeExtended();

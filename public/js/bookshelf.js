@@ -17,6 +17,11 @@ const Bookshelf = function () {
         bookshelfTable.addEventListener('click', function (e) { checkEvent(e); });
         newBook.addEventListener('submit', function (e) { createBook(e); });
         loadBooks();
+        const addAuthorButton = document.getElementById('bookshelf-new-book-addAuthor');
+        addAuthorButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            Authors.addAuthor();
+        });
     };
 
     const checkEvent = function (e) {
@@ -70,7 +75,7 @@ const Bookshelf = function () {
                 loadBooks();
             })
             .catch(function (errors) {
-                ErrorsHandler.show(form, errors);
+                ErrorsHandler.show(form, JSON.parse(errors).errors);
             });
     };
 
@@ -197,11 +202,8 @@ const Bookshelf = function () {
         fetchBooks(getPath)
             .then(decode)
             .then(function (data) {
-                let displayedAuthor = '';
-                if (Object.keys(data.book.author).length > 0) {
-                    displayedAuthor = data.book.author.name + ' ' + data.book.author.surname;
-                }
-                const text = 'Czy na pewno chcesz usunąć książkę: ' + displayedAuthor + ' "' + data.book.title + '"?';
+                const displayedAuthors = Authors.createDisplayedAuthors(data.book.authors);
+                const text = 'Czy na pewno chcesz usunąć książkę: ' + displayedAuthors + ' "' + data.book.title + '"?';
                 const approvalDiv = BookshelfElements.deleteDiv(text, function () {
                     ModalWindow.closeModal(); 
                     doDeleteBook(deletePath)
