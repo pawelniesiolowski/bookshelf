@@ -235,12 +235,15 @@ const Bookshelf = function () {
                 const form = BookshelfElements.editForm(data.book);
                 form.addEventListener('submit', function (e) { 
                     e.preventDefault();
-                    ModalWindow.closeModal(); 
+                    ErrorsHandler.reset(form);
                     const data = Book.create(e.target.elements)
                     doEditBook(data, editPath)
-                        .then(loadBooks)
+                        .then(function () {
+                            ModalWindow.closeModal();
+                            loadBooks();
+                        })
                         .catch(function (errors) {
-                            console.log(errors);
+                            ErrorsHandler.show(form, JSON.parse(errors).errors);
                         });
                 });
                 div.appendChild(form);

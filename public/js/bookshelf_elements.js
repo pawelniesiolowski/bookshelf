@@ -154,8 +154,11 @@ const BookshelfElements = function () {
         title.setAttribute('id', 'book-edit-form-title');
         title.setAttribute('class', 'form-control');
         title.setAttribute('value', book.title);
+        const titleError = document.createElement('div');
+        titleError.setAttribute('class', 'form-error error-title');
         bookGroup.appendChild(titleLabel);
         bookGroup.appendChild(title);
+        bookGroup.appendChild(titleError);
 
         const isbnLabel = document.createElement('label');
         isbnLabel.setAttribute('for', 'book-edit-form-isbn');
@@ -166,8 +169,11 @@ const BookshelfElements = function () {
         isbnInput.setAttribute('id', 'book-edit-form-isbn');
         isbnInput.setAttribute('class', 'form-control');
         isbnInput.setAttribute('value', book.ISBN);
+        const isbnError = document.createElement('div');
+        isbnError.setAttribute('class', 'form-error error-ISBN');
         bookGroup.appendChild(isbnLabel);
         bookGroup.appendChild(isbnInput);
+        bookGroup.appendChild(isbnError);
 
         const priceLabel = document.createElement('label');
         priceLabel.setAttribute('for', 'book-edit-form-price');
@@ -178,8 +184,11 @@ const BookshelfElements = function () {
         priceInput.setAttribute('id', 'book-edit-form-price');
         priceInput.setAttribute('class', 'form-control');
         priceInput.setAttribute('value', book.price);
+        const priceError = document.createElement('div');
+        priceError.setAttribute('class', 'form-error error-price');
         bookGroup.appendChild(priceLabel);
         bookGroup.appendChild(priceInput);
+        bookGroup.appendChild(priceError);
         form.appendChild(bookGroup);
 
 
@@ -201,28 +210,34 @@ const BookshelfElements = function () {
 
     const createAuthorElements = function (name, surname, div, i) {
         const surnameLabel = document.createElement('label');
-        surnameLabel.setAttribute('for', 'book-edit-form-author-surname' + '[' +  i + ']');
+        surnameLabel.setAttribute('for', 'book-edit-form-authorSurname' + '[' +  i + ']');
         surnameLabel.textContent = 'Nazwisko autora';
         const surnameInput = document.createElement('input');
         surnameInput.setAttribute('type', 'text');
         surnameInput.setAttribute('name', 'authorSurname[' + i + ']');
-        surnameInput.setAttribute('id', 'book-edit-form-author-surname' + '[' + i + ']');
+        surnameInput.setAttribute('id', 'book-edit-form-authorSurname' + '[' + i + ']');
         surnameInput.setAttribute('class', 'form-control');
         surnameInput.setAttribute('value', surname);
+        const surnameError = document.createElement('div');
+        surnameError.setAttribute('class', 'form-error error-authorSurname[' + i + ']');
         div.appendChild(surnameLabel);
         div.appendChild(surnameInput);
+        div.appendChild(surnameError);
 
         const nameLabel = document.createElement('label');
-        nameLabel.setAttribute('for', 'book-edit-form-author-name' + '[' + i + ']');
+        nameLabel.setAttribute('for', 'book-edit-form-authorName' + '[' + i + ']');
         nameLabel.textContent = 'Imię autora';
         const nameInput = document.createElement('input');
         nameInput.setAttribute('type', 'text');
         nameInput.setAttribute('name', 'authorName[' + i + ']');
-        nameInput.setAttribute('id', 'book-edit-form-author-name' + '[' + i + ']');
+        nameInput.setAttribute('id', 'book-edit-form-authorName' + '[' + i + ']');
         nameInput.setAttribute('class', 'form-control');
         nameInput.setAttribute('value', name);
+        const nameError = document.createElement('div');
+        nameError.setAttribute('class', 'form-error error-authorName[' + i + ']');
         div.appendChild(nameLabel);
         div.appendChild(nameInput);
+        div.appendChild(nameError);
     };
 
     const releaseDiv = function (book) {

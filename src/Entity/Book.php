@@ -251,7 +251,7 @@ class Book implements \JsonSerializable
         if ($this->title === '') {
             $this->addError('title', 'Podaj tytuł');
         } else if (mb_strlen($this->title, 'utf8') > 100) {
-            $this->addError('title', 'Tytuł nie może być dłuższy niż 100 znaków!');
+            $this->addError('title', 'Tytuł nie może być dłuższy niż 100 znaków');
         }
     }
 
@@ -260,19 +260,19 @@ class Book implements \JsonSerializable
         $isbn = $this->ISBN;
         $digits = str_ireplace(['-', 'X'], '', $isbn);
         if (!is_numeric($digits)) {
-            $this->addError('ISBN', 'ISBN musi się składać tylko z cyfr, myślników i znaków "X"!');
+            $this->addError('ISBN', 'ISBN musi się składać tylko z cyfr, myślników i znaków "X"');
             return;
         }
 
         $digitsAndX = str_ireplace('-', '', $isbn);;
         $length = strlen($digitsAndX);
         if ($length !== 10 && $length !== 13) {
-            $this->addError('ISBN', 'ISBN powinien mieć 10 lub 13 cyfr (w tym znak X)!');
+            $this->addError('ISBN', 'ISBN powinien mieć 10 lub 13 cyfr (możliwy jest też znak X)');
             return;
         }
 
         if (strlen($isbn) > 17) {
-            $this->addError('ISBN', 'ISBN razem z myślnikami może mieć maksymalnie 17 znaków!');
+            $this->addError('ISBN', 'ISBN razem z myślnikami może mieć maksymalnie 17 znaków');
             return;
         }
     }

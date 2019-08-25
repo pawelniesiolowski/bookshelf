@@ -168,7 +168,7 @@ class BookTest extends TestCase
         $errors = $book->getErrors();
 
         $this->assertSame('Podaj tytuł', $errors['title']);
-        $this->assertSame('ISBN musi się składać tylko z cyfr, myślników i znaków "X"!', $errors['ISBN']);
+        $this->assertSame('ISBN musi się składać tylko z cyfr, myślników i znaków "X"', $errors['ISBN']);
         $this->assertSame('Podaj imię autora', $errors['authors'][0]['authorName']);
         $this->assertSame('Podaj nazwisko autora', $errors['authors'][0]['authorSurname']);
         $this->assertSame('Cena książki nie może być wyższa niż 99999.00 zł', $errors['price']);
