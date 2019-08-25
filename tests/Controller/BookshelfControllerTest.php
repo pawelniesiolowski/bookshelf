@@ -134,7 +134,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiverId' => 1,
+            'receiver' => 1,
             'comment' => 'Test',
         ];
 
@@ -148,6 +148,24 @@ class BookshelfControllerTest extends FunctionalTestCase
         $this->assertSame(1, $serializedBook['copies']);
     }
 
+    public function testItShouldReturnProperErrorWhenReleaseBookWithEmptyString()
+    {
+        $book = new Book('Bracia Karamazow');
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $data = [
+            'copies' => '',
+            'receiver' => 1,
+            'comment' => 'Test',
+        ];
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+
+        $this->assertSame(422, $response->getStatusCode());
+    }
+
     public function testItShouldReturnProperErrorsWhenReceiverIdIsInvalid()
     {
         $book = new Book('Bracia Karamazow', '0123456789', 29.99);
@@ -157,7 +175,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiverId' => 1,
+            'receiver' => 1,
         ];
 
         $client = static::createClient();
@@ -168,7 +186,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $this->assertSame(422, $response->getStatusCode());
         $this->assertArrayHasKey('errors', $content);
-        $this->assertArrayHasKey('receiverId', $content['errors']);
+        $this->assertArrayHasKey('receiver', $content['errors']);
     }
     
     public function testItShouldReturnProperErrorsWhenThereIsLessCopiesThenZero()
@@ -184,7 +202,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => -4,
-            'receiverId' => 1,
+            'receiver' => 1,
             'comment' => 'Test',
         ];
 

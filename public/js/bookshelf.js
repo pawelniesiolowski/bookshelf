@@ -153,10 +153,9 @@ const Bookshelf = function () {
         const form = BookshelfElements.releaseForm(data.receivers);
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            ModalWindow.closeModal();
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
-                receiverId: e.target.elements.namedItem('receivers').value,
+                receiver: e.target.elements.namedItem('receiver').value,
                 comment: e.target.elements.namedItem('comment').value,
             };
             emitBookChangeEvent(data, path, form);

@@ -248,8 +248,11 @@ const BookshelfElements = function () {
         copiesInput.setAttribute('name', 'copies');
         copiesInput.setAttribute('id', 'book-release-form-copies');
         copiesInput.setAttribute('class', 'form-control');
+        const copiesErrorDiv = document.createElement('div');
+        copiesErrorDiv.setAttribute('class', 'form-error error-copies');
         copiesGroup.appendChild(copiesLabel);
         copiesGroup.appendChild(copiesInput);
+        copiesGroup.appendChild(copiesErrorDiv);
 
         const receiversGroup = document.createElement('div');
         receiversGroup.setAttribute('class', 'form-group');
@@ -257,7 +260,7 @@ const BookshelfElements = function () {
         receiverLabel.setAttribute('for', 'book-release-form-receiver');
         receiverLabel.textContent = 'Pobierający książki';
         const receiverSelect = document.createElement('select');
-        receiverSelect.setAttribute('name', 'receivers');
+        receiverSelect.setAttribute('name', 'receiver');
         receiverSelect.setAttribute('id', 'book-release-form-receiver');
         receiverSelect.setAttribute('class', 'form-control');
         for (const receiver of receivers) {
@@ -266,8 +269,11 @@ const BookshelfElements = function () {
             receiverOption.textContent = receiver.name;
             receiverSelect.appendChild(receiverOption);
         }
+        const receiversErrorDiv = document.createElement('div');
+        receiversErrorDiv.setAttribute('class', 'form-error error-receiver');
         receiversGroup.appendChild(receiverLabel);
         receiversGroup.appendChild(receiverSelect);
+        receiversGroup.appendChild(receiversErrorDiv);
         
         const commentGroup = document.createElement('div');
         commentGroup.setAttribute('class', 'form-group');
@@ -278,8 +284,11 @@ const BookshelfElements = function () {
         text.setAttribute('name', 'comment');
         text.setAttribute('id', 'book-release-form-comment');
         text.setAttribute('class', 'form-control');
+        const commentErrorDiv = document.createElement('div');
+        commentErrorDiv.setAttribute('class', 'form-error error-comment');
         commentGroup.appendChild(commentLabel);
         commentGroup.appendChild(text);
+        commentGroup.appendChild(commentErrorDiv);
 
         const buttonsGroup = document.createElement('div');
         buttonsGroup.setAttribute('class', 'form-group text-center');
