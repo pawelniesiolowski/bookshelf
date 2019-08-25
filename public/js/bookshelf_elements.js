@@ -73,6 +73,9 @@ const BookshelfElements = function () {
         input.setAttribute('name', 'copies');
         input.setAttribute('class', 'form-control');
         group.appendChild(input);
+        const errorDiv = document.createElement('div');
+        errorDiv.setAttribute('class', 'form-error error-copies');
+        group.appendChild(errorDiv);
         const div = document.createElement('div');
         div.setAttribute('class', 'text-center');
         form.appendChild(div);

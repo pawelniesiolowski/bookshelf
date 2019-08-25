@@ -40,6 +40,8 @@ class BookshelfController extends AbstractController
             $book->receive($data['copies']);
         } catch (BookException $e) {
             return $this->json(['errors' => ['copies' => $e->getMessage()]], 422);
+        } catch (\TypeError $e) {
+            return $this->json(['errors' => ['copies' => 'Ilość egzemplarzy musi być liczbą większą od zera']], 422);
         }
 
         $this->entityManager->persist($book);

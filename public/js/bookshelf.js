@@ -107,11 +107,10 @@ const Bookshelf = function () {
                 const form = BookshelfElements.simpleBookActionForm(data.book);
                 form.addEventListener('submit', function (e) { 
                     e.preventDefault();
-                    ModalWindow.closeModal(); 
                     const data = {
                         copies: e.target.elements.namedItem('copies').value,
                     };
-                    emitBookChangeEvent(data, receivePath);
+                    emitBookChangeEvent(data, receivePath, form);
                 });
                 const div = BookshelfElements.simpleBookActionDiv(data.book, 'dodać');
                 div.appendChild(form);
@@ -160,7 +159,7 @@ const Bookshelf = function () {
                 receiverId: e.target.elements.namedItem('receivers').value,
                 comment: e.target.elements.namedItem('comment').value,
             };
-            emitBookChangeEvent(data, path);
+            emitBookChangeEvent(data, path, form);
         });
         div.appendChild(form);
         ModalWindow.init(div);
@@ -188,7 +187,7 @@ const Bookshelf = function () {
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
             };
-            emitBookChangeEvent(data, sellPath);
+            emitBookChangeEvent(data, sellPath, form);
         });
         const div = BookshelfElements.simpleBookActionDiv(data.book, 'sprzedać');
         div.appendChild(form);
@@ -270,11 +269,15 @@ const Bookshelf = function () {
         });
     };
 
-    const emitBookChangeEvent = function (data, path) {
+    const emitBookChangeEvent = function (data, path, form) {
+        ErrorsHandler.reset(form);
         doEmitBookChangeEvent(data, path)
-            .then(loadBooks)
+            .then(function () {
+                ModalWindow.closeModal();
+                loadBooks();
+            })
             .catch(function (errors) {
-                console.log(errors);
+                ErrorsHandler.show(form, JSON.parse(errors).errors);
             });
     };
 
