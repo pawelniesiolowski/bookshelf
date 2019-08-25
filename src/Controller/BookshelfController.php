@@ -83,6 +83,8 @@ class BookshelfController extends AbstractController
             $book->sell($data['copies']);
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
+        } catch (\TypeError $e) {
+            return $this->json(['errors' => ['copies' => 'Ilość egzemplarzy musi być liczbą większą od zera']], 422);
         }
 
         if (count($errors) > 0) {

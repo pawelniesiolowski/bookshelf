@@ -183,7 +183,6 @@ const Bookshelf = function () {
         const form = BookshelfElements.simpleBookActionForm(data.book);
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            ModalWindow.closeModal();
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
             };

@@ -219,5 +219,19 @@ class BookshelfControllerTest extends FunctionalTestCase
         $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
         $this->assertSame(3, $serializedBook['copies']);
     }
+
+    public function testItShouldReturnProperErrorWhenSellsBookWithEmptyString()
+    {
+        $book = new Book('Bracia Karamazow');
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $data = ['copies' => ''];
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('POST', '/sell/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+
+        $this->assertSame(422, $response->getStatusCode());
+    }
 }
 
