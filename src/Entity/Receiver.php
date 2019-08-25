@@ -92,14 +92,14 @@ class Receiver implements \JsonSerializable
     private function validateName(): void
     {
         if (!is_string($this->name) || $this->name === '') {
-            $this->addError('name', 'Imię osoby, która może pobrać książki jest wymagane');
+            $this->addError('name', 'Imię użytkownika jest wymagane');
         }
     }
 
     private function validateSurname(): void
     {
         if (!is_string($this->name) || $this->surname === '') {
-            $this->addError('surname', 'Nazwisko osoby, która może pobrać książki jest wymagane');
+            $this->addError('surname', 'Nazwisko użytkownika jest wymagane');
         }
     }
 

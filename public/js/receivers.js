@@ -11,6 +11,7 @@ const Receivers = function () {
         const newReceiver = document.getElementById('bookshelf-new-receiver');
         newReceiver.addEventListener('submit', function (e) {
             e.preventDefault();
+            ErrorsHandler.reset(newReceiver);
             const receiver = Receiver.create(e.target.elements);
             const path = e.target.getAttribute('action');
             post(receiver, path)
@@ -18,7 +19,7 @@ const Receivers = function () {
                     loadReceivers(paths.index);
                 })
                 .catch(function (errors) {
-                    console.log(errors);
+                    ErrorsHandler.show(newReceiver, JSON.parse(errors).errors);
                 });
         });
         table.addEventListener('click', function (e) { e.preventDefault(); checkEvent(e); });
@@ -126,12 +127,15 @@ const Receivers = function () {
                 const form = ReceiversElements.editForm(data.receiver);
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
-                    ModalWindow.closeModal();
+                    ErrorsHandler.reset(form);
                     const data = Receiver.create(e.target.elements)
                     doEditReceiver(data, editPath)
-                        .then(loadReceivers)
+                        .then(function () {
+                            ModalWindow.closeModal();
+                            loadReceivers();
+                        })
                         .catch(function (errors) {
-                            console.log(errors);
+                            ErrorsHandler.show(form, JSON.parse(errors).errors);
                         });
                 });
                 div.appendChild(form);

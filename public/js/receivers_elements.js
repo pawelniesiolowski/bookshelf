@@ -49,8 +49,11 @@ const ReceiversElements = function () {
         surnameInput.setAttribute('id', 'receiver-edit-form-surname');
         surnameInput.setAttribute('class', 'form-control');
         surnameInput.setAttribute('value', receiver[0]);
+        const surnameError = document.createElement('div');
+        surnameError.setAttribute('class', 'form-error error-surname');
         receiverGroup.appendChild(surnameLabel);
         receiverGroup.appendChild(surnameInput);
+        receiverGroup.appendChild(surnameError);
 
         const nameLabel = document.createElement('label');
         nameLabel.setAttribute('for', 'receiver-edit-form-name');
@@ -61,8 +64,11 @@ const ReceiversElements = function () {
         nameInput.setAttribute('id', 'receiver-edit-form-name');
         nameInput.setAttribute('class', 'form-control');
         nameInput.setAttribute('value', receiver[1]);
+        const nameError = document.createElement('div');
+        nameError.setAttribute('class', 'form-error error-name');
         receiverGroup.appendChild(nameLabel);
         receiverGroup.appendChild(nameInput);
+        receiverGroup.appendChild(nameError);
         form.appendChild(receiverGroup);
 
         const buttonsGroup = document.createElement('div');
