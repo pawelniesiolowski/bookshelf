@@ -151,8 +151,13 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReturnProperErrorWhenReleaseBookWithEmptyString()
     {
         $book = new Book('Bracia Karamazow');
+        $book->receive(5);
         $this->entityManager->persist($book);
+
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
         $this->entityManager->flush();
+
         $data = [
             'copies' => '',
             'receiver' => 1,
@@ -162,13 +167,16 @@ class BookshelfControllerTest extends FunctionalTestCase
         $client = static::createClient();
         $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
         $response = $client->getResponse();
+        $content = json_decode($response->getContent(), true);
 
         $this->assertSame(422, $response->getStatusCode());
+        $this->assertArrayHasKey('errors', $content);
+        $this->assertArrayHasKey('copies', $content['errors']);
     }
 
-    public function testItShouldReturnProperErrorsWhenReceiverIdIsInvalid()
+    public function testItShouldReturnProperErrorsWhenReceiverIdDoesNotExist()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $this->entityManager->persist($book);
         $this->entityManager->flush();
@@ -188,10 +196,36 @@ class BookshelfControllerTest extends FunctionalTestCase
         $this->assertArrayHasKey('errors', $content);
         $this->assertArrayHasKey('receiver', $content['errors']);
     }
+
+    public function testItShouldReturnProperErrorsWhenReceiverIdIsOfInvalidType()
+    {
+        $book = new Book('Bracia Karamazow');
+        $book->receive(5);
+        $this->entityManager->persist($book);
+
+        $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+
+        $data = [
+            'copies' => 4,
+            'receiver' => '',
+        ];
+
+        $client = static::createClient();
+
+        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $response = $client->getResponse();
+        $content = json_decode($response->getContent(), true);
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertArrayHasKey('errors', $content);
+        $this->assertArrayHasKey('receiver', $content['errors']);
+    }
     
     public function testItShouldReturnProperErrorsWhenThereIsLessCopiesThenZero()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $this->entityManager->persist($book);
         $this->entityManager->flush();

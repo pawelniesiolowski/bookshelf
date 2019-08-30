@@ -55,18 +55,21 @@ class BookshelfController extends AbstractController
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);
         $errors = [];
+
         try {
             $receiver = $receiverProvider->findOneById($data['receiver']);
-            $book->release($data['copies'], $receiver, $data['comment']);
-        } catch (NonUniqueResultException | NoResultException $e) {
+        } catch (\TypeError | NonUniqueResultException | NoResultException $e) {
             $errors['receiver'] = 'Wybierz osobę, która jest uprawniona do pobrania książek';
-        } catch (BookException $e) {
-            $errors['copies'] = $e->getMessage();
-        } catch (\TypeError $e) {
-            $errors['copies'] = 'Ilość egzemplarzy musi być liczbą większą od zera';
+            return $this->json(['errors' => $errors], 422);
         }
 
-        if (count($errors) > 0) {
+        try {
+            $book->release($data['copies'], $receiver, $data['comment']);
+        } catch (BookException $e) {
+            $errors['copies'] = $e->getMessage();
+            return $this->json(['errors' => $errors], 422);
+        } catch (\TypeError $e) {
+            $errors['copies'] = 'Ilość egzemplarzy musi być liczbą większą od zera';
             return $this->json(['errors' => $errors], 422);
         }
         
