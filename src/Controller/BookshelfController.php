@@ -85,7 +85,7 @@ class BookshelfController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $errors = [];
         try {
-            $book->sell($data['copies']);
+            $book->sell($data['copies'], $data['comment']);
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
         } catch (\TypeError $e) {

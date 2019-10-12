@@ -94,7 +94,7 @@ class BookChangeEvent
 
     public function textFromReceiverPerspective(): string
     {
-        return $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: ' . $this->book->__toString();
+        return $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: ' . $this->book->__toString() . '. Komentarz: ' . $this->getComment();
     }
 
     public function __toString()

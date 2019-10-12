@@ -179,11 +179,12 @@ const Bookshelf = function () {
     };
 
     const doSellBook = function (data, sellPath) {
-        const form = BookshelfElements.simpleBookActionForm(data.book);
+        const form = BookshelfElements.sellForm(data.book);
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             const data = {
                 copies: e.target.elements.namedItem('copies').value,
+                comment: e.target.elements.namedItem('comment').value,
             };
             emitBookChangeEvent(data, sellPath, form);
         });

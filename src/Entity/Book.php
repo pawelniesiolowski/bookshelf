@@ -110,7 +110,7 @@ class Book implements \JsonSerializable
         $this->addEvent($event);
     }
 
-    public function sell(int $num): void
+    public function sell(int $num, string $comment = ''): void
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
@@ -119,6 +119,7 @@ class Book implements \JsonSerializable
             new \DateTime('now'),
             $this
         );
+        $event->setComment($comment);
         $this->addEvent($event);
     }
 

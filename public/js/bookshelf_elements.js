@@ -92,6 +92,52 @@ const BookshelfElements = function () {
         return form;
     };
 
+    const sellForm = function (book) {
+        const form = document.createElement('form');
+        const group = document.createElement('div');
+        group.setAttribute('class', 'form-group');
+        form.appendChild(group);
+        const input = document.createElement('input');
+        input.setAttribute('type', 'number');
+        input.setAttribute('name', 'copies');
+        input.setAttribute('class', 'form-control');
+        group.appendChild(input);
+        const errorDiv = document.createElement('div');
+        errorDiv.setAttribute('class', 'form-error error-copies');
+        group.appendChild(errorDiv);
+
+        const commentGroup = document.createElement('div');
+        commentGroup.setAttribute('class', 'form-group');
+        const commentLabel = document.createElement('label');
+        commentLabel.setAttribute('for', 'book-sell-form-comment');
+        commentLabel.textContent = 'Komentarz';
+        const text = document.createElement('textarea');
+        text.setAttribute('name', 'comment');
+        text.setAttribute('id', 'book-sell-form-comment');
+        text.setAttribute('class', 'form-control');
+        const commentErrorDiv = document.createElement('div');
+        commentErrorDiv.setAttribute('class', 'form-error error-comment');
+        commentGroup.appendChild(commentLabel);
+        commentGroup.appendChild(text);
+        commentGroup.appendChild(commentErrorDiv);
+        form.appendChild(commentGroup);
+
+        const div = document.createElement('div');
+        div.setAttribute('class', 'text-center');
+        form.appendChild(div);
+        const saveButton = document.createElement('button');
+        saveButton.setAttribute('class', 'btn btn-success action-button');
+        saveButton.setAttribute('type', 'submit');
+        saveButton.textContent = 'Zapisz';
+        div.appendChild(saveButton);
+        const cancelButton = document.createElement('button');
+        cancelButton.setAttribute('class', 'btn btn-default action-button');
+        cancelButton.textContent = 'Anuluj';
+        cancelButton.addEventListener('click', function (e) { e.preventDefault(); ModalWindow.closeModal(); });
+        div.appendChild(cancelButton);
+        return form;
+    };
+
     const deleteDiv = function (textContent, deleteFunction) {
         const container = document.createElement('div');
         container.setAttribute('class', 'container');
@@ -330,6 +376,7 @@ const BookshelfElements = function () {
         tableBodyContent: tableBodyContent,
         simpleBookActionDiv: simpleBookActionDiv,
         simpleBookActionForm: simpleBookActionForm,
+        sellForm: sellForm,
         deleteDiv: deleteDiv,
         editForm: editForm,
         releaseDiv: releaseDiv,
