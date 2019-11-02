@@ -66,3 +66,7 @@ app_logout:
     path: /logout
     controller: App\Controller\SecurityController:logout
     methods: [GET]
+event_index:
+    path: /events
+    controller: App\Controller\EventController:index
+    methods: [GET]

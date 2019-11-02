@@ -107,6 +107,10 @@ class BookChangeEvent
         if ($this->receiver !== null) {
             $text .= ' Pobrał(a): ' . $this->receiver->__toString();
         }
+
+        if ($this->getComment() !== '') {
+            $text .= '. Komentarz: ' . $this->getComment();
+        }
         return $text;
     }
 

@@ -80,6 +80,19 @@ class BookChangeEventTest extends TestCase
         $this->assertSame('17-05-2019: wydano 3 egz. Pobrał(a): Mazur Justyna', $event->__toString());
     }
 
+    public function testReleaseBooksEventWithComment()
+    {
+        $event = new BookChangeEvent(
+            BookChangeEvent::RELEASE,
+            3,
+            new \DateTime('2019-05-17'),
+            $this->book,
+            $this->receiver
+        );
+        $event->setComment('Testowy komentarz');
+        $this->assertSame('17-05-2019: wydano 3 egz. Pobrał(a): Mazur Justyna. Komentarz: Testowy komentarz', $event->__toString());
+    }
+
     public function testSellBookEvent()
     {
         $event = new BookChangeEvent(

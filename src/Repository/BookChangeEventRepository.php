@@ -12,5 +12,10 @@ class BookChangeEventRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, BookChangeEvent::class);
     }
+
+    public function findAllOrderedByDateDesc(): array
+    {
+        return $this->findBy([], ['date' => 'DESC']);
+    }
 }
 
