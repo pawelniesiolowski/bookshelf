@@ -253,13 +253,14 @@ class BookshelfControllerTest extends FunctionalTestCase
 
     public function testItShouldSellBook()
     {
-        $book = new Book('Bracia Karamazow', '0123456789', 29.99);
+        $book = new Book('Bracia Karamazow');
         $book->receive(5);
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 
         $data = [
             'copies' => 2,
+            'comment' => '',
         ];
 
         $client = static::createClient();
@@ -277,7 +278,10 @@ class BookshelfControllerTest extends FunctionalTestCase
         $book = new Book('Bracia Karamazow');
         $this->entityManager->persist($book);
         $this->entityManager->flush();
-        $data = ['copies' => ''];
+        $data = [
+            'copies' => '',
+            'comment' => ''
+        ];
 
         $client = static::createClient();
         $client->xmlHttpRequest('POST', '/sell/1', [], [], [], json_encode($data));

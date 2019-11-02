@@ -105,5 +105,21 @@ class BookChangeEventTest extends TestCase
             $event->textFromReceiverPerspective()
         );
     }
+
+    public function testItCreatesTextFromReceiverPerspectiveWithComment()
+    {
+        $event = new BookChangeEvent(
+            BookChangeEvent::RELEASE,
+            3,
+            new \DateTime('2019-05-19'),
+            $this->book,
+            $this->receiver
+        );
+        $event->setComment('Testowy komentarz');
+        $this->assertSame(
+            '19-05-2019 pobrał(a) 3 egz.: Lem Stanisław "Solaris". Komentarz: Testowy komentarz',
+            $event->textFromReceiverPerspective()
+        );
+    }
 }
 
