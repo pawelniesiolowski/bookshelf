@@ -31,7 +31,7 @@ class AuthorProviderTest extends TestCase
         $this->authorRepository->method('findOneByNameAndSurname')
             ->with(
                 $this->equalTo('Fiodor'),
-                $this->equalTo('Dostojewski'),
+                $this->equalTo('Dostojewski')
             )
             ->will($this->returnValue($author));
         $authorProvider = new AuthorProvider($this->authorRepository);

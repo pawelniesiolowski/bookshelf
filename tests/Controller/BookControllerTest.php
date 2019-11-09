@@ -65,7 +65,7 @@ class BookControllerTest extends FunctionalTestCase
 
     public function testItShouldEditBook()
     {
-        $book = new Book('Zbrodnia i kara', '0123456789', 19.99);
+        $book = new Book('Zbrodnia i kara');
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 

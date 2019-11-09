@@ -10,7 +10,6 @@ use App\Repository\BookRepository;
 class BookRepositoryTest extends FunctionalTestCase
 {
     private $bookRepository;
-
     public function setUp()
     {
         parent::setUp();
@@ -20,9 +19,7 @@ class BookRepositoryTest extends FunctionalTestCase
     public function testItShouldGetBookFromDatabase()
     {
         $book = new Book(
-            'BraciaKaramazow',
-            '0123456789',
-            29.99
+            'BraciaKaramazow'
         );
         $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
         
@@ -35,15 +32,11 @@ class BookRepositoryTest extends FunctionalTestCase
     public function testItShouldGetAllBooksFromDatabase()
     {
         $book1 = new Book(
-            'BraciaKaramazow',
-            '0123456789',
-            29.99
+            'BraciaKaramazow'
         );
         $book1->addAuthor(new Author('Fiodor', 'Dostojewski'));
         $book2 = new Book(
-            'Idiota',
-            '9876543210',
-            39.99
+            'Idiota'
         );
         $book2->addAuthor(new Author('Fiodor', 'Dostojewski'));
         $books = [];
@@ -59,9 +52,9 @@ class BookRepositoryTest extends FunctionalTestCase
 
     public function testItShouldFindAllBooksOrderedByTitle()
     {
-        $firstBook = new Book('Solaris', '0987654321', 10.00);
-        $secondBook = new Book('Biblia', '0123456789', 50.00);
-        $thirdBook = new Book('Bracia Karamazow', '1234567890', 19.99);
+        $firstBook = new Book('Solaris');
+        $secondBook = new Book('Biblia');
+        $thirdBook = new Book('Bracia Karamazow');
 
         $this->entityManager->persist($firstBook);
         $this->entityManager->persist($secondBook);

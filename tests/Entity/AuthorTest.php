@@ -12,19 +12,13 @@ class AuthorTest extends TestCase
     {
         $lem = new Author('Stanisław', 'Lem');
         $pirx = new Book(
-            'Opowieści o pilocie Pirxie',
-            '0123456789',
-            19.99
+            'Opowieści o pilocie Pirxie'
         );
         $solaris = new Book(
-            'Solaris',
-            '1234567890',
-            39.99
+            'Solaris'
         );
         $voice = new Book(
-            'Głos Pana',
-            '9876543210',
-            50.00
+            'Głos Pana'
         );
         $lem->addBook($pirx);
         $lem->addBook($solaris);
