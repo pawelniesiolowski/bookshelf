@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Entity\BookChangeEvent;
 use App\Exception\BookException;
-use App\Entity\Receiver;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BookRepository")
  */
-class Book implements \JsonSerializable
+class Book implements JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -80,6 +80,10 @@ class Book implements \JsonSerializable
         }
     }
 
+    /**
+     * @param int $num
+     * @throws BookException
+     */
     public function receive(int $num): void
     {
         if ($num <= 0) {
@@ -90,19 +94,25 @@ class Book implements \JsonSerializable
         $event = new BookChangeEvent(
             BookChangeEvent::RECEIVE,
             $num,
-            new \DateTime('now'),
+            new DateTime('now'),
             $this
         );
         $this->addEvent($event);
     }
-    
+
+    /**
+     * @param int $num
+     * @param Receiver $receiver
+     * @param string $comment
+     * @throws BookException
+     */
     public function release(int $num, Receiver $receiver, string $comment = ''): void
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
             BookChangeEvent::RELEASE,
             $num,
-            new \DateTime('now'),
+            new DateTime('now'),
             $this,
             $receiver
         );
@@ -110,13 +120,18 @@ class Book implements \JsonSerializable
         $this->addEvent($event);
     }
 
+    /**
+     * @param int $num
+     * @param string $comment
+     * @throws BookException
+     */
     public function sell(int $num, string $comment = ''): void
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
             BookChangeEvent::SELL,
             $num,
-            new \DateTime('now'),
+            new DateTime('now'),
             $this
         );
         $event->setComment($comment);
@@ -125,7 +140,7 @@ class Book implements \JsonSerializable
 
     public function delete(): void
     {
-        $this->deletedAt = new \DateTime();
+        $this->deletedAt = new DateTime();
     }
 
     public function jsonSerialize(): array
@@ -229,6 +244,10 @@ class Book implements \JsonSerializable
         }, $events);
     }
 
+    /**
+     * @param int $num
+     * @throws BookException
+     */
     private function substractCopies(int $num): void
     {
         if ($num <= 0) {
@@ -301,4 +320,3 @@ class Book implements \JsonSerializable
         }
     }
 }
-
