@@ -17,3 +17,7 @@
 tags
 *.swp
 ###< my dev tools ###
+
+###> phpstorm ###
+/.idea/
+###< phpstorm ###
