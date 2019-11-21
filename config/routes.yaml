@@ -1,72 +1,68 @@
 website_index:
     path: /
-    controller: App\Controller\WebsiteController::index
+    controller: App\Shared\Controller\WebsiteController::index
     methods: [GET]
 website_receivers:
     path: /receivers
-    controller: App\Controller\WebsiteController::receivers
+    controller: App\Shared\Controller\WebsiteController::receivers
     methods: [GET]
 bookshelf_index:
     path: /books
-    controller: App\Controller\BookshelfController::index
+    controller: App\BookAction\Controller\BookshelfController::index
     methods: [GET]
 bookshelf_receive:
     path: /receive/{id}
-    controller: App\Controller\BookshelfController::receive
+    controller: App\BookAction\Controller\BookshelfController::receive
     methods: [POST]
 bookshelf_release:
     path: /release/{id}
-    controller: App\Controller\BookshelfController::release
+    controller: App\BookAction\Controller\BookshelfController::release
     methods: [POST]
 bookshelf_sell:
     path: /sell/{id}
-    controller: App\Controller\BookshelfController::sell
+    controller: App\BookAction\Controller\BookshelfController::sell
     methods: [POST]
 book_new:
     path: /books
-    controller: App\Controller\BookController::new
+    controller: App\Catalog\Controller\BookController::new
     methods: [POST]
 book_one:
     path: /books/{id}
-    controller: App\Controller\BookController:one
+    controller: App\Catalog\Controller\BookController:one
     methods: [GET]
 book_edit:
     path: /books/{id}
-    controller: App\Controller\BookController:edit
+    controller: App\Catalog\Controller\BookController:edit
     methods: [PUT]
 book_delete:
     path: /books/{id}
-    controller: App\Controller\BookController:delete
+    controller: App\Catalog\Controller\BookController:delete
     methods: [DELETE]
 receiver_new:
     path: /receiver
-    controller: App\Controller\ReceiverController:new
+    controller: App\Receiver\Controller\ReceiverController:new
     methods: [POST]
 receiver_index:
     path: /receiver
-    controller: App\Controller\ReceiverController:index
+    controller: App\Receiver\Controller\ReceiverController:index
     methods: [GET]
 receiver_one:
     path: /receiver/{id}
-    controller: App\Controller\ReceiverController:one
+    controller: App\Receiver\Controller\ReceiverController:one
     methods: [GET]
 receiver_delete:
     path: /receiver/{id}
-    controller: App\Controller\ReceiverController:delete
+    controller: App\Receiver\Controller\ReceiverController:delete
     methods: [DELETE]
 receiver_edit:
     path: /receiver/{id}
-    controller: App\Controller\ReceiverController:edit
+    controller: App\Receiver\Controller\ReceiverController:edit
     methods: [PUT]
 app_login:
     path: /login
-    controller: App\Controller\SecurityController:login
+    controller: App\Shared\Controller\SecurityController:login
     methods: [GET, POST]
 app_logout:
     path: /logout
-    controller: App\Controller\SecurityController:logout
-    methods: [GET]
-event_index:
-    path: /events
-    controller: App\Controller\EventController:index
+    controller: App\Shared\Controller\SecurityController:logout
     methods: [GET]

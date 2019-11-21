@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Entity;
+namespace App\BookAction\Persistence;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Exception\BookChangeEventException;
-use App\Entity\Receiver;
-use App\Entity\Book;
+use App\Receiver\Persistence\Receiver;
+use App\Catalog\Persistence\Book;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BookChangeEventRepository")

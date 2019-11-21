@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Catalog\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Factory\BookFactory;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Provider\BookProvider;
 use App\Provider\AuthorProvider;
-use App\Entity\Author;
+use App\Catalog\Persistence\Author;
 
 class BookController extends AbstractController
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Catalog\Persistence;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;

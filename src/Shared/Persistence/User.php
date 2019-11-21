@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Shared\Persistence;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;

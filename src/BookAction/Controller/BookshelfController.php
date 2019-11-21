@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\BookAction\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Exception\BookException;
-use App\Exception\BookChangeEventException;
 use App\Provider\BookProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Provider\ReceiverProvider;
