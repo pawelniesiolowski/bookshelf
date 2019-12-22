@@ -2,13 +2,14 @@
 
 namespace App\BookAction\Persistence;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use App\Exception\BookChangeEventException;
+use App\BookAction\Exception\BookChangeEventException;
 use App\Receiver\Persistence\Receiver;
 use App\Catalog\Persistence\Book;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BookChangeEventRepository")
+ * @ORM\Entity(repositoryClass="App\BookAction\Repository\BookChangeEventRepository")
  */
 class BookChangeEvent
 {
@@ -51,20 +52,29 @@ class BookChangeEvent
      */
     private $date;
     /**
-     * @ORM\ManyToOne(targetEntity="Book", inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="App\Catalog\Persistence\Book", inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
      */
     private $book;
     /**
-     * @ORM\ManyToOne(targetEntity="Receiver", inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="App\Receiver\Persistence\Receiver", inversedBy="events")
      * @ORM\JoinColumn(nullable=true)
      */
     private $receiver;
 
+    /**
+     * BookChangeEvent constructor.
+     * @param string $name
+     * @param int $num
+     * @param DateTime $date
+     * @param Book $book
+     * @param Receiver|null $receiver
+     * @throws BookChangeEventException
+     */
     public function __construct(
         string $name,
         int $num,
-        \DateTime $date,
+        DateTime $date,
         Book $book,
         Receiver $receiver = null
     ) {
@@ -129,6 +139,10 @@ class BookChangeEvent
         return $this->date->format('d-m-Y');
     }
 
+    /**
+     * @param string $name
+     * @throws BookChangeEventException
+     */
     private function validateName(string $name): void
     {
         if (!in_array($name, self::VALID_NAMES)) {
@@ -136,6 +150,10 @@ class BookChangeEvent
         }
     }
 
+    /**
+     * @param int $num
+     * @throws BookChangeEventException
+     */
     private function validateNum(int $num): void
     {
         if ($num <= 0) {
@@ -143,4 +161,3 @@ class BookChangeEvent
         }
     }
 }
-

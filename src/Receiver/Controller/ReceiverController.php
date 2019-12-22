@@ -5,8 +5,8 @@ namespace App\Receiver\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Factory\ReceiverFactory;
-use App\Provider\ReceiverProvider;
+use App\Receiver\Factory\ReceiverFactory;
+use App\Receiver\Provider\ReceiverProvider;
 
 class ReceiverController extends AbstractController
 {
@@ -66,4 +66,3 @@ class ReceiverController extends AbstractController
         return $this->json([], 204);
     }
 }
-

@@ -4,11 +4,12 @@ namespace App\Catalog\Persistence;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use JsonSerializable;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\AuthorRepository")
+ * @ORM\Entity(repositoryClass="App\Catalog\Repository\AuthorRepository")
  */
-class Author implements \JsonSerializable
+class Author implements JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -25,7 +26,7 @@ class Author implements \JsonSerializable
      */
     private $surname;
     /**
-     * @ORM\ManyToMany(targetEntity="Book", mappedBy="authors", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="App\Catalog\Persistence\Book", mappedBy="authors", cascade={"persist", "remove"})
      */
     private $books;
 
@@ -87,6 +88,7 @@ class Author implements \JsonSerializable
         usort($books, 'strnatcasecmp');
 
         $books = array_map(function($book) {
+            /** @var Book $book */
             return $book->jsonSerializeBasic();
         }, $books);
 
@@ -114,4 +116,3 @@ class Author implements \JsonSerializable
         }
     }
 }
-

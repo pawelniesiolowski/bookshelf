@@ -16,4 +16,3 @@ class WebsiteController extends AbstractController
         return $this->render('receivers.html.twig');
     }
 }
-

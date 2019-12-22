@@ -21,9 +21,27 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
         mappings:
-            App:
+            App\BookAction:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                dir: '%kernel.project_dir%/src/BookAction/Persistence'
+                prefix: 'App\BookAction\Persistence'
+                alias: AppBookAction
+            App\Catalog:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Catalog/Persistence'
+                prefix: 'App\Catalog\Persistence'
+                alias: AppCatalog
+            App\Receiver:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Receiver/Persistence'
+                prefix: 'App\Receiver\Persistence'
+                alias: AppReceiver
+            App\Shared:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Shared/Persistence'
+                prefix: 'App\Shared\Persistence'
+                alias: AppShared

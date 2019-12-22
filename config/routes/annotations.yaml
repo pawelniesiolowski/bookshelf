@@ -1,3 +1,12 @@
-controllers:
-    resource: ../../src/Controller/
+book_action_controllers:
+    resource: ../../src/BookAction/Controller/
+    type: annotation
+catalog_controllers:
+    resource: ../../src/Catalog/Controller/
+    type: annotation
+receiver_controllers:
+    resource: ../../src/Receiver/Controller/
+    type: annotation
+shared_controllers:
+    resource: ../../src/Shared/Controller/
     type: annotation

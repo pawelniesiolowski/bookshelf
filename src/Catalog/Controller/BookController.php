@@ -3,11 +3,11 @@
 namespace App\Catalog\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Factory\BookFactory;
+use App\Catalog\Factory\BookFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Provider\BookProvider;
-use App\Provider\AuthorProvider;
+use App\Catalog\Provider\BookProvider;
+use App\Catalog\Provider\AuthorProvider;
 use App\Catalog\Persistence\Author;
 
 class BookController extends AbstractController
@@ -82,4 +82,3 @@ class BookController extends AbstractController
         return $this->json([], 204);
     }
 }
-

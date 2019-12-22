@@ -2,12 +2,11 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Entity\Author;
-use App\Entity\Book;
-use App\Entity\Receiver;
-use App\Entity\BookChangeEvent;
+use App\Catalog\Persistence\Author;
+use App\Catalog\Persistence\Book;
+use App\Receiver\Persistence\Receiver;
+use App\BookAction\Persistence\BookChangeEvent;
 
 class FunctionalTestCase extends WebTestCase
 {

@@ -2,13 +2,16 @@
 
 namespace App\Receiver\Persistence;
 
+use App\BookAction\Persistence\BookChangeEvent;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use JsonSerializable;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ReceiverRepository")
+ * @ORM\Entity(repositoryClass="App\Receiver\Repository\ReceiverRepository")
  */
-class Receiver implements \JsonSerializable
+class Receiver implements JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -25,7 +28,7 @@ class Receiver implements \JsonSerializable
      */
     private $surname;
     /**
-     * @ORM\OneToMany(targetEntity="BookChangeEvent", mappedBy="receiver", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\BookAction\Persistence\BookChangeEvent", mappedBy="receiver", orphanRemoval=true)
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $events;
@@ -60,7 +63,7 @@ class Receiver implements \JsonSerializable
 
     public function delete(): void
     {
-        $this->deletedAt = new \DateTime();
+        $this->deletedAt = new DateTime();
     }
 
     public function validate(): bool
@@ -112,10 +115,11 @@ class Receiver implements \JsonSerializable
 
     private function createJsonSerializableEvents(): array
     {
+        /** @var BookChangeEvent[] $events */
         $events = $this->events->toArray();
         return array_map(function ($event) {
+            /** @var BookChangeEvent $event */
             return $event->textFromReceiverPerspective();
         }, $events);
     }
 }
-

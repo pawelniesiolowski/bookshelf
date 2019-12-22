@@ -4,12 +4,13 @@ namespace App\BookAction\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use App\Exception\BookException;
-use App\Provider\BookProvider;
+use App\Catalog\Exception\BookException;
+use App\Catalog\Provider\BookProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Provider\ReceiverProvider;
+use App\Receiver\Provider\ReceiverProvider;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\NonUniqueResultException;
+use TypeError;
 
 class BookshelfController extends AbstractController
 {
@@ -34,12 +35,11 @@ class BookshelfController extends AbstractController
     {
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);
-
         try {
             $book->receive($data['copies']);
         } catch (BookException $e) {
             return $this->json(['errors' => ['copies' => $e->getMessage()]], 422);
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             return $this->json(['errors' => ['copies' => 'Ilość egzemplarzy musi być liczbą większą od zera']], 422);
         }
 
@@ -57,7 +57,7 @@ class BookshelfController extends AbstractController
 
         try {
             $receiver = $receiverProvider->findOneById($data['receiver']);
-        } catch (\TypeError | NonUniqueResultException | NoResultException $e) {
+        } catch (TypeError | NonUniqueResultException | NoResultException $e) {
             $errors['receiver'] = 'Wybierz osobę, która jest uprawniona do pobrania książek';
             return $this->json(['errors' => $errors], 422);
         }
@@ -67,7 +67,7 @@ class BookshelfController extends AbstractController
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
             return $this->json(['errors' => $errors], 422);
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             $errors['copies'] = 'Ilość egzemplarzy musi być liczbą większą od zera';
             return $this->json(['errors' => $errors], 422);
         }
@@ -87,7 +87,7 @@ class BookshelfController extends AbstractController
             $book->sell($data['copies'], $data['comment']);
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             return $this->json(['errors' => ['copies' => 'Ilość egzemplarzy musi być liczbą większą od zera']], 422);
         }
 
@@ -101,4 +101,3 @@ class BookshelfController extends AbstractController
         return $this->json([], 204);
     }
 }
-

@@ -2,14 +2,17 @@
 
 namespace App\Catalog\Persistence;
 
+use App\BookAction\Exception\BookChangeEventException;
+use App\BookAction\Persistence\BookChangeEvent;
+use App\Receiver\Persistence\Receiver;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Exception\BookException;
+use App\Catalog\Exception\BookException;
 use JsonSerializable;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BookRepository")
+ * @ORM\Entity(repositoryClass="App\Catalog\Repository\BookRepository")
  */
 class Book implements JsonSerializable
 {
@@ -36,13 +39,13 @@ class Book implements JsonSerializable
      */
     private $ISBN;
     /**
-     * @ORM\ManyToMany(targetEntity="Author", inversedBy="books", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="App\Catalog\Persistence\Author", inversedBy="books", cascade={"persist", "remove"})
      * @ORM\JoinTable(name="books_authors")
      */
     private $authors;
 
     /**
-     * @ORM\OneToMany(targetEntity="BookChangeEvent", mappedBy="book", orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\BookAction\Persistence\BookChangeEvent", mappedBy="book", orphanRemoval=true, cascade={"persist", "remove"})
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $events;
@@ -82,6 +85,7 @@ class Book implements JsonSerializable
 
     /**
      * @param int $num
+     * @throws BookChangeEventException
      * @throws BookException
      */
     public function receive(int $num): void
@@ -105,6 +109,7 @@ class Book implements JsonSerializable
      * @param Receiver $receiver
      * @param string $comment
      * @throws BookException
+     * @throws BookChangeEventException
      */
     public function release(int $num, Receiver $receiver, string $comment = ''): void
     {
@@ -123,6 +128,7 @@ class Book implements JsonSerializable
     /**
      * @param int $num
      * @param string $comment
+     * @throws BookChangeEventException
      * @throws BookException
      */
     public function sell(int $num, string $comment = ''): void
@@ -231,6 +237,7 @@ class Book implements JsonSerializable
     {
         $authors = $this->authors->toArray();
         $authors = array_map(function($author) {
+            /** @var Author $author */
             return $author->toArray();
         }, $authors);
         return $authors;
@@ -240,6 +247,7 @@ class Book implements JsonSerializable
     {
         $events = $this->events->toArray();
         return array_map(function ($event) {
+            /** @var BookChangeEvent $event */
             return $event->__toString();
         }, $events);
     }
@@ -284,7 +292,7 @@ class Book implements JsonSerializable
             return;
         }
 
-        $digitsAndX = str_ireplace('-', '', $isbn);;
+        $digitsAndX = str_ireplace('-', '', $isbn);
         $length = strlen($digitsAndX);
         if ($length !== 10 && $length !== 13) {
             $this->addError('ISBN', 'ISBN powinien mieć 10 lub 13 cyfr (możliwy jest też znak X)');
