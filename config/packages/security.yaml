@@ -1,7 +1,7 @@
 security:
     encoders:
         App\Shared\Persistence\User:
-            algorithm: bcrypt
+            algorithm: argon2i
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -32,4 +32,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/$, roles: ROLE_USER, methods: [GET] }
+        - { path: ^/books$, roles: ROLE_USER, methods: [GET] }
+        - { path: ^/, roles: ROLE_ADMIN }
