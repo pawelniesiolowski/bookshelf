@@ -13,11 +13,15 @@ class User implements UserInterface
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    /**
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid")
+     */
+    private $uuid;
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */

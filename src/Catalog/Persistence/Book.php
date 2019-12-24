@@ -18,10 +18,15 @@ class Book implements JsonSerializable
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\Column(type="integer")
      */
     private $id;
+    /**
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid")
+     */
+    private $uuid;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -43,12 +48,10 @@ class Book implements JsonSerializable
      * @ORM\JoinTable(name="books_authors")
      */
     private $authors;
-
     /**
-     * @ORM\OneToMany(targetEntity="App\BookAction\Persistence\BookChangeEvent", mappedBy="book", orphanRemoval=true, cascade={"persist", "remove"})
-     * @ORM\OrderBy({"id" = "DESC"})
+     * @ORM\Column(type="string", length=500, nullable=true)
      */
-    private $events;
+    private $authorsNames;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -62,7 +65,22 @@ class Book implements JsonSerializable
     ) {
         $this->title = $title;
         $this->authors = new ArrayCollection();
-        $this->events = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 
     public function setPrice(float $price): void
@@ -75,6 +93,11 @@ class Book implements JsonSerializable
         $this->ISBN = $ISBN;
     }
 
+    public function setAuthorsNames(array $authors): void
+    {
+        $this->authorsNames = json_encode($authors);
+    }
+
     public function addAuthor(Author $author)
     {
         if (!$this->authors->contains($author)) {
@@ -85,63 +108,69 @@ class Book implements JsonSerializable
 
     /**
      * @param int $num
+     * @return BookChangeEvent
      * @throws BookChangeEventException
      * @throws BookException
      */
-    public function receive(int $num): void
+    public function receive(int $num): BookChangeEvent
     {
         if ($num <= 0) {
             throw new BookException('Nie można przyjąć mniej niż jedną książkę');
         }
 
         $this->copies += $num;
-        $event = new BookChangeEvent(
+        return new BookChangeEvent(
             BookChangeEvent::RECEIVE,
             $num,
             new DateTime('now'),
-            $this
+            $this->id,
+            $this->title
         );
-        $this->addEvent($event);
     }
 
     /**
      * @param int $num
      * @param Receiver $receiver
      * @param string $comment
-     * @throws BookException
+     * @return BookChangeEvent
      * @throws BookChangeEventException
+     * @throws BookException
      */
-    public function release(int $num, Receiver $receiver, string $comment = ''): void
+    public function release(int $num, Receiver $receiver, string $comment = ''): BookChangeEvent
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
             BookChangeEvent::RELEASE,
             $num,
             new DateTime('now'),
-            $this,
-            $receiver
+            $this->id,
+            $this->title,
+            $receiver->id(),
+            $receiver->__toString()
         );
         $event->setComment($comment);
-        $this->addEvent($event);
+        return $event;
     }
 
     /**
      * @param int $num
      * @param string $comment
+     * @return BookChangeEvent
      * @throws BookChangeEventException
      * @throws BookException
      */
-    public function sell(int $num, string $comment = ''): void
+    public function sell(int $num, string $comment = ''): BookChangeEvent
     {
         $this->substractCopies($num);
         $event = new BookChangeEvent(
             BookChangeEvent::SELL,
             $num,
             new DateTime('now'),
-            $this
+            $this->id,
+            $this->title
         );
         $event->setComment($comment);
-        $this->addEvent($event);
+        return $event;
     }
 
     public function delete(): void
@@ -167,19 +196,6 @@ class Book implements JsonSerializable
             'id' => $this->id,
             'title' => $this->title,
             'copies' => $this->copies,
-        ];
-    }
-
-    public function jsonSerializeExtended(): array
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'ISBN' => $this->ISBN ?? '',
-            'price' => $this->price,
-            'copies' => $this->copies,
-            'authors' => $this->createJsonSerializableSortedAuthors(),
-            'events' => $this->createJsonSerializableEvents(),
         ];
     }
 
@@ -233,7 +249,7 @@ class Book implements JsonSerializable
         return $text;
     }
 
-    private function createJsonSerializableSortedAuthors(): array
+    public function createJsonSerializableSortedAuthors(): array
     {
         $authors = $this->authors->toArray();
         $authors = array_map(function($author) {
@@ -241,15 +257,6 @@ class Book implements JsonSerializable
             return $author->toArray();
         }, $authors);
         return $authors;
-    }
-
-    private function createJsonSerializableEvents(): array
-    {
-        $events = $this->events->toArray();
-        return array_map(function ($event) {
-            /** @var BookChangeEvent $event */
-            return $event->__toString();
-        }, $events);
     }
 
     /**
@@ -265,13 +272,6 @@ class Book implements JsonSerializable
             throw new BookException('Książka nie może mieć mniej niż zero egzemplarzy');
         }
         $this->copies -= $num;
-    }
-
-    private function addEvent(BookChangeEvent $bookChangeEvent): void
-    {
-        if (!$this->events->contains($bookChangeEvent)) {
-            $this->events[] = $bookChangeEvent;
-        }
     }
 
     private function validateTitle(): void

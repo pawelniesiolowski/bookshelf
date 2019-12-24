@@ -2,10 +2,8 @@
 
 namespace App\Receiver\Persistence;
 
-use App\BookAction\Persistence\BookChangeEvent;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
 
 /**
@@ -15,10 +13,15 @@ class Receiver implements JsonSerializable
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\Column(type="integer")
      */
     private $id;
+    /**
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid")
+     */
+    private $uuid;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -27,11 +30,6 @@ class Receiver implements JsonSerializable
      * @ORM\Column(type="string", length=255)
      */
     private $surname;
-    /**
-     * @ORM\OneToMany(targetEntity="App\BookAction\Persistence\BookChangeEvent", mappedBy="receiver", orphanRemoval=true)
-     * @ORM\OrderBy({"id" = "DESC"})
-     */
-    private $events;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -44,7 +42,19 @@ class Receiver implements JsonSerializable
     {
         $this->name = $name;
         $this->surname = $surname;
-        $this->events = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    public function id(): int
+    {
+        return $this->id();
     }
 
     public function editFromJsonData(string $data): void
@@ -52,13 +62,6 @@ class Receiver implements JsonSerializable
         $data = json_decode($data, true);
         $this->name = $data['name'] ?? '';
         $this->surname = $data['surname'] ?? '';
-    }
-
-    public function addEvent(BookChangeEvent $bookChangeEvent): void
-    {
-        if (!$this->events->contains($bookChangeEvent)) {
-            $this->events[] = $bookChangeEvent;
-        }
     }
 
     public function delete(): void
@@ -83,7 +86,6 @@ class Receiver implements JsonSerializable
         return [
             'id' => $this->id,
             'name' => $this->__toString(),
-            'events' => $this->createJsonSerializableEvents(),
         ];
     }
 
@@ -111,15 +113,5 @@ class Receiver implements JsonSerializable
         if (!array_key_exists($key, $this->errors)) {
             $this->errors[$key] = $desc;
         }
-    }
-
-    private function createJsonSerializableEvents(): array
-    {
-        /** @var BookChangeEvent[] $events */
-        $events = $this->events->toArray();
-        return array_map(function ($event) {
-            /** @var BookChangeEvent $event */
-            return $event->textFromReceiverPerspective();
-        }, $events);
     }
 }

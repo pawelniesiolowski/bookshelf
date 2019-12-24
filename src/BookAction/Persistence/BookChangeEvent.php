@@ -5,8 +5,6 @@ namespace App\BookAction\Persistence;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\BookAction\Exception\BookChangeEventException;
-use App\Receiver\Persistence\Receiver;
-use App\Catalog\Persistence\Book;
 
 /**
  * @ORM\Entity(repositoryClass="App\BookAction\Repository\BookChangeEventRepository")
@@ -31,10 +29,15 @@ class BookChangeEvent
 
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\Column(type="integer")
      */
     private $id;
+    /**
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid")
+     */
+    private $uuid;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -52,42 +55,105 @@ class BookChangeEvent
      */
     private $date;
     /**
-     * @ORM\ManyToOne(targetEntity="App\Catalog\Persistence\Book", inversedBy="events")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $book;
+    private $bookId;
     /**
-     * @ORM\ManyToOne(targetEntity="App\Receiver\Persistence\Receiver", inversedBy="events")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\Column(type="guid")
      */
-    private $receiver;
+    private $bookUuid;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $bookTitle;
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $receiverId;
+    /**
+     * @ORM\Column(type="guid")
+     */
+    private $receiverUuid;
+    /**
+     * @ORM\Column(type="string", length=510, nullable=true)
+     */
+    private $receiverName;
 
     /**
      * BookChangeEvent constructor.
      * @param string $name
      * @param int $num
      * @param DateTime $date
-     * @param Book $book
-     * @param Receiver|null $receiver
+     * @param int $bookId
+     * @param string $bookTitle
+     * @param int|null $receiverId
+     * @param string|null $receiverName
      * @throws BookChangeEventException
      */
     public function __construct(
         string $name,
         int $num,
         DateTime $date,
-        Book $book,
-        Receiver $receiver = null
+        int $bookId,
+        string $bookTitle,
+        int $receiverId = null,
+        string $receiverName = null
     ) {
         $this->validateName($name);
         $this->validateNum($num);
         $this->name = $name;
         $this->num = $num;
         $this->date = $date;
-        $this->book = $book;
-        $this->receiver = $receiver;
-        if ($this->receiver !== null) {
-            $this->receiver->addEvent($this);
-        }
+        $this->bookId = $bookId;
+        $this->bookTitle = $bookTitle;
+        $this->receiverId = $receiverId;
+        $this->receiverName = $receiverName;
+    }
+
+    public function getBookId()
+    {
+        return $this->bookId;
+    }
+
+    public function setBookUuid($bookUuid): void
+    {
+        $this->bookUuid = $bookUuid;
+    }
+
+    public function getBookTitle(): string
+    {
+        return $this->bookTitle;
+    }
+
+    public function setBookTitle(string $bookTitle): void
+    {
+        $this->bookTitle = $bookTitle;
+    }
+
+    public function getReceiverId()
+    {
+        return $this->receiverId;
+    }
+
+    public function setReceiverUuid($receiverUuid): void
+    {
+        $this->receiverUuid = $receiverUuid;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReceiverName(): ?string
+    {
+        return $this->receiverName;
+    }
+
+    /**
+     * @param string|null $receiverName
+     */
+    public function setReceiverName(?string $receiverName): void
+    {
+        $this->receiverName = $receiverName;
     }
 
     public function setComment(string $comment): void
@@ -104,7 +170,7 @@ class BookChangeEvent
 
     public function textFromReceiverPerspective(): string
     {
-        $text = $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: ' . $this->book->__toString();
+        $text = $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: ' . $this->bookTitle;
         if ($this->getComment()) {
             $text .= '. Komentarz: ' . $this->getComment();
         }
@@ -114,8 +180,8 @@ class BookChangeEvent
     public function __toString()
     {
         $text = $this->whenAndHowMany();
-        if ($this->receiver !== null) {
-            $text .= ' Pobrał(a): ' . $this->receiver->__toString();
+        if ($this->receiverName !== null) {
+            $text .= ' Pobrał(a): ' . $this->receiverName;
         }
 
         if ($this->getComment() !== '') {
