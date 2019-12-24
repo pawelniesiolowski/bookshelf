@@ -1,8 +1,12 @@
 const BookshelfElements = function () {
-    const tableBodyContent = function (books) {
+    const tableBodyContent = function (books, isAdmin) {
         const content = document.createDocumentFragment();
+        let num = 1;
         for (let book of books) {
             const tr = document.createElement('tr');
+            const td0 = document.createElement('td');
+            td0.textContent = num.toString();
+            tr.appendChild(td0);
             const td1 = document.createElement('td');
             td1.textContent = Authors.createDisplayedAuthors(book.authors);
             tr.appendChild(td1);
@@ -18,42 +22,49 @@ const BookshelfElements = function () {
             const td5 = document.createElement('td');
             td5.textContent = book.price;
             tr.appendChild(td5);
-            
-            const td6 = document.createElement('td');
-            td6.setAttribute('bookId', book.id);
-            
-            const receiveButton = document.createElement('button');
-            receiveButton.setAttribute('class', 'receive-button action-button btn btn-success');
-            receiveButton.textContent = 'Dodaj';
-            
-            const releaseButton = document.createElement('button');
-            releaseButton.setAttribute('class', 'release-button action-button btn btn-warning');
-            releaseButton.textContent = 'Wydaj';
-            
-            const sellButton = document.createElement('button');
-            sellButton.setAttribute('class', 'sell-button action-button btn btn-info');
-            sellButton.textContent = 'Sprzedaj';
 
-            const editBookButton = document.createElement('button');
-            editBookButton.setAttribute('class', 'edit-book-button action-button btn btn-secondary');
-            editBookButton.textContent = 'Edytuj';
-            
-            const deleteBookButton = document.createElement('button');
-            deleteBookButton.setAttribute('class', 'delete-book-button action-button btn btn-danger');
-            deleteBookButton.textContent = 'Usuń';
-
-            td6.appendChild(receiveButton);
-            td6.appendChild(releaseButton);
-            td6.appendChild(sellButton);
-            td6.appendChild(editBookButton);
-            td6.appendChild(deleteBookButton);
-            tr.appendChild(td6);
+            if (isAdmin) {
+                tr.appendChild(createActionsColumn(book));
+            }
             
             content.appendChild(tr);
+            num++;
         }
 
         return content;
     };
+
+    const createActionsColumn = function (book) {
+        const td6 = document.createElement('td');
+        td6.setAttribute('bookId', book.id);
+
+        const receiveButton = document.createElement('button');
+        receiveButton.setAttribute('class', 'receive-button action-button btn btn-success');
+        receiveButton.textContent = 'Dodaj';
+
+        const releaseButton = document.createElement('button');
+        releaseButton.setAttribute('class', 'release-button action-button btn btn-warning');
+        releaseButton.textContent = 'Wydaj';
+
+        const sellButton = document.createElement('button');
+        sellButton.setAttribute('class', 'sell-button action-button btn btn-info');
+        sellButton.textContent = 'Sprzedaj';
+
+        const editBookButton = document.createElement('button');
+        editBookButton.setAttribute('class', 'edit-book-button action-button btn btn-secondary');
+        editBookButton.textContent = 'Edytuj';
+
+        const deleteBookButton = document.createElement('button');
+        deleteBookButton.setAttribute('class', 'delete-book-button action-button btn btn-danger');
+        deleteBookButton.textContent = 'Usuń';
+
+        td6.appendChild(receiveButton);
+        td6.appendChild(releaseButton);
+        td6.appendChild(sellButton);
+        td6.appendChild(editBookButton);
+        td6.appendChild(deleteBookButton);
+        return td6;
+    }
 
     const simpleBookActionDiv = function (book, verb) {
         const div = document.createElement('div');

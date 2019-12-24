@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block main %}
+{% if is_granted('ROLE_ADMIN') %}
 <section>
     <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -62,6 +63,7 @@
         </div>
     </div>
 </section>
+{% endif %}
 <section>
     <div class="row">
         <div class="col-md-10 offset-md-1">
@@ -69,16 +71,22 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>Nr</th>
                             <th>Autor</th>
                             <th>Tytuł</th>
                             <th>Egz.</th>
                             <th>ISBN</th>
                             <th>Cena</th>
+                            {% if is_granted('ROLE_ADMIN') %}
                             <th style="min-width: 470px">Akcja</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody
-                        id="bookshelf-table-body" 
+                        id="bookshelf-table-body"
+                        {% if is_granted('ROLE_ADMIN') %}
+                        data-admin="true"
+                        {% endif %}
                         data-index="{{ path('bookshelf_index') }}" 
                         data-receive-path="{{ path('bookshelf_receive', { 'id': 0 }) }}"
                         data-release-path="{{ path('bookshelf_release', { 'id': 0 }) }}"

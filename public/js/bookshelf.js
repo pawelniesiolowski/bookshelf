@@ -11,17 +11,21 @@ const Bookshelf = function () {
         get: bookshelfTable.getAttribute('data-get-book-path'),
         deleteBook: bookshelfTable.getAttribute('data-delete-book-path'),
         getReceivers: bookshelfTable.getAttribute('data-get-receivers-path')
-    }
+    };
     
     const init = function () {
         bookshelfTable.addEventListener('click', function (e) { checkEvent(e); });
-        newBook.addEventListener('submit', function (e) { createBook(e); });
+        if (newBook) {
+            newBook.addEventListener('submit', function (e) { createBook(e); });
+        }
         loadBooks();
         const addAuthorButton = document.getElementById('bookshelf-new-book-addAuthor');
-        addAuthorButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            Authors.addAuthor();
-        });
+        if (addAuthorButton) {
+            addAuthorButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                Authors.addAuthor();
+            });
+        }
     };
 
     const checkEvent = function (e) {
@@ -48,7 +52,11 @@ const Bookshelf = function () {
         fetchBooks(paths.index)
             .then(decode)
             .then(function(data) {
-                const content = BookshelfElements.tableBodyContent(data.books);
+                let isAdmin = false;
+                if (bookshelfTable.hasAttribute('data-admin')) {
+                    isAdmin = true;
+                }
+                const content = BookshelfElements.tableBodyContent(data.books, isAdmin);
                 reloadBookshelfTable(content);
             })
             .catch(function(error) {
