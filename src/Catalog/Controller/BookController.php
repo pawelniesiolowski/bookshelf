@@ -2,6 +2,7 @@
 
 namespace App\Catalog\Controller;
 
+use App\Catalog\Exception\BookException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Catalog\Factory\BookFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +40,16 @@ class BookController extends AbstractController
 
         $this->entityManager->persist($book);
         $this->entityManager->flush();
-        
+
+        // Temporary mixing responsibilities of two different subdomains
+        $data = json_decode($request->getContent(), true);
+        if (!empty($data['copies']) && $data['copies'] > 0) {
+            $event = $book->receive($data['copies']);
+            $this->entityManager->persist($book);
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+        }
+
         return $this->json([], 201);
     }
 

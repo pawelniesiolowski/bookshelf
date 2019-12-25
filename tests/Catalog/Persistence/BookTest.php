@@ -2,6 +2,7 @@
 
 namespace App\Tests\Catalog\Persistence;
 
+use App\BookAction\Persistence\BookChangeEvent;
 use PHPUnit\Framework\TestCase;
 use App\Catalog\Persistence\Book;
 use App\Catalog\Persistence\Author;
@@ -12,11 +13,25 @@ class BookTest extends TestCase
 {
     private $receiver;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->receiver = $this->createMock(Receiver::class);
         $this->receiver->method('__toString')
             ->will($this->returnValue('Mazur Justyna'));
+    }
+
+    public function testAddingAuthors()
+    {
+        $book = new Book('Testowa książka');
+        $author1 = new Author('Pierwszy', 'Autor');
+        $author2 = new Author('Drugi', 'Autor');
+        $book->addAuthor($author1);
+        $book->addAuthor($author2);
+        $expectedAuthors = [
+            ['name' => 'Pierwszy', 'surname' => 'Autor'],
+            ['name' => 'Drugi', 'surname' => 'Autor'],
+        ];
+        $this->assertEquals($expectedAuthors, $book->getAuthorsNames());
     }
 
     public function testItCanBeJsonSerialized()
@@ -63,30 +78,6 @@ class BookTest extends TestCase
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 
-    public function testItShouldCreateJsonSerializedExtendedData()
-    {
-        $book = new Book('Bracia Karamazow');
-        $book->setISBN('0123456789');
-        $book->setPrice(29.99);
-        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
-        $jsonSerializeData = [
-            'id' => null,
-            'title' => 'Bracia Karamazow',
-            'ISBN' => '0123456789',
-            'price' => 29.99,
-            'copies' => 0,
-            'authors' => [
-                [
-                    'name' => 'Fiodor',
-                    'surname' => 'Dostojewski',
-                ],
-            ],
-            'events' => [],
-        ];
-        $this->assertSame(true, $book->validate());
-        $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());
-    }
-
     public function testItCreatesJsonSerializedBasicData()
     {
         $book = new Book('Bracia Karamazow');
@@ -110,41 +101,36 @@ class BookTest extends TestCase
     public function testReceiveBook()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(1);
+        $book->setId(1);
+        $event = $book->receive(1);
         $this->assertSame(true, $book->validate());
-        $jsonSerializedBook = $book->jsonSerializeExtended();
-        $this->assertSame(1, $jsonSerializedBook['copies']);
-        $this->assertContains('przyjęto', $jsonSerializedBook['events'][0]); 
+        $this->assertInstanceOf(BookChangeEvent::class, $event);
     }
 
     public function testReleaseBooks()
     {
         $book = new Book('Bracia Karamazow');
+        $book->setId(1);
         $book->receive(5);
-        $book->release(3, $this->receiver);
-        $jsonSerializedBook = $book->jsonSerializeExtended();
+        $event = $book->release(3, $this->receiver);
         $this->assertSame(true, $book->validate());
-        $this->assertSame(2, $jsonSerializedBook['copies']);
-        $this->assertSame(2, count($jsonSerializedBook['events']));
-        $this->assertContains('wydano', $jsonSerializedBook['events'][1]);
-        $this->assertContains('Pobrał(a): Mazur Justyna', $jsonSerializedBook['events'][1]);
+        $this->assertInstanceOf(BookChangeEvent::class, $event);
     }
     
     public function testSellBooks()
     {
         $book = new Book('Bracia Karamazow');
+        $book->setId(1);
         $book->receive(5);
         $event = $book->sell(2);
         $this->assertSame(true, $book->validate());
-        $jsonSerializedBook = $book->jsonSerializeExtended();
-        $this->assertSame(3, $jsonSerializedBook['copies']);
-        $this->assertSame(2, count($jsonSerializedBook['events']));
-        $this->assertContains('sprzedano', $jsonSerializedBook['events'][1]); 
+        $this->assertInstanceOf(BookChangeEvent::class, $event);
     }
 
     public function testItShouldThrowExceptionWhenThereAreLessThenZeroBooks()
     {
         $book = new Book('Bracia Karamazow');
+        $book->setId(1);
         $book->receive(5);
         $this->expectException(BookException::class);
         $event = $book->release(6, $this->receiver);
@@ -153,6 +139,7 @@ class BookTest extends TestCase
     public function testItShouldThrowExceptionWhenReceiveMethodGetsLessThenZero()
     {
         $book = new Book('Bracia Karamazow');
+        $book->setId(1);
         $this->expectException(BookException::class);
         $book->receive(-5);
     }
@@ -207,9 +194,8 @@ class BookTest extends TestCase
                     'surname' => 'Dostojewski',
                 ],
             ],
-            'events' => [],
         ];
-        $this->assertSame($jsonSerializeData, $book->jsonSerializeExtended());
+        $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }
 
     public function testISBNWithTenDigitsShouldBeValid()

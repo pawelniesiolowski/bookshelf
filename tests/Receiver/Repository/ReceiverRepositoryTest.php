@@ -10,7 +10,7 @@ class ReceiverRepositoryTest extends FunctionalTestCase
 {
     private $receiverRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->receiverRepository = new ReceiverRepository($this->registry);

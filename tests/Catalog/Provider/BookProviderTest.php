@@ -12,7 +12,7 @@ class BookProviderTest extends TestCase
 {
     private $bookRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->bookRepository = $this->createMock(BookRepository::class);
     }

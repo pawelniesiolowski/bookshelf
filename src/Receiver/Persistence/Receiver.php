@@ -5,6 +5,7 @@ namespace App\Receiver\Persistence;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Receiver\Repository\ReceiverRepository")
@@ -13,13 +14,12 @@ class Receiver implements JsonSerializable
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $uuid;
     /**
@@ -42,6 +42,9 @@ class Receiver implements JsonSerializable
     {
         $this->name = $name;
         $this->surname = $surname;
+        if (empty($this->uuid)) {
+            $this->uuid = Uuid::uuid1()->toString();
+        }
     }
 
     /**
@@ -54,7 +57,7 @@ class Receiver implements JsonSerializable
 
     public function id(): int
     {
-        return $this->id();
+        return $this->id;
     }
 
     public function editFromJsonData(string $data): void

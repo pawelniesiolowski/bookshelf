@@ -47,12 +47,10 @@ class ReceiverControllerTest extends FunctionalTestCase
                 [
                     'id' => 2,
                     'name' => 'Mazur Justyna',
-                    'events' => [],
                 ],
                 [
                     'id' => 1,
                     'name' => 'Niesiołowski Paweł',
-                    'events' => [],
                 ],
             ],
         ];
@@ -76,7 +74,6 @@ class ReceiverControllerTest extends FunctionalTestCase
             'receiver' => [
                 'id' => 1,
                 'name' => 'Niesiołowski Paweł',
-                'events' => [],
             ],
         ];
 

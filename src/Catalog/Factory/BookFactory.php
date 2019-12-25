@@ -2,8 +2,6 @@
 
 namespace App\Catalog\Factory;
 
-use App\BookAction\Exception\BookChangeEventException;
-use App\Catalog\Exception\BookException;
 use App\Catalog\Persistence\Book;
 use App\Catalog\Provider\AuthorProvider;
 use App\Catalog\Persistence\Author;
@@ -22,8 +20,6 @@ class BookFactory
     /**
      * @param string $json
      * @return Book
-     * @throws BookChangeEventException
-     * @throws BookException
      * @throws NonUniqueResultException
      */
     public function fromJson(string $json): Book
@@ -43,9 +39,6 @@ class BookFactory
         }
         foreach(($data['authors'] ?? []) as $author) {
             $book->addAuthor($this->getAuthor($author));
-        }
-        if (($data['copies'] ?? 0) > 0) {
-            $book->receive($data['copies']);
         }
         return $book;
     }

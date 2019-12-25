@@ -5,6 +5,7 @@ namespace App\Catalog\Persistence;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Catalog\Repository\AuthorRepository")
@@ -13,13 +14,12 @@ class Author implements JsonSerializable
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $uuid;
     /**
@@ -42,6 +42,9 @@ class Author implements JsonSerializable
         $this->name = $name;
         $this->surname = $surname;
         $this->books = new ArrayCollection();
+        if (empty($this->uuid)) {
+            $this->uuid = Uuid::uuid1()->toString();
+        }
     }
 
     public function addBook(Book $book): void

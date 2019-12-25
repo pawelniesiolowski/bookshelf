@@ -10,7 +10,7 @@ use App\Catalog\Repository\BookRepository;
 class BookRepositoryTest extends FunctionalTestCase
 {
     private $bookRepository;
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->bookRepository = new BookRepository($this->registry);

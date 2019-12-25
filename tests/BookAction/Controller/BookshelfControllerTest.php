@@ -12,7 +12,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 {
     private $bookRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->bookRepository = new BookRepository($this->registry);
@@ -125,8 +125,11 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReleaseBook()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $event = $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
 
         $receiver = new Receiver('Justyna', 'Mazur');
         $this->entityManager->persist($receiver);
@@ -151,10 +154,14 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReturnProperErrorWhenReleaseBookWithEmptyString()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $event = $book->receive(5);
 
         $receiver = new Receiver('Justyna', 'Mazur');
+
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->persist($receiver);
         $this->entityManager->flush();
 
@@ -177,8 +184,11 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReturnProperErrorsWhenReceiverIdDoesNotExist()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $event = $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         $data = [
@@ -200,10 +210,12 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReturnProperErrorsWhenReceiverIdIsOfInvalidType()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
-
+        $this->entityManager->flush();
+        $event = $book->receive(5);
         $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->persist($receiver);
         $this->entityManager->flush();
 
@@ -226,11 +238,13 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldReturnProperErrorsWhenThereIsLessCopiesThenZero()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
         $this->entityManager->flush();
+        $event = $book->receive(5);
 
         $receiver = new Receiver('Justyna', 'Mazur');
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->persist($receiver);
         $this->entityManager->flush();
 
@@ -254,8 +268,11 @@ class BookshelfControllerTest extends FunctionalTestCase
     public function testItShouldSellBook()
     {
         $book = new Book('Bracia Karamazow');
-        $book->receive(5);
         $this->entityManager->persist($book);
+        $this->entityManager->flush();
+        $event = $book->receive(5);
+        $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         $data = [

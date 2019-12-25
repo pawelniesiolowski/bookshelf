@@ -4,6 +4,7 @@ namespace App\Shared\Persistence;
 
 use App\Shared\Security\UserRolesDictionary;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -13,13 +14,12 @@ class User implements UserInterface
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $uuid;
     /**
@@ -58,6 +58,9 @@ class User implements UserInterface
         $this->password = $password;
         $this->name = $name;
         $this->surname = $surname;
+        if (empty($this->uuid)) {
+            $this->uuid = Uuid::uuid1()->toString();
+        }
     }
 
     public function getId(): ?int

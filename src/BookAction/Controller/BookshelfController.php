@@ -36,7 +36,7 @@ class BookshelfController extends AbstractController
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);
         try {
-            $book->receive($data['copies']);
+            $event = $book->receive($data['copies']);
         } catch (BookException $e) {
             return $this->json(['errors' => ['copies' => $e->getMessage()]], 422);
         } catch (TypeError $e) {
@@ -44,6 +44,7 @@ class BookshelfController extends AbstractController
         }
 
         $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         return $this->json([], 204);
@@ -63,7 +64,7 @@ class BookshelfController extends AbstractController
         }
 
         try {
-            $book->release($data['copies'], $receiver, $data['comment']);
+            $event = $book->release($data['copies'], $receiver, $data['comment']);
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
             return $this->json(['errors' => $errors], 422);
@@ -73,6 +74,7 @@ class BookshelfController extends AbstractController
         }
         
         $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         return $this->json([], 204);
@@ -84,7 +86,7 @@ class BookshelfController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $errors = [];
         try {
-            $book->sell($data['copies'], $data['comment']);
+            $event = $book->sell($data['copies'], $data['comment']);
         } catch (BookException $e) {
             $errors['copies'] = $e->getMessage();
         } catch (TypeError $e) {
@@ -96,6 +98,7 @@ class BookshelfController extends AbstractController
         }
 
         $this->entityManager->persist($book);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         return $this->json([], 204);

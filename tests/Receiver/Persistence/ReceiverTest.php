@@ -25,15 +25,9 @@ class ReceiverTest extends TestCase
             ->will($this->returnValue('second text from receiver perspective'));
         
         $receiver = new Receiver('Justyna', 'Mazur');
-        $receiver->addEvent($firstBookChangeEvent);
-        $receiver->addEvent($secBookChangeEvent);
         $jsonSerializedReceiver = [
             'id' => null,
             'name' => 'Mazur Justyna',
-            'events' => [
-                'first text from receiver perspective',
-                'second text from receiver perspective',
-            ],
         ];
         $this->assertSame($jsonSerializedReceiver, $receiver->jsonSerialize());
     }

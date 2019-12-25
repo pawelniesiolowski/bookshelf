@@ -5,6 +5,7 @@ namespace App\BookAction\Persistence;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\BookAction\Exception\BookChangeEventException;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\BookAction\Repository\BookChangeEventRepository")
@@ -29,13 +30,12 @@ class BookChangeEvent
 
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $uuid;
     /**
@@ -59,7 +59,7 @@ class BookChangeEvent
      */
     private $bookId;
     /**
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid")
      */
     private $bookUuid;
     /**
@@ -71,7 +71,7 @@ class BookChangeEvent
      */
     private $receiverId;
     /**
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", nullable=true)
      */
     private $receiverUuid;
     /**
@@ -85,8 +85,10 @@ class BookChangeEvent
      * @param int $num
      * @param DateTime $date
      * @param int $bookId
+     * @param string $bookUuid
      * @param string $bookTitle
      * @param int|null $receiverId
+     * @param string|null $receiverUuid
      * @param string|null $receiverName
      * @throws BookChangeEventException
      */
@@ -95,8 +97,10 @@ class BookChangeEvent
         int $num,
         DateTime $date,
         int $bookId,
+        string $bookUuid,
         string $bookTitle,
         int $receiverId = null,
+        string $receiverUuid = null,
         string $receiverName = null
     ) {
         $this->validateName($name);
@@ -105,9 +109,14 @@ class BookChangeEvent
         $this->num = $num;
         $this->date = $date;
         $this->bookId = $bookId;
+        $this->bookUuid = $bookUuid;
         $this->bookTitle = $bookTitle;
         $this->receiverId = $receiverId;
+        $this->receiverUuid = $receiverUuid;
         $this->receiverName = $receiverName;
+        if (empty($this->uuid)) {
+            $this->uuid = Uuid::uuid1()->toString();
+        }
     }
 
     public function getBookId()
@@ -170,7 +179,7 @@ class BookChangeEvent
 
     public function textFromReceiverPerspective(): string
     {
-        $text = $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: ' . $this->bookTitle;
+        $text = $this->formatDate() . ' pobrał(a) ' . $this->num . ' egz.: "' . $this->bookTitle . '"';
         if ($this->getComment()) {
             $text .= '. Komentarz: ' . $this->getComment();
         }

@@ -11,7 +11,7 @@ class AuthorProviderTest extends TestCase
 {
     private $authorRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authorRepository = $this->createMock(AuthorRepository::class);
     }

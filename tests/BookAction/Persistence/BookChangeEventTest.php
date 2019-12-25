@@ -5,32 +5,19 @@ namespace App\Tests\BookAction\Persistence;
 use PHPUnit\Framework\TestCase;
 use App\BookAction\Persistence\BookChangeEvent;
 use App\BookAction\Exception\BookChangeEventException;
-use App\Receiver\Persistence\Receiver;
-use App\Catalog\Persistence\Book;
+use Ramsey\Uuid\Uuid;
 
 class BookChangeEventTest extends TestCase
 {
-    private $book;
-    private $receiver;
-
-    public function setUp()
-    {
-        $this->book = $this->createMock(Book::class);
-        $this->book->method('__toString')
-            ->will($this->returnValue('Lem Stanisław "Solaris"'));
-
-        $this->receiver = $this->createMock(Receiver::class);
-        $this->receiver->method('__toString')
-            ->will($this->returnValue('Mazur Justyna'));
-    }
-
     public function testReceiveBookEvent()
     {
         $event = new BookChangeEvent(
             BookChangeEvent::RECEIVE,
             3,
             new \DateTime('2019-05-17'),
-            $this->book
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris'
         );
         $this->assertSame('17-05-2019: przyjęto 3 egz.', $event->__toString());
     }
@@ -42,7 +29,9 @@ class BookChangeEventTest extends TestCase
             'invalid name',
             3,
             new \DateTime('2019-05-17'),
-            $this->book
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris'
         );
     }
     
@@ -56,7 +45,9 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RECEIVE,
             $num,
             new \DateTime('2019-05-17'),
-            $this->book
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris'
         );
     }
     
@@ -74,8 +65,12 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-17'),
-            $this->book,
-            $this->receiver
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris',
+            1,
+            Uuid::uuid1()->toString(),
+            'Mazur Justyna'
         );
         $this->assertSame('17-05-2019: wydano 3 egz. Pobrał(a): Mazur Justyna', $event->__toString());
     }
@@ -86,8 +81,12 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-17'),
-            $this->book,
-            $this->receiver
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris',
+            1,
+            Uuid::uuid1()->toString(),
+            'Mazur Justyna'
         );
         $event->setComment('Testowy komentarz');
         $this->assertSame('17-05-2019: wydano 3 egz. Pobrał(a): Mazur Justyna. Komentarz: Testowy komentarz', $event->__toString());
@@ -99,7 +98,9 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::SELL,
             3,
             new \DateTime('2019-05-17'),
-            $this->book
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris'
         );
         $this->assertSame('17-05-2019: sprzedano 3 egz.', $event->__toString());
     }
@@ -110,11 +111,15 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-19'),
-            $this->book,
-            $this->receiver
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris',
+            1,
+            Uuid::uuid1()->toString(),
+            'Mazur Justyna'
         );
         $this->assertSame(
-            '19-05-2019 pobrał(a) 3 egz.: Lem Stanisław "Solaris"',
+            '19-05-2019 pobrał(a) 3 egz.: "Solaris"',
             $event->textFromReceiverPerspective()
         );
     }
@@ -125,12 +130,16 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-19'),
-            $this->book,
-            $this->receiver
+            1,
+            Uuid::uuid1()->toString(),
+            'Solaris',
+            1,
+            Uuid::uuid1()->toString(),
+            'Mazur Justyna'
         );
         $event->setComment('Testowy komentarz');
         $this->assertSame(
-            '19-05-2019 pobrał(a) 3 egz.: Lem Stanisław "Solaris". Komentarz: Testowy komentarz',
+            '19-05-2019 pobrał(a) 3 egz.: "Solaris". Komentarz: Testowy komentarz',
             $event->textFromReceiverPerspective()
         );
     }

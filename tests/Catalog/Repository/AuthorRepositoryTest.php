@@ -12,7 +12,7 @@ class AuthorRepositoryTest extends FunctionalTestCase
 {
     private $authorRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->authorRepository = new AuthorRepository($this->registry);

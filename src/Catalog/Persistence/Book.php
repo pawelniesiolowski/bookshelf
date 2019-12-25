@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Catalog\Exception\BookException;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Catalog\Repository\BookRepository")
@@ -18,13 +19,12 @@ class Book implements JsonSerializable
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="guid")
+     * @ORM\Column(type="uuid", unique=true)
      */
     private $uuid;
     /**
@@ -51,7 +51,7 @@ class Book implements JsonSerializable
     /**
      * @ORM\Column(type="string", length=500, nullable=true)
      */
-    private $authorsNames;
+    private $authorsNames = '[]';
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -65,6 +65,15 @@ class Book implements JsonSerializable
     ) {
         $this->title = $title;
         $this->authors = new ArrayCollection();
+        if (empty($this->uuid)) {
+            $this->uuid = Uuid::uuid1()->toString();
+        }
+    }
+
+    // Temporary method when changing id to uuid
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
@@ -98,11 +107,21 @@ class Book implements JsonSerializable
         $this->authorsNames = json_encode($authors);
     }
 
+    public function getAuthorsNames(): array
+    {
+        return json_decode($this->authorsNames, true);
+    }
+
     public function addAuthor(Author $author)
     {
         if (!$this->authors->contains($author)) {
             $this->authors[] = $author;
             $author->addBook($this);
+        }
+        $authorsNames = $this->getAuthorsNames();
+        if (!in_array($author->toArray(), $authorsNames)) {
+            $authorsNames[] = $author->toArray();
+            $this->setAuthorsNames($authorsNames);
         }
     }
 
@@ -124,6 +143,7 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
+            $this->uuid,
             $this->title
         );
     }
@@ -144,8 +164,10 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
+            $this->uuid,
             $this->title,
             $receiver->id(),
+            $receiver->getUuid(),
             $receiver->__toString()
         );
         $event->setComment($comment);
@@ -167,6 +189,7 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
+            $this->uuid,
             $this->title
         );
         $event->setComment($comment);

@@ -12,7 +12,7 @@ class ReceiverProviderTest extends TestCase
     private $receiverRepository;
     private $receiverProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->receiverRepository = $this->createMock(ReceiverRepository::class);
         $this->receiverProvider = new ReceiverProvider($this->receiverRepository);

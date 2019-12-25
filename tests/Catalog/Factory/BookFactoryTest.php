@@ -10,7 +10,7 @@ class BookFactoryTest extends TestCase
 {
     private $bookFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $authorProvider = $this->createMock(AuthorProvider::class);
         $authorProvider->method('findOneByNameAndSurname')
@@ -24,7 +24,6 @@ class BookFactoryTest extends TestCase
             'title' => 'Zbrodnia i kara',
             'ISBN' => '1234567890',
             'price' => 39.99,
-            'copies' => 5,
             'authors' => [
                 [
                     'name' => 'Fiodor',
@@ -48,9 +47,7 @@ class BookFactoryTest extends TestCase
                 ],
             ],
         ];
-        $jsonSerializedBook = $book->jsonSerializeExtended();
-        $this->assertArraySubset($bookData, $jsonSerializedBook);
-        $this->assertContains('przyjęto', $jsonSerializedBook['events'][0]);
+        $this->assertArraySubset($bookData, $book->jsonSerialize());
     }
 
     public function testItCreatesBookFromEmptyData()
@@ -65,7 +62,6 @@ class BookFactoryTest extends TestCase
             'title' => 'Zbrodnia i kara',
             'ISBN' => '',
             'price' => '',
-            'copies' => 0,
         ];
         $data = json_encode($requestContent);
         $book = $this->bookFactory->fromJson($data);

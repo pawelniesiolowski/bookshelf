@@ -13,7 +13,7 @@ class FunctionalTestCase extends WebTestCase
     protected $registry;
     protected $entityManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         self::bootKernel();
         $this->registry = self::$kernel->getContainer()
