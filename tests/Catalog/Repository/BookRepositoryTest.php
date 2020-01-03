@@ -4,7 +4,6 @@ namespace App\Tests\Catalog\Repository;
 
 use App\Tests\FunctionalTestCase;
 use App\Catalog\Persistence\Book;
-use App\Catalog\Persistence\Author;
 use App\Catalog\Repository\BookRepository;
 
 class BookRepositoryTest extends FunctionalTestCase
@@ -21,33 +20,25 @@ class BookRepositoryTest extends FunctionalTestCase
         $book = new Book(
             'BraciaKaramazow'
         );
-        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
-        
+
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 
-        $this->assertSame($book, $this->bookRepository->find(1));
+        $this->assertSame($book, $this->bookRepository->find($book->getId()));
     }
 
     public function testItShouldGetAllBooksFromDatabase()
     {
-        $book1 = new Book(
-            'BraciaKaramazow'
-        );
-        $book1->addAuthor(new Author('Fiodor', 'Dostojewski'));
-        $book2 = new Book(
-            'Idiota'
-        );
-        $book2->addAuthor(new Author('Fiodor', 'Dostojewski'));
-        $books = [];
-        $books[] = $book1;
-        $books[] = $book2;
+        $book1 = new Book('Bracia Karamazow');
+        $book2 = new Book('Idiota');
+        $books = [$book1->jsonSerialize(), $book2->jsonSerialize()];
 
         $this->entityManager->persist($book1);
         $this->entityManager->persist($book2);
         $this->entityManager->flush();
 
-        $this->assertSame($books, $this->bookRepository->findAll());
+        $booksFromDatabase = $this->bookRepository->findAll();
+        $this->assertCount(2, $booksFromDatabase);
     }
 
     public function testItShouldFindAllBooksOrderedByTitle()

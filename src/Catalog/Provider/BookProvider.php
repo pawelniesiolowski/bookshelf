@@ -16,11 +16,11 @@ class BookProvider
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return Book
      * @throws BookException
      */
-    public function findOne(int $id): Book
+    public function findOne(string $id): Book
     {
         /** @var Book $book */
         $book = $this->bookRepository->find($id);

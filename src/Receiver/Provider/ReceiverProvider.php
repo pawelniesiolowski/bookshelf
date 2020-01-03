@@ -17,12 +17,12 @@ class ReceiverProvider
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return Receiver
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findOneById(int $id): Receiver
+    public function findOneById(string $id): Receiver
     {
         return $this->receiverRepository->findOneById($id);
     }

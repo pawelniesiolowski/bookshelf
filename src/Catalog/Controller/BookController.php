@@ -2,32 +2,26 @@
 
 namespace App\Catalog\Controller;
 
-use App\Catalog\Exception\BookException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Catalog\Factory\BookFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Catalog\Provider\BookProvider;
-use App\Catalog\Provider\AuthorProvider;
-use App\Catalog\Persistence\Author;
 
 class BookController extends AbstractController
 {
     private $bookFactory;
     private $entityManager;
     private $bookProvider;
-    private $authorProvider;
 
     public function __construct(
         BookFactory $bookFactory,
         EntityManagerInterface $entityManager,
-        BookProvider $bookProvider,
-        AuthorProvider $authorProvider
+        BookProvider $bookProvider
     ) {
         $this->bookFactory = $bookFactory;
         $this->entityManager = $entityManager;
         $this->bookProvider = $bookProvider;
-        $this->authorProvider = $authorProvider;
     }
 
     public function new(Request $request)
@@ -53,12 +47,12 @@ class BookController extends AbstractController
         return $this->json([], 201);
     }
 
-    public function one(int $id)
+    public function one(string $id)
     {
         return $this->json(['book' => $this->bookProvider->findOne($id)]);
     }
 
-    public function delete(int $id)
+    public function delete(string $id)
     {
         $book = $this->bookProvider->findOne($id);
         $book->delete();
@@ -67,20 +61,14 @@ class BookController extends AbstractController
         return $this->json([], 200);
     }
 
-    public function edit(int $id, Request $request)
+    public function edit(string $id, Request $request)
     {
         $book = $this->bookProvider->findOne($id);
 
         $content = $request->getContent();
         $contentData = json_decode($content, true);
-        $authors = [];
-        foreach ($contentData['authors'] as $author) {
-            $author = $this->authorProvider->findOneByNameAndSurname($author['name'] ?? '', $author['surname'] ?? '') ??
-                new Author($author['name'] ?? '', $author['surname'] ?? '');
-            $authors[] = $author;
-        }
 
-        $book->updateFromJson($content, $authors);
+        $book->updateFromJson($content, $contentData['authors']);
 
         if (!$book->validate()) {
             return $this->json(['errors' => $book->getErrors()], 422);

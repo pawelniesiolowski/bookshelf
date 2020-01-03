@@ -4,7 +4,7 @@ namespace App\Receiver\Repository;
 
 use App\Receiver\Persistence\Receiver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NonUniqueResultException as NonUniqueResultExceptionAlias;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -16,12 +16,12 @@ class ReceiverRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return Receiver
      * @throws NoResultException
-     * @throws NonUniqueResultException
+     * @throws NonUniqueResultExceptionAlias
      */
-    public function findOneById(int $id): Receiver
+    public function findOneById(string $id): Receiver
     {
         return $this->createQueryBuilder('receiver')
             ->andWhere('receiver.id = :id')

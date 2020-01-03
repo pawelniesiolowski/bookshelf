@@ -3,7 +3,6 @@
 namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Catalog\Persistence\Author;
 use App\Catalog\Persistence\Book;
 use App\Receiver\Persistence\Receiver;
 use App\BookAction\Persistence\BookChangeEvent;
@@ -22,14 +21,11 @@ class FunctionalTestCase extends WebTestCase
         $this->entityManager = $this->registry->getManager();
         $this->truncateEntities(
             [
-                Author::class,
                 Book::class,
                 Receiver::class,
                 BookChangeEvent::class,
             ],
-            [
-                'books_authors',
-            ]
+            []
         );
     }
 

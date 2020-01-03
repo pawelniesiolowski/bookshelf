@@ -40,12 +40,12 @@ class ReceiverController extends AbstractController
         return $this->json(['receivers' => $this->receiverProvider->findAll()]);
     }
 
-    public function one(int $id)
+    public function one(string $id)
     {
         return $this->json(['receiver' => $this->receiverProvider->findOneById($id)]);
     }
 
-    public function delete(int $id)
+    public function delete(string $id)
     {
         $receiver = $this->receiverProvider->findOneById($id);
         $receiver->delete();
@@ -54,7 +54,7 @@ class ReceiverController extends AbstractController
         return $this->json([], 200);
     }
 
-    public function edit(int $id, Request $request)
+    public function edit(string $id, Request $request)
     {
         $receiver = $this->receiverProvider->findOneById($id);
         $receiver->editFromJsonData($request->getContent());

@@ -58,11 +58,11 @@ class ChangeIdToUuidCommand extends Command
             $book = $this->bookRepository->find($bookId);
             $receiverId = $event->getReceiverId();
             /** @var Receiver $receiver */
-            $event->setBookUuid($book->getUuid());
+            $event->setBookId($book->getId());
             $event->setBookTitle($book->getTitle());
             if (!is_null($receiverId)) {
                 $receiver = $this->receiverRepository->find($receiverId);
-                $event->setReceiverUuid($receiver->getUuid());
+                $event->setReceiverId($receiver->getId());
                 $event->setReceiverName($receiver->__toString());
             }
             $this->entityManager->persist($event);

@@ -31,7 +31,7 @@ class BookshelfController extends AbstractController
         return $this->json(['books' => $books]);
     }
 
-    public function receive(int $id, Request $request)
+    public function receive(string $id, Request $request)
     {
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);
@@ -50,7 +50,7 @@ class BookshelfController extends AbstractController
         return $this->json([], 204);
     }
 
-    public function release(int $id, Request $request, ReceiverProvider $receiverProvider)
+    public function release(string $id, Request $request, ReceiverProvider $receiverProvider)
     {
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);
@@ -72,7 +72,7 @@ class BookshelfController extends AbstractController
             $errors['copies'] = 'Ilość egzemplarzy musi być liczbą większą od zera';
             return $this->json(['errors' => $errors], 422);
         }
-        
+
         $this->entityManager->persist($book);
         $this->entityManager->persist($event);
         $this->entityManager->flush();
@@ -80,7 +80,7 @@ class BookshelfController extends AbstractController
         return $this->json([], 204);
     }
 
-    public function sell(int $id, Request $request)
+    public function sell(string $id, Request $request)
     {
         $book = $this->bookProvider->findOne($id);
         $data = json_decode($request->getContent(), true);

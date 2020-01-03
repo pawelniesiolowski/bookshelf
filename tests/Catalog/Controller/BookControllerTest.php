@@ -80,13 +80,13 @@ class BookControllerTest extends FunctionalTestCase
             ],
         ];
         $client = static::createClient();
-        $client->xmlHttpRequest('PUT', '/books/1', [], [], [], json_encode($content));
+        $client->xmlHttpRequest('PUT', '/books/' . $book->getId(), [], [], [], json_encode($content));
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
 
         $bookRepository = new BookRepository($this->registry);
-        $book = $bookRepository->find(1);
+        $book = $bookRepository->find($book->getId());
         $this->assertSame('Dostojewski Fiodor "Zbrodnia i kara"', $book->__toString());
     }
 }

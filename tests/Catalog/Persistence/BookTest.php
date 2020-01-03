@@ -5,9 +5,9 @@ namespace App\Tests\Catalog\Persistence;
 use App\BookAction\Persistence\BookChangeEvent;
 use PHPUnit\Framework\TestCase;
 use App\Catalog\Persistence\Book;
-use App\Catalog\Persistence\Author;
 use App\Catalog\Exception\BookException;
 use App\Receiver\Persistence\Receiver;
+use Ramsey\Uuid\Uuid;
 
 class BookTest extends TestCase
 {
@@ -22,25 +22,24 @@ class BookTest extends TestCase
 
     public function testAddingAuthors()
     {
+        $author1 = ['name' => 'Pierwszy', 'surname' => 'Autor'];
+        $author2 = ['name' => 'Drugi', 'surname' => 'Autor'];
         $book = new Book('Testowa książka');
-        $author1 = new Author('Pierwszy', 'Autor');
-        $author2 = new Author('Drugi', 'Autor');
         $book->addAuthor($author1);
         $book->addAuthor($author2);
-        $expectedAuthors = [
-            ['name' => 'Pierwszy', 'surname' => 'Autor'],
-            ['name' => 'Drugi', 'surname' => 'Autor'],
-        ];
-        $this->assertEquals($expectedAuthors, $book->getAuthorsNames());
+        $expectedAuthors = [$author1, $author2];
+        $this->assertEquals($expectedAuthors, $book->getAuthors());
     }
 
     public function testItCanBeJsonSerialized()
     {
+        $author1 = ['name' => 'Fiodor', 'surname' => 'Dostojewski'];
+        $author2 = ['name' => 'Michaił', 'surname' => 'Bułhakow'];
         $book = new Book('Bracia Karamazow');
         $book->setISBN('0123456789');
         $book->setPrice(29.99);
-        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
-        $book->addAuthor(new Author('Michaił', 'Bułhakow'));
+        $book->addAuthor($author1);
+        $book->addAuthor($author2);
 
         $jsonSerializeData = [
             'id' => null,
@@ -48,16 +47,7 @@ class BookTest extends TestCase
             'ISBN' => '0123456789',
             'price' => 29.99,
             'copies' => 0,
-            'authors' => [
-                [
-                    'name' => 'Fiodor',
-                    'surname' => 'Dostojewski',
-                ],
-                [
-                    'name' => 'Michaił',
-                    'surname' => 'Bułhakow',
-                ],
-            ],
+            'authors' => [$author1, $author2],
         ];
         $this->assertSame(true, $book->validate());
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
@@ -93,7 +83,7 @@ class BookTest extends TestCase
     public function testItCanBeUsedAsString()
     {
         $book = new Book('Bracia Karamazow');
-        $book->addAuthor(new Author('Fiodor', 'Dostojewski'));
+        $book->addAuthor(['name' => 'Fiodor', 'surname' => 'Dostojewski']);
         $this->assertSame(true, $book->validate());
         $this->assertSame('Dostojewski Fiodor "Bracia Karamazow"', $book->__toString());
     }
@@ -101,7 +91,7 @@ class BookTest extends TestCase
     public function testReceiveBook()
     {
         $book = new Book('Bracia Karamazow');
-        $book->setId(1);
+        $book->setId(Uuid::uuid1()->toString());
         $event = $book->receive(1);
         $this->assertSame(true, $book->validate());
         $this->assertInstanceOf(BookChangeEvent::class, $event);
@@ -110,7 +100,7 @@ class BookTest extends TestCase
     public function testReleaseBooks()
     {
         $book = new Book('Bracia Karamazow');
-        $book->setId(1);
+        $book->setId(Uuid::uuid1()->toString());
         $book->receive(5);
         $event = $book->release(3, $this->receiver);
         $this->assertSame(true, $book->validate());
@@ -120,7 +110,7 @@ class BookTest extends TestCase
     public function testSellBooks()
     {
         $book = new Book('Bracia Karamazow');
-        $book->setId(1);
+        $book->setId(Uuid::uuid1()->toString());
         $book->receive(5);
         $event = $book->sell(2);
         $this->assertSame(true, $book->validate());
@@ -130,16 +120,16 @@ class BookTest extends TestCase
     public function testItShouldThrowExceptionWhenThereAreLessThenZeroBooks()
     {
         $book = new Book('Bracia Karamazow');
-        $book->setId(1);
+        $book->setId(Uuid::uuid1()->toString());
         $book->receive(5);
         $this->expectException(BookException::class);
-        $event = $book->release(6, $this->receiver);
+        $book->release(6, $this->receiver);
     }
 
     public function testItShouldThrowExceptionWhenReceiveMethodGetsLessThenZero()
     {
         $book = new Book('Bracia Karamazow');
-        $book->setId(1);
+        $book->setId(Uuid::uuid1()->toString());
         $this->expectException(BookException::class);
         $book->receive(-5);
     }
@@ -149,7 +139,7 @@ class BookTest extends TestCase
         $book = new Book('');
         $book->setISBN('invalid');
         $book->setPrice(100000);
-        $book->addAuthor(new Author('', ''));
+        $book->addAuthor(['name' => '', 'surname' => '']);
         $this->assertSame(false, $book->validate());
         $errors = $book->getErrors();
 
@@ -165,7 +155,7 @@ class BookTest extends TestCase
         $book = new Book('Fiodor Dostojewski');
         $book->setISBN('0123456789');
         $book->setPrice(19.99);
-        $book->addAuthor(new Author('Stanisław', 'Lem'));
+        $book->addAuthor(['name' => 'Stanisław', 'surname' => 'Lem']);
 
         $bookFromRequest = [
             'title' => 'Zbrodnia i kara',
@@ -178,7 +168,7 @@ class BookTest extends TestCase
                 ],
             ],
         ];
-        $authors = [new Author('Fiodor', 'Dostojewski')];
+        $authors = $bookFromRequest['authors'];
         $bookFromRequest = json_encode($bookFromRequest);
         $book->updateFromJson($bookFromRequest, $authors);
 
@@ -188,12 +178,7 @@ class BookTest extends TestCase
             'ISBN' => '1234567890',
             'price' => 39.99,
             'copies' => 0,
-            'authors' => [
-                [
-                    'name' => 'Fiodor',
-                    'surname' => 'Dostojewski',
-                ],
-            ],
+            'authors' => $authors,
         ];
         $this->assertSame($jsonSerializeData, $book->jsonSerialize());
     }

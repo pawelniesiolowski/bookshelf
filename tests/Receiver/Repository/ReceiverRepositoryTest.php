@@ -21,7 +21,7 @@ class ReceiverRepositoryTest extends FunctionalTestCase
         $receiver = new Receiver('Justyna', 'Mazur');
         $this->entityManager->persist($receiver);
         $this->entityManager->flush();
-        $this->assertSame($receiver, $this->receiverRepository->findOneById(1));
+        $this->assertSame($receiver, $this->receiverRepository->findOneById($receiver->getId()));
     }
 
     public function testItShouldFindAllNonDeletedOrderAlfabethically()

@@ -15,7 +15,6 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RECEIVE,
             3,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris'
         );
@@ -29,7 +28,6 @@ class BookChangeEventTest extends TestCase
             'invalid name',
             3,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris'
         );
@@ -45,7 +43,6 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RECEIVE,
             $num,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris'
         );
@@ -65,10 +62,8 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris',
-            1,
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );
@@ -81,10 +76,8 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris',
-            1,
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );
@@ -98,7 +91,6 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::SELL,
             3,
             new \DateTime('2019-05-17'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris'
         );
@@ -111,10 +103,8 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-19'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris',
-            1,
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );
@@ -130,10 +120,8 @@ class BookChangeEventTest extends TestCase
             BookChangeEvent::RELEASE,
             3,
             new \DateTime('2019-05-19'),
-            1,
             Uuid::uuid1()->toString(),
             'Solaris',
-            1,
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );

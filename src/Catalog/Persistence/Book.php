@@ -7,10 +7,9 @@ use App\BookAction\Persistence\BookChangeEvent;
 use App\Receiver\Persistence\Receiver;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use App\Catalog\Exception\BookException;
 use JsonSerializable;
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Catalog\Repository\BookRepository")
@@ -18,15 +17,14 @@ use Ramsey\Uuid\Uuid;
 class Book implements JsonSerializable
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var UuidInterface
+     *
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
-    /**
-     * @ORM\Column(type="uuid", unique=true)
-     */
-    private $uuid;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -44,14 +42,9 @@ class Book implements JsonSerializable
      */
     private $ISBN;
     /**
-     * @ORM\ManyToMany(targetEntity="App\Catalog\Persistence\Author", inversedBy="books", cascade={"persist", "remove"})
-     * @ORM\JoinTable(name="books_authors")
-     */
-    private $authors;
-    /**
      * @ORM\Column(type="string", length=500, nullable=true)
      */
-    private $authorsNames = '[]';
+    private $authors = '[]';
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -64,24 +57,16 @@ class Book implements JsonSerializable
         string $title
     ) {
         $this->title = $title;
-        $this->authors = new ArrayCollection();
-        if (empty($this->uuid)) {
-            $this->uuid = Uuid::uuid1()->toString();
-        }
     }
 
-    // Temporary method when changing id to uuid
-    public function setId(int $id): void
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUuid()
+    public function getId(): string
     {
-        return $this->uuid;
+        return $this->id;
     }
 
     /**
@@ -102,26 +87,22 @@ class Book implements JsonSerializable
         $this->ISBN = $ISBN;
     }
 
-    public function setAuthorsNames(array $authors): void
+    public function setAuthors(array $authors): void
     {
-        $this->authorsNames = json_encode($authors);
+        $this->authors = json_encode($authors);
     }
 
-    public function getAuthorsNames(): array
+    public function getAuthors(): array
     {
-        return json_decode($this->authorsNames, true);
+        return json_decode($this->authors, true);
     }
 
-    public function addAuthor(Author $author)
+    public function addAuthor(array $author)
     {
-        if (!$this->authors->contains($author)) {
-            $this->authors[] = $author;
-            $author->addBook($this);
-        }
-        $authorsNames = $this->getAuthorsNames();
-        if (!in_array($author->toArray(), $authorsNames)) {
-            $authorsNames[] = $author->toArray();
-            $this->setAuthorsNames($authorsNames);
+        $authors = $this->getAuthors();
+        if (!in_array($author, $authors)) {
+            $authors[] = $author;
+            $this->setAuthors($authors);
         }
     }
 
@@ -143,7 +124,6 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
-            $this->uuid,
             $this->title
         );
     }
@@ -164,10 +144,8 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
-            $this->uuid,
             $this->title,
-            $receiver->id(),
-            $receiver->getUuid(),
+            $receiver->getId(),
             $receiver->__toString()
         );
         $event->setComment($comment);
@@ -189,7 +167,6 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
-            $this->uuid,
             $this->title
         );
         $event->setComment($comment);
@@ -236,10 +213,7 @@ class Book implements JsonSerializable
         } else {
             $this->price = is_numeric($data['price']) ? (float)$data['price'] : 0.0;
         }
-        $this->authors->clear();
-        foreach ($authors as $author) {
-            $this->addAuthor($author);
-        }
+        $this->setAuthors($authors);
     }
 
     public function validate(): bool
@@ -262,10 +236,10 @@ class Book implements JsonSerializable
     public function __toString()
     {
         $text = '';
-        $authors = $this->authors->toArray();
+        $authors = $this->getAuthors();
         $numOfAuthors = count($authors);
         for ($i = 0; $i < $numOfAuthors; $i++) {
-            $text .= $authors[$i]->__toString();
+            $text .= $authors[$i]['surname'] . ' ' . $authors[$i]['name'];
             $text .= ($i < $numOfAuthors - 1 ? ', ' : ' ');
         }
         $text .= '"' . $this->title . '"';
@@ -274,12 +248,7 @@ class Book implements JsonSerializable
 
     public function createJsonSerializableSortedAuthors(): array
     {
-        $authors = $this->authors->toArray();
-        $authors = array_map(function($author) {
-            /** @var Author $author */
-            return $author->toArray();
-        }, $authors);
-        return $authors;
+        return $this->getAuthors();
     }
 
     /**
@@ -330,9 +299,13 @@ class Book implements JsonSerializable
 
     private function validateAuthors(): void
     {
-        for ($i = 0; $i < count($this->authors); $i++) {
-            if (!$this->authors[$i]->validate()) {
-                $this->errors['authors'][$i] = $this->authors[$i]->getErrors();
+        $authors = $this->getAuthors();
+        for ($i = 0; $i < count($authors); $i++) {
+            if (empty($authors[$i]['name'])) {
+                $this->errors['authors'][$i]['authorName'] = 'Podaj imię autora';
+            }
+            if (empty($authors[$i]['surname'])) {
+                $this->errors['authors'][$i]['authorSurname'] = 'Podaj nazwisko autora';
             }
         }
     }

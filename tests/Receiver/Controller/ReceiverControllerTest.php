@@ -21,8 +21,8 @@ class ReceiverControllerTest extends FunctionalTestCase
         $this->assertSame(201, $response->getStatusCode());
 
         $receiverRepository = new ReceiverRepository($this->registry);
-        $receiver = $receiverRepository->find(1);
-        $this->assertSame('Mazur Justyna', $receiver->__toString());
+        $receiver = $receiverRepository->findAll();
+        $this->assertSame('Mazur Justyna', $receiver[0]->__toString());
     }
 
     public function testItShouldIndexNonDeletedReceiversInAlfabethicalOrder()
@@ -45,11 +45,11 @@ class ReceiverControllerTest extends FunctionalTestCase
         $expectedData = [
             'receivers' => [
                 [
-                    'id' => 2,
+                    'id' => $secondReceiver->getId(),
                     'name' => 'Mazur Justyna',
                 ],
                 [
-                    'id' => 1,
+                    'id' => $firstReceiver->getId(),
                     'name' => 'Niesiołowski Paweł',
                 ],
             ],
@@ -65,14 +65,14 @@ class ReceiverControllerTest extends FunctionalTestCase
         $this->entityManager->flush();
 
         $client = static::createClient();
-        $client->xmlHttpRequest('GET', '/receiver/1');
+        $client->xmlHttpRequest('GET', '/receiver/' . $receiver->getId());
         $response = $client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
         
         $expectedData = [
             'receiver' => [
-                'id' => 1,
+                'id' => $receiver->getId(),
                 'name' => 'Niesiołowski Paweł',
             ],
         ];
@@ -87,7 +87,7 @@ class ReceiverControllerTest extends FunctionalTestCase
         $this->entityManager->flush();
 
         $client = static::createClient();
-        $client->xmlHttpRequest('DELETE', '/receiver/1');
+        $client->xmlHttpRequest('DELETE', '/receiver/' . $receiver->getId());
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
     }
@@ -103,13 +103,13 @@ class ReceiverControllerTest extends FunctionalTestCase
             'surname' => 'Mazur',
         ];
         $client = static::createClient();
-        $client->xmlHttpRequest('PUT', '/receiver/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('PUT', '/receiver/' . $receiver->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
 
         $receiverRepository = new ReceiverRepository($this->registry);
-        $receiver = $receiverRepository->find(1);
+        $receiver = $receiverRepository->find($receiver->getId());
         $this->assertSame('Mazur Justynka', $receiver->__toString());
     }
 }

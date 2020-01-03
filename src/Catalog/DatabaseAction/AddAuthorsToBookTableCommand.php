@@ -44,7 +44,7 @@ class AddAuthorsToBookTableCommand extends Command
         foreach ($books as $book) {
             /** @var Book $book */
             $authors = $book->createJsonSerializableSortedAuthors();
-            $book->setAuthorsNames($authors);
+            $book->setAuthors($authors);
             $this->entityManager->persist($book);
         }
         $this->entityManager->flush();

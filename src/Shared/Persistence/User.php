@@ -4,7 +4,7 @@ namespace App\Shared\Persistence;
 
 use App\Shared\Security\UserRolesDictionary;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -13,15 +13,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var UuidInterface
+     *
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
-    /**
-     * @ORM\Column(type="uuid", unique=true)
-     */
-    private $uuid;
+
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
@@ -58,12 +58,9 @@ class User implements UserInterface
         $this->password = $password;
         $this->name = $name;
         $this->surname = $surname;
-        if (empty($this->uuid)) {
-            $this->uuid = Uuid::uuid1()->toString();
-        }
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

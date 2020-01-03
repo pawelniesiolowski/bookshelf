@@ -2,10 +2,10 @@
 
 namespace App\BookAction\Persistence;
 
-use DateTime;
+use DateTime as DateTimeAlias;
 use Doctrine\ORM\Mapping as ORM;
 use App\BookAction\Exception\BookChangeEventException;
-use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\BookAction\Repository\BookChangeEventRepository")
@@ -29,15 +29,14 @@ class BookChangeEvent
     ];
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var UuidInterface
+     *
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
-    /**
-     * @ORM\Column(type="uuid", unique=true)
-     */
-    private $uuid;
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -55,25 +54,17 @@ class BookChangeEvent
      */
     private $date;
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $bookId;
-    /**
      * @ORM\Column(type="uuid")
      */
-    private $bookUuid;
+    private $bookId;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $bookTitle;
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $receiverId;
-    /**
      * @ORM\Column(type="uuid", nullable=true)
      */
-    private $receiverUuid;
+    private $receiverId;
     /**
      * @ORM\Column(type="string", length=510, nullable=true)
      */
@@ -83,24 +74,20 @@ class BookChangeEvent
      * BookChangeEvent constructor.
      * @param string $name
      * @param int $num
-     * @param DateTime $date
-     * @param int $bookId
-     * @param string $bookUuid
+     * @param DateTimeAlias $date
+     * @param string $bookId
      * @param string $bookTitle
-     * @param int|null $receiverId
-     * @param string|null $receiverUuid
+     * @param string|null $receiverId
      * @param string|null $receiverName
      * @throws BookChangeEventException
      */
     public function __construct(
         string $name,
         int $num,
-        DateTime $date,
-        int $bookId,
-        string $bookUuid,
+        DateTimeAlias $date,
+        string $bookId,
         string $bookTitle,
-        int $receiverId = null,
-        string $receiverUuid = null,
+        string $receiverId = null,
         string $receiverName = null
     ) {
         $this->validateName($name);
@@ -109,24 +96,14 @@ class BookChangeEvent
         $this->num = $num;
         $this->date = $date;
         $this->bookId = $bookId;
-        $this->bookUuid = $bookUuid;
         $this->bookTitle = $bookTitle;
         $this->receiverId = $receiverId;
-        $this->receiverUuid = $receiverUuid;
         $this->receiverName = $receiverName;
-        if (empty($this->uuid)) {
-            $this->uuid = Uuid::uuid1()->toString();
-        }
     }
 
-    public function getBookId()
+    public function setBookId($bookId): void
     {
-        return $this->bookId;
-    }
-
-    public function setBookUuid($bookUuid): void
-    {
-        $this->bookUuid = $bookUuid;
+        $this->bookId = $bookId;
     }
 
     public function getBookTitle(): string
@@ -139,14 +116,9 @@ class BookChangeEvent
         $this->bookTitle = $bookTitle;
     }
 
-    public function getReceiverId()
+    public function setReceiverId($receiverId): void
     {
-        return $this->receiverId;
-    }
-
-    public function setReceiverUuid($receiverUuid): void
-    {
-        $this->receiverUuid = $receiverUuid;
+        $this->receiverId = $receiverId;
     }
 
     /**

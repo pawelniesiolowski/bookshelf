@@ -3,10 +3,10 @@
 namespace App\Tests\BookAction\Controller;
 
 use App\Tests\FunctionalTestCase;
-use App\Catalog\Persistence\Author;
 use App\Catalog\Persistence\Book;
 use App\Receiver\Persistence\Receiver;
 use App\Catalog\Repository\BookRepository;
+use Ramsey\Uuid\Uuid;
 
 class BookshelfControllerTest extends FunctionalTestCase
 {
@@ -20,20 +20,18 @@ class BookshelfControllerTest extends FunctionalTestCase
 
     public function testIndex()
     {
-        $dostojewski = new Author('Fiodor', 'Dostojewski');
         $crime = new Book('Zbrodnia i kara');
         $crime->setISBN('1234567890');
         $crime->setPrice(29.99);
         $idiot = new Book('Idiota');
         $idiot->setISBN('0987654321');
         $idiot->setPrice(19.99);
-        $crime->addAuthor($dostojewski);
-        $idiot->addAuthor($dostojewski);
-        $lem = new Author('Stanisław', 'Lem');
+        $crime->addAuthor(['name' => 'Fiodor', 'surname' => 'Dostojewski']);
+        $idiot->addAuthor(['name' => 'Fiodor', 'surname' => 'Dostojewski']);
         $robots = new Book('Bajki robotów');
         $robots->setISBN('0123456789');
         $robots->setPrice(59.00);
-        $robots->addAuthor($lem);
+        $robots->addAuthor(['name' => 'Stanisław', 'surname' => 'Lem']);
         $this->entityManager->persist($crime);
         $this->entityManager->persist($robots);
         $this->entityManager->persist($idiot);
@@ -48,7 +46,6 @@ class BookshelfControllerTest extends FunctionalTestCase
         $expectedData = [
             'books' => [
                 [
-                    'id' => 2,
                     'title' => 'Idiota',
                     'ISBN' => '0987654321',
                     'price' => '19.99',
@@ -61,7 +58,6 @@ class BookshelfControllerTest extends FunctionalTestCase
                     ],
                 ],
                 [
-                    'id' => 1,
                     'title' => 'Zbrodnia i kara',
                     'ISBN' => '1234567890',
                     'price' => '29.99',
@@ -74,7 +70,6 @@ class BookshelfControllerTest extends FunctionalTestCase
                     ],
                 ],
                 [
-                    'id' => 3,
                     'title' => 'Bajki robotów',
                     'ISBN' => '0123456789',
                     'price' => '59.00',
@@ -88,7 +83,7 @@ class BookshelfControllerTest extends FunctionalTestCase
                 ],
             ],
         ];
-        $this->assertSame($expectedData, json_decode($content, true));
+        $this->assertArraySubset($expectedData, json_decode($content, true));
     }
 
     public function testItShouldReceiveBook()
@@ -99,12 +94,12 @@ class BookshelfControllerTest extends FunctionalTestCase
         $data = ['copies' => 4];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/receive/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/receive/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
 
-        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $serializedBook = $this->bookRepository->find($book->getId())->jsonSerializeBasic();
         $this->assertSame(4, $serializedBook['copies']);
     }
 
@@ -116,7 +111,7 @@ class BookshelfControllerTest extends FunctionalTestCase
         $data = ['copies' => ''];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/receive/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/receive/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(422, $response->getStatusCode());
@@ -137,17 +132,17 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiver' => 1,
+            'receiver' => $receiver->getId(),
             'comment' => 'Test',
         ];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/release/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
 
-        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $serializedBook = $this->bookRepository->find($book->getId())->jsonSerializeBasic();
         $this->assertSame(1, $serializedBook['copies']);
     }
 
@@ -167,12 +162,12 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => '',
-            'receiver' => 1,
+            'receiver' => $receiver->getId(),
             'comment' => 'Test',
         ];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/release/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
 
@@ -193,12 +188,12 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => 4,
-            'receiver' => 1,
+            'receiver' => Uuid::uuid1()->toString(),
         ];
 
         $client = static::createClient();
 
-        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/release/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
 
@@ -226,7 +221,7 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $client = static::createClient();
 
-        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/release/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
 
@@ -250,13 +245,13 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $data = [
             'copies' => -4,
-            'receiver' => 1,
+            'receiver' => $receiver->getId(),
             'comment' => 'Test',
         ];
 
         $client = static::createClient();
 
-        $client->xmlHttpRequest('POST', '/release/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/release/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
 
@@ -281,12 +276,12 @@ class BookshelfControllerTest extends FunctionalTestCase
         ];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/sell/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/sell/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(204, $response->getStatusCode());
 
-        $serializedBook = $this->bookRepository->find(1)->jsonSerializeBasic();
+        $serializedBook = $this->bookRepository->find($book->getId())->jsonSerializeBasic();
         $this->assertSame(3, $serializedBook['copies']);
     }
 
@@ -301,7 +296,7 @@ class BookshelfControllerTest extends FunctionalTestCase
         ];
 
         $client = static::createClient();
-        $client->xmlHttpRequest('POST', '/sell/1', [], [], [], json_encode($data));
+        $client->xmlHttpRequest('POST', '/sell/' . $book->getId(), [], [], [], json_encode($data));
         $response = $client->getResponse();
 
         $this->assertSame(422, $response->getStatusCode());

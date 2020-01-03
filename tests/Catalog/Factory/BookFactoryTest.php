@@ -4,7 +4,6 @@ namespace App\Catalog\Factory;
 
 use PHPUnit\Framework\TestCase;
 use App\Catalog\Persistence\Book;
-use App\Catalog\Provider\AuthorProvider;
 
 class BookFactoryTest extends TestCase
 {
@@ -12,10 +11,7 @@ class BookFactoryTest extends TestCase
 
     public function setUp(): void
     {
-        $authorProvider = $this->createMock(AuthorProvider::class);
-        $authorProvider->method('findOneByNameAndSurname')
-            ->will($this->returnValue(null));
-        $this->bookFactory = new BookFactory($authorProvider);
+        $this->bookFactory = new BookFactory();
     }
 
     public function testItCreatesBookFromJson()
