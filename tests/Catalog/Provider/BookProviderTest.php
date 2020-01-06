@@ -37,24 +37,5 @@ class BookProviderTest extends TestCase
         $this->expectException(BookException::class);
         $bookProvider->findOne(1);
     }
-
-    public function testItCansGetAllOrderedByAuthorAndTitle()
-    {
-        $firstBook = $this->createMock(Book::class);
-        $firstBook->method('__toString')
-            ->will($this->returnValue('C'));
-        $secondBook = $this->createMock(Book::class);
-        $secondBook->method('__toString')
-            ->will($this->returnValue('A'));
-        $thirdBook = $this->createMock(Book::class);
-        $thirdBook->method('__toString')
-            ->will($this->returnValue('B'));
-        $booksOrderedByTitle = [$firstBook, $secondBook, $thirdBook];
-        $this->bookRepository->method('findAllOrderedByTitle')
-            ->will($this->returnValue($booksOrderedByTitle));
-        $bookProvider = new BookProvider($this->bookRepository);
-        $booksOrderedByAuthor = [$secondBook, $thirdBook, $firstBook];
-        $this->assertSame($booksOrderedByAuthor, $bookProvider->getAllOrderedByAuthorAndTitle());
-    }
 }
 

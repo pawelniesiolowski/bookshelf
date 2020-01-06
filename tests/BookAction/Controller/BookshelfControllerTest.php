@@ -46,6 +46,18 @@ class BookshelfControllerTest extends FunctionalTestCase
         $expectedData = [
             'books' => [
                 [
+                    'title' => 'Bajki robotów',
+                    'ISBN' => '0123456789',
+                    'price' => '59.00',
+                    'copies' => 0,
+                    'authors' => [
+                        [
+                            'name' => 'Stanisław',
+                            'surname' => 'Lem',
+                        ],
+                    ],
+                ],
+                [
                     'title' => 'Idiota',
                     'ISBN' => '0987654321',
                     'price' => '19.99',
@@ -66,18 +78,6 @@ class BookshelfControllerTest extends FunctionalTestCase
                         [
                             'name' => 'Fiodor',
                             'surname' => 'Dostojewski',
-                        ],
-                    ],
-                ],
-                [
-                    'title' => 'Bajki robotów',
-                    'ISBN' => '0123456789',
-                    'price' => '59.00',
-                    'copies' => 0,
-                    'authors' => [
-                        [
-                            'name' => 'Stanisław',
-                            'surname' => 'Lem',
                         ],
                     ],
                 ],

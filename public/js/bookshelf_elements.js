@@ -8,10 +8,10 @@ const BookshelfElements = function () {
             td0.textContent = num.toString();
             tr.appendChild(td0);
             const td1 = document.createElement('td');
-            td1.textContent = Authors.createDisplayedAuthors(book.authors);
+            td1.textContent = book.title;
             tr.appendChild(td1);
             const td2 = document.createElement('td');
-            td2.textContent = book.title;
+            td2.textContent = Authors.createDisplayedAuthors(book.authors);
             tr.appendChild(td2);
             const td3 = document.createElement('td');
             td3.textContent = book.copies;

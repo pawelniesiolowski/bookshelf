@@ -32,8 +32,6 @@ class BookProvider
 
     public function getAllOrderedByAuthorAndTitle(): array
     {
-        $books = $this->bookRepository->findAllOrderedByTitle();
-        usort($books, 'strnatcasecmp');
-        return $books;
+        return $this->bookRepository->findAllOrderedByTitle();
     }
 }
