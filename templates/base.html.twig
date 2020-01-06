@@ -30,6 +30,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     {% if is_granted('ROLE_ADMIN') %}
+                        <a class="nav-item nav-link" href="{{ path('book_form') }}">Dodaj książkę</a>
                     <a class="nav-item nav-link" href="{{ path('website_receivers') }}">Użytkownicy</a>
                     {% endif %}
                     <a class="nav-item nav-link" href="{{ path('app_logout') }}">Wyloguj</a>

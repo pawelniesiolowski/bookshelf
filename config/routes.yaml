@@ -22,6 +22,10 @@ bookshelf_sell:
     path: /sell/{id}
     controller: App\BookAction\Controller\BookshelfController::sell
     methods: [POST]
+book_form:
+    path: /books/form
+    controller: App\Catalog\Controller\WebsiteController:form
+    methods: [GET]
 book_new:
     path: /books
     controller: App\Catalog\Controller\BookController::new

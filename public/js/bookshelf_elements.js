@@ -64,7 +64,7 @@ const BookshelfElements = function () {
         td6.appendChild(editBookButton);
         td6.appendChild(deleteBookButton);
         return td6;
-    }
+    };
 
     const simpleBookActionDiv = function (book, verb) {
         const div = document.createElement('div');
@@ -299,7 +299,7 @@ const BookshelfElements = function () {
 
     const releaseDiv = function (book) {
         const div = document.createElement('div');
-        const text = document.createElement('h2');
+        const text = document.createElement('p');
         text.setAttribute('class', 'text-center');
         const displayedAuthor = Authors.createDisplayedAuthors(book.authors);
         text.textContent = 'Wydajesz książkę: ' + displayedAuthor  + ' "' + book.title + '"';

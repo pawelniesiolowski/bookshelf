@@ -1,7 +1,6 @@
 const Bookshelf = function () {
 
     const bookshelfTable = document.getElementById('bookshelf-table-body');
-    const newBook = document.getElementById('bookshelf-new-book');
     const paths = {
         index: bookshelfTable.getAttribute('data-index'),
         receive: bookshelfTable.getAttribute('data-receive-path'),
@@ -15,17 +14,7 @@ const Bookshelf = function () {
     
     const init = function () {
         bookshelfTable.addEventListener('click', function (e) { checkEvent(e); });
-        if (newBook) {
-            newBook.addEventListener('submit', function (e) { createBook(e); });
-        }
         loadBooks();
-        const addAuthorButton = document.getElementById('bookshelf-new-book-addAuthor');
-        if (addAuthorButton) {
-            addAuthorButton.addEventListener('click', function (e) {
-                e.preventDefault();
-                Authors.addAuthor();
-            });
-        }
     };
 
     const checkEvent = function (e) {
@@ -70,39 +59,6 @@ const Bookshelf = function () {
             bookshelfTable.removeChild(bookshelfTable.firstChild);
         }
         bookshelfTable.appendChild(newContent);
-    };
-
-    const createBook = function (e) {
-        e.preventDefault();
-        const form = e.target;
-        const path = form.getAttribute('action');
-        const book = Book.create(e.target.elements);
-        ErrorsHandler.reset(form);
-        doCreateBook(book, path)
-            .then(function () {
-                loadBooks();
-            })
-            .catch(function (errors) {
-                ErrorsHandler.show(form, JSON.parse(errors).errors);
-            });
-    };
-
-    const doCreateBook = function (book, path) {
-        return new Promise(function (resolve, reject) {
-            const request = new XMLHttpRequest();
-            request.open('POST', path, true);
-            request.onload = function () {
-                if (request.status === 201) {
-                    resolve();
-                } else {
-                    reject(this.response);
-                }
-            };
-            request.onerror = function () {
-                reject(Error('Błąd! Nie udało się dodać książki'));
-            };
-            request.send(JSON.stringify(book));
-        });
     };
 
     const receiveBook = function (id) {
@@ -237,9 +193,9 @@ const Bookshelf = function () {
             .then(decode)
             .then(function (data) {
                 const div = document.createElement('div');
-                const text = document.createElement('h2');
+                const text = document.createElement('p');
                 text.setAttribute('class', 'text-center');
-                text.textContent = 'Edycja książki';
+                text.textContent = 'Edycja książki "' + data.book.title + '"';
                 div.appendChild(text);
                 const form = BookshelfElements.editForm(data.book);
                 form.addEventListener('submit', function (e) { 
