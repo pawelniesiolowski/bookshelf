@@ -2,6 +2,7 @@
 
 namespace App\Catalog\Controller;
 
+use App\BookAction\ActualizeBookDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Catalog\Factory\BookFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +62,7 @@ class BookController extends AbstractController
         return $this->json([], 200);
     }
 
-    public function edit(string $id, Request $request)
+    public function edit(string $id, Request $request, ActualizeBookDataService $actualizeBookDataService)
     {
         $book = $this->bookProvider->findOne($id);
 
@@ -73,9 +74,14 @@ class BookController extends AbstractController
         if (!$book->validate()) {
             return $this->json(['errors' => $book->getErrors()], 422);
         }
-
+        $this->entityManager->beginTransaction();
         $this->entityManager->persist($book);
         $this->entityManager->flush();
+        if (!$actualizeBookDataService->actualizeDataForBook($book->getId(), $book->getTitle(), $book->firstAuthorIfExists())) {
+            $this->entityManager->rollback();
+            return $this->json(['errors' => ['title' => 'Nie udało się zmienić danych książki. Spróbuj ponownie później.']], 500);
+        }
+        $this->entityManager->commit();
 
         return $this->json([], 204);
     }
