@@ -17,4 +17,9 @@ class BookChangeEventRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['date' => 'DESC']);
     }
+
+    public function findAllByBookId(string $id): array
+    {
+        return $this->findBy(['bookId' => $id]);
+    }
 }

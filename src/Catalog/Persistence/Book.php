@@ -124,7 +124,8 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
-            $this->title
+            $this->title,
+            $this->firstAuthorIfExists()
         );
     }
 
@@ -145,6 +146,7 @@ class Book implements JsonSerializable
             new DateTime('now'),
             $this->id,
             $this->title,
+            $this->firstAuthorIfExists(),
             $receiver->getId(),
             $receiver->__toString()
         );
@@ -167,7 +169,8 @@ class Book implements JsonSerializable
             $num,
             new DateTime('now'),
             $this->id,
-            $this->title
+            $this->title,
+            $this->firstAuthorIfExists()
         );
         $event->setComment($comment);
         return $event;
@@ -308,6 +311,15 @@ class Book implements JsonSerializable
                 $this->errors['authors'][$i]['authorSurname'] = 'Podaj nazwisko autora';
             }
         }
+    }
+
+    public function firstAuthorIfExists(): ?string
+    {
+        $firstAuthor = $this->getAuthors()[0] ?? [];
+        if (array_key_exists('name', $firstAuthor) && array_key_exists('surname', $firstAuthor)) {
+            return $firstAuthor['surname'] . ' ' . $firstAuthor['name'];
+        }
+        return null;
     }
 
     private function validatePrice(): void

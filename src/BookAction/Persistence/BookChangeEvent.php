@@ -62,6 +62,10 @@ class BookChangeEvent
      */
     private $bookTitle;
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $bookAuthor;
+    /**
      * @ORM\Column(type="uuid", nullable=true)
      */
     private $receiverId;
@@ -77,6 +81,7 @@ class BookChangeEvent
      * @param DateTimeAlias $date
      * @param string $bookId
      * @param string $bookTitle
+     * @param string $bookAuthor
      * @param string|null $receiverId
      * @param string|null $receiverName
      * @throws BookChangeEventException
@@ -87,6 +92,7 @@ class BookChangeEvent
         DateTimeAlias $date,
         string $bookId,
         string $bookTitle,
+        string $bookAuthor = null,
         string $receiverId = null,
         string $receiverName = null
     ) {
@@ -97,6 +103,7 @@ class BookChangeEvent
         $this->date = $date;
         $this->bookId = $bookId;
         $this->bookTitle = $bookTitle;
+        $this->bookAuthor = $bookAuthor;
         $this->receiverId = $receiverId;
         $this->receiverName = $receiverName;
     }
@@ -114,6 +121,11 @@ class BookChangeEvent
     public function setBookTitle(string $bookTitle): void
     {
         $this->bookTitle = $bookTitle;
+    }
+
+    public function setBookAuthor(?string $bookAuthor): void
+    {
+        $this->bookAuthor = $bookAuthor;
     }
 
     public function setReceiverId($receiverId): void

@@ -64,6 +64,7 @@ class BookChangeEventTest extends TestCase
             new \DateTime('2019-05-17'),
             Uuid::uuid1()->toString(),
             'Solaris',
+            'Lem Stanisław',
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );
@@ -78,6 +79,7 @@ class BookChangeEventTest extends TestCase
             new \DateTime('2019-05-17'),
             Uuid::uuid1()->toString(),
             'Solaris',
+            'Lem Stanisław',
             Uuid::uuid1()->toString(),
             'Mazur Justyna'
         );
