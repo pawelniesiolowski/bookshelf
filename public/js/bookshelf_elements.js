@@ -69,7 +69,7 @@ const BookshelfElements = function () {
     const simpleBookActionDiv = function (book, verb) {
         const div = document.createElement('div');
         const text = document.createElement('p');
-        text.textContent = 'Ile egzemplarzy książki "' + book.title + '" chcesz ' + verb + '?';
+        text.textContent = 'Ile egzemplarzy książki "' + book.title + '" (' + book.copies + ' egz.) chcesz ' + verb + '?';
         div.appendChild(text);
         return div;
     };
@@ -302,7 +302,7 @@ const BookshelfElements = function () {
         const text = document.createElement('p');
         text.setAttribute('class', 'text-center');
         const displayedAuthor = Authors.createDisplayedAuthors(book.authors);
-        text.textContent = 'Wydajesz książkę: ' + displayedAuthor  + ' "' + book.title + '"';
+        text.textContent = 'Wydajesz książkę: ' + displayedAuthor  + ' "' + book.title + '" (' + book.copies + ' egz.)';
         div.appendChild(text);
         return div;
     };
