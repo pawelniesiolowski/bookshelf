@@ -9,9 +9,10 @@ const Bookshelf = function () {
         edit: bookshelfTable.getAttribute('data-edit-book-path'),
         get: bookshelfTable.getAttribute('data-get-book-path'),
         deleteBook: bookshelfTable.getAttribute('data-delete-book-path'),
-        getReceivers: bookshelfTable.getAttribute('data-get-receivers-path')
+        getReceivers: bookshelfTable.getAttribute('data-get-receivers-path'),
+        bookActionIndexForBook: bookshelfTable.getAttribute('data-book-action-index-for-book')
     };
-    
+
     const init = function () {
         bookshelfTable.addEventListener('click', function (e) { checkEvent(e); });
         loadBooks();
@@ -45,7 +46,7 @@ const Bookshelf = function () {
                 if (bookshelfTable.hasAttribute('data-admin')) {
                     isAdmin = true;
                 }
-                const content = BookshelfElements.tableBodyContent(data.books, isAdmin);
+                const content = BookshelfElements.tableBodyContent(data.books, isAdmin, paths.bookActionIndexForBook);
                 reloadBookshelfTable(content);
             })
             .catch(function(error) {
@@ -69,7 +70,7 @@ const Bookshelf = function () {
             .then(decode)
             .then(function (data) {
                 const form = BookshelfElements.simpleBookActionForm(data.book);
-                form.addEventListener('submit', function (e) { 
+                form.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const data = {
                         copies: e.target.elements.namedItem('copies').value,
@@ -167,13 +168,13 @@ const Bookshelf = function () {
                 const displayedAuthors = Authors.createDisplayedAuthors(data.book.authors);
                 const text = 'Czy na pewno chcesz usunąć książkę: ' + displayedAuthors + ' "' + data.book.title + '"?';
                 const approvalDiv = BookshelfElements.deleteDiv(text, function () {
-                    ModalWindow.closeModal(); 
+                    ModalWindow.closeModal();
                     doDeleteBook(deletePath)
                         .then(loadBooks)
                         .catch(function (errors) {
                             console.log(errors);
                         });
-                    
+
                 });
                 ModalWindow.init(approvalDiv);
             });
@@ -198,7 +199,7 @@ const Bookshelf = function () {
                 text.textContent = 'Edycja książki "' + data.book.title + '"';
                 div.appendChild(text);
                 const form = BookshelfElements.editForm(data.book);
-                form.addEventListener('submit', function (e) { 
+                form.addEventListener('submit', function (e) {
                     e.preventDefault();
                     ErrorsHandler.reset(form);
                     const data = Book.create(e.target.elements)

@@ -6,6 +6,10 @@ website_receivers:
     path: /receivers
     controller: App\Shared\Controller\WebsiteController::receivers
     methods: [GET]
+book_action_index_for_book:
+    path: /bookaction/{bookId}
+    controller: App\BookAction\Controller\BookActionController:indexActionsForBook
+    methods: [GET]
 bookshelf_index:
     path: /books
     controller: App\BookAction\Controller\BookshelfController::index

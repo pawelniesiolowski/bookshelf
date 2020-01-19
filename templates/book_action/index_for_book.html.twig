@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <section>
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <header class="my-5 text-center">
+                    <div>
+                        <h3>Zdarzenia dotyczące książki: <strong>{{ events[0].bookAuthor }} "{{ events[0].bookTitle }}"</strong></h3>
+                    </div>
+                </header>
+                <div class="table-responsive-xl">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Nazwa zdarzenia</th>
+                            <th>Ilość książek</th>
+                            <th>Odbiorca książki</th>
+                            <th>Komentarz</th>
+                            <th>Data</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                                <tr>
+                                    <td>{{ event.name }}</td>
+                                    <td>{{ event.num }}</td>
+                                    <td>{{ event.receiverName }}</td>
+                                    <td>{{ event.comment }}</td>
+                                    <td>{{ event.date }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

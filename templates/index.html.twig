@@ -23,7 +23,7 @@
                         {% if is_granted('ROLE_ADMIN') %}
                         data-admin="true"
                         {% endif %}
-                        data-index="{{ path('bookshelf_index') }}" 
+                        data-index="{{ path('bookshelf_index') }}"
                         data-receive-path="{{ path('bookshelf_receive', { 'id': 0 }) }}"
                         data-release-path="{{ path('bookshelf_release', { 'id': 0 }) }}"
                         data-sell-path="{{ path('bookshelf_sell', { 'id': 0 }) }}"
@@ -31,6 +31,7 @@
                         data-get-book-path="{{ path('book_one', { 'id': 0 }) }}"
                         data-delete-book-path="{{ path('book_delete', { 'id': 0 }) }}"
                         data-get-receivers-path="{{ path('receiver_index') }}"
+                        data-book-action-index-for-book="{{ path('book_action_index_for_book', {'bookId': 0}) }}"
                     >
                     </tbody>
                 </table>

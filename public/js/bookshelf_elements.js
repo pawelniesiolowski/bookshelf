@@ -1,5 +1,5 @@
 const BookshelfElements = function () {
-    const tableBodyContent = function (books, isAdmin) {
+    const tableBodyContent = function (books, isAdmin, bookActionIndexForBook) {
         const content = document.createDocumentFragment();
         let num = 1;
         for (let book of books) {
@@ -8,7 +8,10 @@ const BookshelfElements = function () {
             td0.textContent = num.toString();
             tr.appendChild(td0);
             const td1 = document.createElement('td');
-            td1.textContent = book.title;
+            const link = document.createElement('a');
+            link.setAttribute('href', bookActionIndexForBook.replace('0', book.id));
+            link.textContent = book.title;
+            td1.appendChild(link);
             tr.appendChild(td1);
             const td2 = document.createElement('td');
             td2.textContent = Authors.createDisplayedAuthors(book.authors);
@@ -26,7 +29,7 @@ const BookshelfElements = function () {
             if (isAdmin) {
                 tr.appendChild(createActionsColumn(book));
             }
-            
+
             content.appendChild(tr);
             num++;
         }
@@ -198,7 +201,7 @@ const BookshelfElements = function () {
             createAuthorElements('', '', authorGroup, 0);
         }
         form.appendChild(authorGroup);
-        
+
         const bookGroup = document.createElement('div');
         bookGroup.setAttribute('class', 'form-group');
 
@@ -346,7 +349,7 @@ const BookshelfElements = function () {
         receiversGroup.appendChild(receiverLabel);
         receiversGroup.appendChild(receiverSelect);
         receiversGroup.appendChild(receiversErrorDiv);
-        
+
         const commentGroup = document.createElement('div');
         commentGroup.setAttribute('class', 'form-group');
         const commentLabel = document.createElement('label');

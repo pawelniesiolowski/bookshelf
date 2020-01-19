@@ -22,7 +22,7 @@ class BookChangeEvent
         self::SELL,
     ];
 
-    private const NAMES_LABELS = [
+    public const NAMES_LABELS = [
         self::RECEIVE => 'przyjęto',
         self::RELEASE => 'wydano',
         self::SELL => 'sprzedano',
