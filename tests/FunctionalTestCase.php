@@ -27,6 +27,7 @@ class FunctionalTestCase extends WebTestCase
             ],
             []
         );
+        self::ensureKernelShutdown();
     }
 
     private function truncateEntities(array $entities, array $joinTables)

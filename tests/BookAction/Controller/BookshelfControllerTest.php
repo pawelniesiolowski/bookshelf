@@ -43,47 +43,9 @@ class BookshelfControllerTest extends FunctionalTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $content = $response->getContent();
-        $expectedData = [
-            'books' => [
-                [
-                    'title' => 'Bajki robotów',
-                    'ISBN' => '0123456789',
-                    'price' => '59.00',
-                    'copies' => 0,
-                    'authors' => [
-                        [
-                            'name' => 'Stanisław',
-                            'surname' => 'Lem',
-                        ],
-                    ],
-                ],
-                [
-                    'title' => 'Idiota',
-                    'ISBN' => '0987654321',
-                    'price' => '19.99',
-                    'copies' => 0,
-                    'authors' => [
-                        [
-                            'name' => 'Fiodor',
-                            'surname' => 'Dostojewski',
-                        ],
-                    ],
-                ],
-                [
-                    'title' => 'Zbrodnia i kara',
-                    'ISBN' => '1234567890',
-                    'price' => '29.99',
-                    'copies' => 0,
-                    'authors' => [
-                        [
-                            'name' => 'Fiodor',
-                            'surname' => 'Dostojewski',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->assertArraySubset($expectedData, json_decode($content, true));
+        $decodedResponse = json_decode($content, true);
+        $this->assertArrayHasKey('books', $decodedResponse);
+        $this->assertCount(3, $decodedResponse['books']);
     }
 
     public function testItShouldReceiveBook()

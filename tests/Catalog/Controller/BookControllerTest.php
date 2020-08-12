@@ -35,7 +35,7 @@ class BookControllerTest extends FunctionalTestCase
 
         $bookChangeEventRepository = new BookChangeEventRepository($this->registry);
         $events = $bookChangeEventRepository->findAll();
-        $this->assertContains('przyjęto', $events[0]->__toString());
+        $this->assertStringContainsString('przyjęto', $events[0]->__toString());
     }
 
     public function testNewWithInvalidDataShouldCauseResponseWithProperErrors()

@@ -42,8 +42,10 @@ class BookFactoryTest extends TestCase
                     'surname' => 'Dostojewski',
                 ],
             ],
+            'id' => null,
+            'copies' => 0,
         ];
-        $this->assertArraySubset($bookData, $book->jsonSerialize());
+        $this->assertEquals($bookData, $book->jsonSerialize());
     }
 
     public function testItCreatesBookFromEmptyData()

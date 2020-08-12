@@ -24,7 +24,7 @@ class BookRepositoryTest extends FunctionalTestCase
         $this->entityManager->persist($book);
         $this->entityManager->flush();
 
-        $this->assertSame($book, $this->bookRepository->find($book->getId()));
+        $this->assertEquals($book, $this->bookRepository->find($book->getId()));
     }
 
     public function testItShouldGetAllBooksFromDatabase()
