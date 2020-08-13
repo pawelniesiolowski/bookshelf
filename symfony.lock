@@ -1,4 +1,7 @@
 {
+    "brick/math": {
+        "version": "0.8.15"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -94,7 +97,7 @@
         "version": "2.2.2"
     },
     "php": {
-        "version": "7.3"
+        "version": "7.2"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -105,8 +108,8 @@
     "psr/log": {
         "version": "1.1.0"
     },
-    "psr/simple-cache": {
-        "version": "1.0.1"
+    "ramsey/collection": {
+        "version": "1.1.0"
     },
     "ramsey/uuid": {
         "version": "3.9.2"
@@ -159,9 +162,6 @@
             "bin/console",
             "config/bootstrap.php"
         ]
-    },
-    "symfony/contracts": {
-        "version": "v1.0.2"
     },
     "symfony/debug": {
         "version": "v4.2.8"
@@ -278,6 +278,9 @@
     "symfony/polyfill-intl-idn": {
         "version": "v1.12.0"
     },
+    "symfony/polyfill-intl-normalizer": {
+        "version": "v1.18.1"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.11.0"
     },
@@ -286,6 +289,9 @@
     },
     "symfony/polyfill-php73": {
         "version": "v1.12.0"
+    },
+    "symfony/polyfill-php80": {
+        "version": "v1.18.1"
     },
     "symfony/property-access": {
         "version": "v4.2.11"
@@ -331,6 +337,9 @@
     },
     "symfony/stopwatch": {
         "version": "v4.2.8"
+    },
+    "symfony/translation-contracts": {
+        "version": "v1.1.9"
     },
     "symfony/twig-bridge": {
         "version": "v4.2.8"
