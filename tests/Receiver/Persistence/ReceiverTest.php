@@ -3,8 +3,8 @@
 namespace App\Tests\Receiver\Persistence;
 
 use PHPUnit\Framework\TestCase;
-use App\Receiver\Persistence\Receiver;
-use App\BookAction\Persistence\BookChangeEvent;
+use App\Receiver\Model\Receiver;
+use App\BookAction\Domain\BookChangeEvent;
 
 class ReceiverTest extends TestCase
 {
@@ -53,4 +53,3 @@ class ReceiverTest extends TestCase
         $this->assertSame('Mazur Justynka', $receiver->__toString());
     }
 }
-

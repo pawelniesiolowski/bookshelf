@@ -24,24 +24,24 @@ doctrine:
             App\BookAction:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/BookAction/Persistence'
-                prefix: 'App\BookAction\Persistence'
+                dir: '%kernel.project_dir%/src/BookAction/Domain'
+                prefix: 'App\BookAction\Domain'
                 alias: AppBookAction
             App\Catalog:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Catalog/Persistence'
-                prefix: 'App\Catalog\Persistence'
+                dir: '%kernel.project_dir%/src/Catalog/Model'
+                prefix: 'App\Catalog\Model'
                 alias: AppCatalog
             App\Receiver:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Receiver/Persistence'
-                prefix: 'App\Receiver\Persistence'
+                dir: '%kernel.project_dir%/src/Receiver/Model'
+                prefix: 'App\Receiver\Model'
                 alias: AppReceiver
-            App\Shared:
+            App\Security:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Shared/Persistence'
-                prefix: 'App\Shared\Persistence'
+                dir: '%kernel.project_dir%/src/Security/Model'
+                prefix: 'App\Security\Model'
                 alias: AppShared

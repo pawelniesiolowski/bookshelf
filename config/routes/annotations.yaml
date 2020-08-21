@@ -7,6 +7,6 @@ catalog_controllers:
 receiver_controllers:
     resource: ../../src/Receiver/Controller/
     type: annotation
-shared_controllers:
-    resource: ../../src/Shared/Controller/
+security_controllers:
+    resource: ../../src/Security/Controller/
     type: annotation

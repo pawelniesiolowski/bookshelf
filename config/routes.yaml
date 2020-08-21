@@ -1,51 +1,51 @@
-website_index:
+catalog_show:
     path: /
-    controller: App\Shared\Controller\WebsiteController::index
+    controller: App\Catalog\Controller\BookController:show
     methods: [GET]
-website_receivers:
-    path: /receivers
-    controller: App\Shared\Controller\WebsiteController::receivers
-    methods: [GET]
-book_action_index_for_book:
-    path: /bookaction/{bookId}
-    controller: App\BookAction\Controller\BookActionController:indexActionsForBook
-    methods: [GET]
-bookshelf_index:
+catalog_index:
     path: /books
-    controller: App\BookAction\Controller\BookshelfController::index
+    controller: App\Catalog\Controller\BookController:index
     methods: [GET]
-bookshelf_receive:
-    path: /receive/{id}
-    controller: App\BookAction\Controller\BookshelfController::receive
-    methods: [POST]
-bookshelf_release:
-    path: /release/{id}
-    controller: App\BookAction\Controller\BookshelfController::release
-    methods: [POST]
-bookshelf_sell:
-    path: /sell/{id}
-    controller: App\BookAction\Controller\BookshelfController::sell
-    methods: [POST]
-book_form:
+catalog_form:
     path: /books/form
-    controller: App\Catalog\Controller\WebsiteController:form
+    controller: App\Catalog\Controller\BookController:form
     methods: [GET]
-book_new:
+catalog_new:
     path: /books
     controller: App\Catalog\Controller\BookController::new
     methods: [POST]
-book_one:
+catalog_one:
     path: /books/{id}
     controller: App\Catalog\Controller\BookController:one
     methods: [GET]
-book_edit:
+catalog_edit:
     path: /books/{id}
     controller: App\Catalog\Controller\BookController:edit
     methods: [PUT]
-book_delete:
+catalog_delete:
     path: /books/{id}
     controller: App\Catalog\Controller\BookController:delete
     methods: [DELETE]
+book_action_index:
+    path: /bookaction/{bookId}
+    controller: App\BookAction\Controller\IndexController:indexActionsForBook
+    methods: [GET]
+book_action_receive:
+    path: /receive/{id}
+    controller: App\BookAction\Controller\ReceiveBookController::receive
+    methods: [POST]
+book_action_release:
+    path: /release/{id}
+    controller: App\BookAction\Controller\ReleaseBookController::release
+    methods: [POST]
+book_action_sell:
+    path: /sell/{id}
+    controller: App\BookAction\Controller\SellBookController::sell
+    methods: [POST]
+receiver_show:
+    path: /receivers
+    controller: App\Receiver\Controller\ReceiverController:show
+    methods: [GET]
 receiver_new:
     path: /receiver
     controller: App\Receiver\Controller\ReceiverController:new
@@ -66,11 +66,11 @@ receiver_edit:
     path: /receiver/{id}
     controller: App\Receiver\Controller\ReceiverController:edit
     methods: [PUT]
-app_login:
+security_login:
     path: /login
-    controller: App\Shared\Controller\SecurityController:login
+    controller: App\Security\Controller\SecurityController:login
     methods: [GET, POST]
-app_logout:
+security_logout:
     path: /logout
-    controller: App\Shared\Controller\SecurityController:logout
+    controller: App\Security\Controller\SecurityController:logout
     methods: [GET]

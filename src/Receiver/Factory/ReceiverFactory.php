@@ -2,7 +2,7 @@
 
 namespace App\Receiver\Factory;
 
-use App\Receiver\Persistence\Receiver;
+use App\Receiver\Model\Receiver;
 
 class ReceiverFactory
 {

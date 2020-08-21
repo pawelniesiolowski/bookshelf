@@ -4,7 +4,7 @@ namespace App\Tests\Receiver\Factory;
 
 use PHPUnit\Framework\TestCase;
 use App\Receiver\Factory\ReceiverFactory;
-use App\Receiver\Persistence\Receiver;
+use App\Receiver\Model\Receiver;
 
 class ReceiverFactoryTest extends TestCase
 {

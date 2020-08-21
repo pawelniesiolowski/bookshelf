@@ -2,8 +2,8 @@
 
 namespace App\Catalog\Factory;
 
-use App\Catalog\Persistence\Book;
-use App\Shared\Tool\TextProcessor;
+use App\Catalog\Model\Book;
+use App\Tool\TextProcessor;
 
 class BookFactory
 {

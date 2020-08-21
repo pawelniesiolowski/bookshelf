@@ -2,26 +2,41 @@
 
 namespace App\Receiver\Controller;
 
+use App\Receiver\Repository\ReceiverRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Receiver\Factory\ReceiverFactory;
-use App\Receiver\Provider\ReceiverProvider;
 
 class ReceiverController extends AbstractController
 {
     private $receiverFactory;
     private $entityManager;
-    private $receiverProvider;
+    private $receiverRepository;
 
     public function __construct(
         ReceiverFactory $receiverFactory,
         EntityManagerInterface $entityManager,
-        ReceiverProvider $receiverProvider
+        ReceiverRepository $receiverRepository
     ) {
         $this->receiverFactory = $receiverFactory;
         $this->entityManager = $entityManager;
-        $this->receiverProvider = $receiverProvider;
+        $this->receiverRepository = $receiverRepository;
+    }
+
+    public function show()
+    {
+        return $this->render('receiver/receivers.html.twig');
+    }
+
+    public function index()
+    {
+        return $this->json(['receivers' => $this->receiverRepository->findAllNonDeletedOrderedAlphabetically()]);
+    }
+
+    public function one(string $id)
+    {
+        return $this->json(['receiver' => $this->receiverRepository->find($id)]);
     }
 
     public function new(Request $request)
@@ -35,28 +50,9 @@ class ReceiverController extends AbstractController
         return $this->json([], 201);
     }
 
-    public function index()
-    {
-        return $this->json(['receivers' => $this->receiverProvider->findAll()]);
-    }
-
-    public function one(string $id)
-    {
-        return $this->json(['receiver' => $this->receiverProvider->findOneById($id)]);
-    }
-
-    public function delete(string $id)
-    {
-        $receiver = $this->receiverProvider->findOneById($id);
-        $receiver->delete();
-        $this->entityManager->persist($receiver);
-        $this->entityManager->flush();
-        return $this->json([], 200);
-    }
-
     public function edit(string $id, Request $request)
     {
-        $receiver = $this->receiverProvider->findOneById($id);
+        $receiver = $this->receiverRepository->find($id);
         $receiver->editFromJsonData($request->getContent());
         if (!$receiver->validate()) {
             return $this->json(['errors' => $receiver->getErrors()], 422);
@@ -64,5 +60,14 @@ class ReceiverController extends AbstractController
         $this->entityManager->persist($receiver);
         $this->entityManager->flush();
         return $this->json([], 204);
+    }
+
+    public function delete(string $id)
+    {
+        $receiver = $this->receiverRepository->find($id);
+        $receiver->delete();
+        $this->entityManager->persist($receiver);
+        $this->entityManager->flush();
+        return $this->json([], 200);
     }
 }

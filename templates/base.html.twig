@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,17 +23,17 @@
         </header>
         {% if is_granted('ROLE_USER') %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="{{ path('website_index') }}">Strona główna</a>
+            <a class="navbar-brand" href="{{ path('catalog_show') }}">Strona główna</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a class="nav-item nav-link" href="{{ path('book_form') }}">Dodaj książkę</a>
-                    <a class="nav-item nav-link" href="{{ path('website_receivers') }}">Użytkownicy</a>
+                        <a class="nav-item nav-link" href="{{ path('catalog_form') }}">Dodaj książkę</a>
+                    <a class="nav-item nav-link" href="{{ path('receiver_show') }}">Użytkownicy</a>
                     {% endif %}
-                    <a class="nav-item nav-link" href="{{ path('app_logout') }}">Wyloguj</a>
+                    <a class="nav-item nav-link" href="{{ path('security_logout') }}">Wyloguj</a>
                 </div>
             </div>
         </nav>
@@ -42,9 +42,9 @@
     </div>
 </main>
 {% block javascripts %}
-    <script src="{{ asset('js/bootstrap-native-v4.min.js') }}"></script>
-    <script src="{{ asset('js/modal.js') }}"></script>
-    <script src="{{ asset('js/bookshelf_elements.js') }}"></script>
+    <script src="{{ asset('js/external_libraries/bootstrap-native-v4.min.js') }}"></script>
+    <script src="{{ asset('js/tool/modal.js') }}"></script>
+    <script src="{{ asset('js/book_action/bookshelf_elements.js') }}"></script>
 {% endblock %}
 </body>
 </html>
