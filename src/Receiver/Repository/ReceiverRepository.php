@@ -2,15 +2,15 @@
 
 namespace App\Receiver\Repository;
 
-use App\Receiver\Persistence\Receiver;
+use App\Receiver\Model\Receiver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException as NonUniqueResultExceptionAlias;
 use Doctrine\ORM\NoResultException;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 class ReceiverRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Receiver::class);
     }
@@ -30,7 +30,7 @@ class ReceiverRepository extends ServiceEntityRepository
             ->getSingleResult();
     }
 
-    public function findAllNonDeletedOrderAlfabethically(): array
+    public function findAllNonDeletedOrderedAlphabetically(): array
     {
         return $this->findBy(['deletedAt' => null], ['surname' => 'ASC', 'name' => 'ASC']);
     }

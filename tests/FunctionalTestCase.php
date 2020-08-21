@@ -2,14 +2,18 @@
 
 namespace App\Tests;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Catalog\Persistence\Book;
-use App\Receiver\Persistence\Receiver;
-use App\BookAction\Persistence\BookChangeEvent;
+use App\Catalog\Model\Book;
+use App\Receiver\Model\Receiver;
+use App\BookAction\Domain\BookChangeEvent;
 
 class FunctionalTestCase extends WebTestCase
 {
     protected $registry;
+    /**
+     * @var EntityManager $entityManager
+     */
     protected $entityManager;
 
     public function setUp(): void

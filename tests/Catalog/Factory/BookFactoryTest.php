@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Catalog\Factory;
+namespace App\Tests\Catalog\Factory;
 
+use App\Catalog\Factory\BookFactory;
 use PHPUnit\Framework\TestCase;
-use App\Catalog\Persistence\Book;
+use App\Catalog\Model\Book;
 
 class BookFactoryTest extends TestCase
 {

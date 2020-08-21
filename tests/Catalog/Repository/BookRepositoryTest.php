@@ -2,17 +2,21 @@
 
 namespace App\Tests\Catalog\Repository;
 
-use App\Tests\FunctionalTestCase;
-use App\Catalog\Persistence\Book;
 use App\Catalog\Repository\BookRepository;
+use App\Tests\FunctionalTestCase;
+use App\Catalog\Model\Book;
 
 class BookRepositoryTest extends FunctionalTestCase
 {
+    /**
+     * @var BookRepository
+     */
     private $bookRepository;
+
     public function setUp(): void
     {
         parent::setUp();
-        $this->bookRepository = new BookRepository($this->registry);
+        $this->bookRepository = $this->entityManager->getRepository(Book::class);
     }
 
     public function testItShouldGetBookFromDatabase()
@@ -31,7 +35,6 @@ class BookRepositoryTest extends FunctionalTestCase
     {
         $book1 = new Book('Bracia Karamazow');
         $book2 = new Book('Idiota');
-        $books = [$book1->jsonSerialize(), $book2->jsonSerialize()];
 
         $this->entityManager->persist($book1);
         $this->entityManager->persist($book2);

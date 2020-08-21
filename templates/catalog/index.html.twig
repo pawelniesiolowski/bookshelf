@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+<section>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="table-responsive-xl">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Tytuł</th>
+                            <th>Autor</th>
+                            <th>Egz.</th>
+                            <th>ISBN</th>
+                            <th>Cena</th>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <th style="min-width: 470px">Akcja</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody
+                        id="bookshelf-table-body"
+                        {% if is_granted('ROLE_ADMIN') %}
+                        data-admin="true"
+                        {% endif %}
+                        data-index="{{ path('catalog_index') }}"
+                        data-receive-path="{{ path('book_action_receive', { 'id': 0 }) }}"
+                        data-release-path="{{ path('book_action_release', { 'id': 0 }) }}"
+                        data-sell-path="{{ path('book_action_sell', { 'id': 0 }) }}"
+                        data-edit-book-path="{{ path('catalog_edit', { 'id': 0 }) }}"
+                        data-get-book-path="{{ path('catalog_one', { 'id': 0 }) }}"
+                        data-delete-book-path="{{ path('catalog_delete', { 'id': 0 }) }}"
+                        data-get-receivers-path="{{ path('receiver_index') }}"
+                        data-book-action-index-for-book="{{ path('book_action_index', {'bookId': 0}) }}"
+                    >
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/catalog/authors.js') }}"></script>
+    <script src="{{ asset('js/catalog/book.js') }}"></script>
+    <script src="{{ asset('js/book_action/bookshelf.js') }}"></script>
+    <script src="{{ asset('js/tool/errors_handler.js') }}"></script>
+{% endblock %}

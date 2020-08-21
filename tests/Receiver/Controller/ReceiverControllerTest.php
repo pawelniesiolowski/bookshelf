@@ -3,8 +3,7 @@
 namespace App\Tests\Receiver\Controller;
 
 use App\Tests\FunctionalTestCase;
-use App\Receiver\Persistence\Receiver;
-use App\Receiver\Repository\ReceiverRepository;
+use App\Receiver\Model\Receiver;
 
 class ReceiverControllerTest extends FunctionalTestCase
 {
@@ -20,7 +19,7 @@ class ReceiverControllerTest extends FunctionalTestCase
 
         $this->assertSame(201, $response->getStatusCode());
 
-        $receiverRepository = new ReceiverRepository($this->registry);
+        $receiverRepository = $this->entityManager->getRepository(Receiver::class);
         $receiver = $receiverRepository->findAll();
         $this->assertSame('Mazur Justyna', $receiver[0]->__toString());
     }
@@ -108,9 +107,8 @@ class ReceiverControllerTest extends FunctionalTestCase
 
         $this->assertSame(204, $response->getStatusCode());
 
-        $receiverRepository = new ReceiverRepository($this->registry);
+        $receiverRepository = $this->entityManager->getRepository(Receiver::class);
         $receiver = $receiverRepository->find($receiver->getId());
         $this->assertSame('Mazur Justynka', $receiver->__toString());
     }
 }
-

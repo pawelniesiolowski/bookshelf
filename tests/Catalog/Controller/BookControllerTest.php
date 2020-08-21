@@ -2,13 +2,39 @@
 
 namespace App\Tests\Catalog\Controller;
 
+use App\BookAction\Domain\BookChangeEvent;
 use App\Tests\FunctionalTestCase;
-use App\Catalog\Persistence\Book;
-use App\Catalog\Repository\BookRepository;
-use App\BookAction\Repository\BookChangeEventRepository;
+use App\Catalog\Model\Book;
+use Ramsey\Uuid\Uuid;
 
 class BookControllerTest extends FunctionalTestCase
 {
+    public function testItIndexesBooks()
+    {
+        $crime = new Book('Zbrodnia i kara');
+        $idiot = new Book('Idiota');
+        $robots = new Book('Bajki robotów');
+        $this->entityManager->persist($crime);
+        $this->entityManager->persist($robots);
+        $this->entityManager->persist($idiot);
+        $this->entityManager->flush();
+
+        $client = static::createClient();
+        $client->xmlHttpRequest('GET', '/books');
+        $response = $client->getResponse();
+
+        $this->assertTrue($response->isOk());
+    }
+
+    public function testItReturnsNotFoundWhenSpecifiedBookDoesNotExist()
+    {
+        $id = Uuid::uuid1()->toString();
+        $client = static::createClient();
+        $client->xmlHttpRequest('GET', '/books/' . $id);
+        $response = $client->getResponse();
+        self::assertSame(404, $response->getStatusCode());
+    }
+
     public function testNewShouldCreateNewBookAndMaybeBookChangeEvent()
     {
         $content = [
@@ -29,11 +55,11 @@ class BookControllerTest extends FunctionalTestCase
 
         $this->assertSame(201, $response->getStatusCode());
 
-        $bookRepository = new BookRepository($this->registry);
+        $bookRepository = $this->entityManager->getRepository(Book::class);
         $books = $bookRepository->findAll();
         $this->assertSame('Dostojewski Fiodor "Zbrodnia i kara"', $books[0]->__toString());
 
-        $bookChangeEventRepository = new BookChangeEventRepository($this->registry);
+        $bookChangeEventRepository = $this->entityManager->getRepository(BookChangeEvent::class);
         $events = $bookChangeEventRepository->findAll();
         $this->assertStringContainsString('przyjęto', $events[0]->__toString());
     }
@@ -85,9 +111,8 @@ class BookControllerTest extends FunctionalTestCase
 
         $this->assertSame(204, $response->getStatusCode());
 
-        $bookRepository = new BookRepository($this->registry);
+        $bookRepository = $this->entityManager->getRepository(Book::class);
         $book = $bookRepository->find($book->getId());
         $this->assertSame('Dostojewski Fiodor "Zbrodnia i kara"', $book->__toString());
     }
 }
-

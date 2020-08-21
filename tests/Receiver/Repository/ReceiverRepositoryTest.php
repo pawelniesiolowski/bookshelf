@@ -3,8 +3,7 @@
 namespace App\Tests\Receiver\Repository;
 
 use App\Tests\FunctionalTestCase;
-use App\Receiver\Repository\ReceiverRepository;
-use App\Receiver\Persistence\Receiver;
+use App\Receiver\Model\Receiver;
 
 class ReceiverRepositoryTest extends FunctionalTestCase
 {
@@ -13,7 +12,7 @@ class ReceiverRepositoryTest extends FunctionalTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->receiverRepository = new ReceiverRepository($this->registry);
+        $this->receiverRepository = $this->entityManager->getRepository(Receiver::class);
     }
 
     public function testItShouldFindOneById()
@@ -43,7 +42,7 @@ class ReceiverRepositoryTest extends FunctionalTestCase
             $firstReceiver,
         ];
 
-        $this->assertEquals($expectedData, $this->receiverRepository->findAllNonDeletedOrderAlfabethically());
+        $this->assertEquals($expectedData, $this->receiverRepository->findAllNonDeletedOrderedAlphabetically());
     }
 }
 

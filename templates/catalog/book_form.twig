@@ -5,59 +5,61 @@
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="bookshelf-form-container">
-                    <form id="bookshelf-new-book" action="{{ path('book_new') }}" data-index-path="{{ path('website_index') }}">
-                        <legend>Dodaj książkę</legend>
-                        <div class="form-group" id="bookshelf-new-book-authorFormGroup">
-                            <div class="form-row">
-                                <div class="col-md-6">
-                                    <label for="bookshelf-new-book-author-surname[0]">Nazwisko autora</label>
-                                    <input type="text" name="authorSurname[0]" id="bookshelf-new-book-author-surname[0]" class="form-control">
-                                    <div class="form-error error-authorSurname[0]"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="bookshelf-new-book-authorName[0]">Imię autora</label>
-                                    <input type="text" name="authorName[0]" id="bookshelf-new-book-authorName[0]" class="form-control">
-                                    <div class="form-error error-authorName[0]"></div>
-                                </div>
-                                <div class="col-md-2">
+                    <form id="bookshelf-new-book" action="{{ path('catalog_new') }}" data-index-path="{{ path('catalog_index') }}">
+                        <fieldset>
+                            <legend>Dodaj książkę</legend>
+                            <div class="form-group" id="bookshelf-new-book-authorFormGroup">
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <label for="bookshelf-new-book-author-surname[0]">Nazwisko autora</label>
+                                        <input type="text" name="authorSurname[0]" id="bookshelf-new-book-author-surname[0]" class="form-control">
+                                        <div class="form-error error-authorSurname[0]"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="bookshelf-new-book-authorName[0]">Imię autora</label>
+                                        <input type="text" name="authorName[0]" id="bookshelf-new-book-authorName[0]" class="form-control">
+                                        <div class="form-error error-authorName[0]"></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <label for="bookshelf-new-book-title">Tytuł</label>
+                                        <input type="text" name="title" id="bookshelf-new-book-title" class="form-control">
+                                        <div class="form-error error-title"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col-md-4">
+                                        <label for="bookshelf-new-book-copies">Egzemplarze</label>
+                                        <input type="number" name="copies" id="bookshelf-new-book-copies" class="form-control">
+                                        <div class="form-error error-copies"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="bookshelf-new-book-isbn">ISBN</label>
+                                        <input type="text" name="ISBN" id="bookshelf-new-book-isbn" class="form-control">
+                                        <div class="form-error error-ISBN"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="bookshelf-new-book-price">Cena</label>
+                                        <input type="number" name="price" id="bookshelf-new-book-price" min="1" step="any" class="form-control">
+                                        <div class="form-error error-price"></div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-row">
                                 <div class="col-md-12">
-                                    <label for="bookshelf-new-book-title">Tytuł</label>
-                                    <input type="text" name="title" id="bookshelf-new-book-title" class="form-control">
-                                    <div class="form-error error-title"></div>
+                                    <button type="submit" class="btn">Zapisz</button>
+                                    <button type="reset" class="btn btn-danger ml-sm-2">Wyczyść</button>
+                                    <button class="btn btn-success float-right" id="bookshelf-new-book-addAuthor">Dodaj autora</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col-md-4">
-                                    <label for="bookshelf-new-book-copies">Egzemplarze</label>
-                                    <input type="number" name="copies" id="bookshelf-new-book-copies" class="form-control">
-                                    <div class="form-error error-copies"></div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="bookshelf-new-book-isbn">ISBN</label>
-                                    <input type="text" name="ISBN" id="bookshelf-new-book-isbn" class="form-control">
-                                    <div class="form-error error-ISBN"></div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="bookshelf-new-book-price">Cena</label>
-                                    <input type="number" name="price" id="bookshelf-new-book-price" min="1" step="any" class="form-control">
-                                    <div class="form-error error-price"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn">Zapisz</button>
-                                <button type="reset" class="btn btn-danger ml-sm-2">Wyczyść</button>
-                                <button class="btn btn-success float-right" id="bookshelf-new-book-addAuthor">Dodaj autora</button>
-                            </div>
-                        </div>
+                        </fieldset>
                     </form>
                 </div>
             </div>
@@ -67,8 +69,8 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/authors.js') }}"></script>
-    <script src="{{ asset('js/book.js') }}"></script>
-    <script src="{{ asset('js/errors_handler.js') }}"></script>
+    <script src="{{ asset('js/catalog/authors.js') }}"></script>
+    <script src="{{ asset('js/catalog/book.js') }}"></script>
+    <script src="{{ asset('js/tool/errors_handler.js') }}"></script>
     <script src="{{ asset('js/catalog/book_form.js') }}"></script>
 {% endblock %}

@@ -1,6 +1,6 @@
 security:
     encoders:
-        App\Shared\Persistence\User:
+        App\Security\Model\User:
             algorithm: auto
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
@@ -8,7 +8,7 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
-                class: App\Shared\Persistence\User
+                class: App\Security\Model\User
                 property: email
     firewalls:
         dev:
@@ -18,9 +18,9 @@ security:
             anonymous: true
             guard:
                 authenticators:
-                    - App\Shared\Security\LoginFormAuthenticator
+                    - App\Security\Security\LoginFormAuthenticator
             logout:
-                path: app_logout
+                path: security_logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
