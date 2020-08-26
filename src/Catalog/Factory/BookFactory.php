@@ -35,6 +35,6 @@ class BookFactory
     private function createPrice($price): float
     {
         $price = is_numeric($price) ? $price : 0;
-        return (float)$price;
+        return (float) $price;
     }
 }

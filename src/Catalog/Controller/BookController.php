@@ -69,7 +69,10 @@ class BookController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         if (!empty($data['copies']) && $data['copies'] > 0) {
-            $this->receiveBookService->addCopiesForBook(new Copies(intval($data['copies'])), $book->toDTO());
+            $copies = $this->receiveBookService->addCopiesForBook(new Copies(intval($data['copies'])), $book->toDTO());
+            $book->setCopies($copies->toInt());
+            $this->entityManager->persist($book);
+            $this->entityManager->flush();
         }
 
         return $this->json([], 201);
@@ -82,7 +85,7 @@ class BookController extends AbstractController
         $content = $request->getContent();
         $contentData = json_decode($content, true);
 
-        $book->updateFromJson($content, $contentData['authors']);
+        $book->updateFromJson($content, $contentData['authors'] ?? []);
 
         if (!$book->validate()) {
             return $this->json(['errors' => $book->getErrors()], 422);
