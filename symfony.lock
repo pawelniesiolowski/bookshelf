@@ -97,7 +97,10 @@
         "version": "2.2.2"
     },
     "php": {
-        "version": "7.2"
+        "version": "7.4"
+    },
+    "phpstan/phpstan": {
+        "version": "0.12.42"
     },
     "psr/cache": {
         "version": "1.0.1"
