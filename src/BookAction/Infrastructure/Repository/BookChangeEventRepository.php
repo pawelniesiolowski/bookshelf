@@ -20,13 +20,18 @@ class BookChangeEventRepository extends ServiceEntityRepository
      */
     public function findAllByBookId(string $id): array
     {
-        return $this->findBy(['bookId' => $id]);
+        return $this->findBy(['bookId' => $id], ['date' => 'ASC']);
     }
 
     public function findAllByBookIdAfterDate(string $bookId, DateTime $date): array
     {
+        $sql = <<<EOD
+            SELECT e FROM App\BookAction\Domain\BookChangeEvent e
+            WHERE e.bookId = :bookId AND e.date >= :date
+            ORDER BY e.date
+EOD;
         return $this->getEntityManager()
-            ->createQuery('SELECT e FROM App\BookAction\Domain\BookChangeEvent e WHERE e.bookId = :bookId AND e.date >= :date')
+            ->createQuery($sql)
             ->setParameter(':bookId', $bookId)
             ->setParameter(':date', $date)
             ->getResult();
